@@ -1,146 +1,117 @@
-
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/api/';
+const API_URL = process.env.REACT_APP_API_BASE_URL;
+
+// Create axios instance with default headers
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+});
+
+// Add request interceptor to include token
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('jwt-token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
 
 const categoryService = {
   async createCategory(categoryData) {
-    const {
-      name,
-      slug,
-      description,
-      type,
-      isActive,
-      order,
-      parentId,
-      contents,
-      images, // array of File
-    } = categoryData;
-  
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('slug', slug);
-    formData.append('description', description || '');
-    formData.append('type', type);
-    formData.append('isActive', isActive ? 'true' : 'false');
-    formData.append('order', order?.toString() || '0');
-    formData.append('parentId', parentId || '');
-  
-    // Nội dung bài viết
-    contents.forEach((content, i) => {
-      formData.append(`contents[${i}]`, content);
-    });
-  
-    // Hình ảnh
-    images.forEach((file, i) => {
-      formData.append(`images`, file); // same field name for multiple files
-    });
-  
     try {
-      const response = await axios.post(`${API_URL}categories`, formData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Accept': 'application/json',
-        },
+      if (!categoryData.name || !categoryData.slug || !categoryData.type) {
+        throw new Error('Tên danh mục, slug và type là bắt buộc');
+      }
+
+      const response = await api.post('/categories', {
+        name: categoryData.name.trim(),
+        slug: categoryData.slug.trim(),
+        type: categoryData.type.trim(),
+        description: categoryData.description?.trim() || '',
+        isActive: Boolean(categoryData.isActive),
+        sortOrder: Number(categoryData.sortOrder) || 0,
+        level: Number(categoryData.level) || 0
       });
       return response.data;
     } catch (error) {
-      console.error("Error creating category:", error);
+      if (error.response && error.response.status === 409) {
+        // Handle duplicate name error
+        throw new Error('Tên danh mục đã tồn tại!');
+      }
+      console.error("Chi tiết lỗi:", error.response?.data || error.message);
       throw error;
     }
-  }
-  ,
+  },
+
+  async editCategory(id, categoryData) {
+    try {
+      if (!categoryData.name || !categoryData.slug || !categoryData.type) {
+        throw new Error('Tên danh mục, slug và type là bắt buộc');
+      }
+
+      const response = await api.put(`/categories/${id}`, {
+        name: categoryData.name.trim(),
+        slug: categoryData.slug.trim(),
+        type: categoryData.type.trim(),
+        description: categoryData.description?.trim() || '',
+        isActive: Boolean(categoryData.isActive),
+        sortOrder: Number(categoryData.sortOrder) || 0,
+        level: Number(categoryData.level) || 0
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error editing category:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
   async getAllCategories() {
     try {
-      const response = await axios.get(`${API_URL}categories`, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data;  // Return the list of all categories
+      const response = await api.get('/categories');
+      return response.data;
     } catch (error) {
       console.error("Error fetching categories:", error);
       throw error;
     }
   },
+
   async getCategoryById(id) {
     try {
-      const response = await axios.get(`${API_URL}categories/${id}`, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      });
-      return response.data;  // Return the category found by ID
+      const response = await api.get(`/categories/${id}`);
+      return response.data;
     } catch (error) {
       console.error("Error fetching category by ID:", error);
       throw error;
     }
   },
-  async editCategory(id, categoryData) {
-    const {
-      name,
-      slug,
-      description,
-      type,
-      isActive,
-      order,
-      parentId,
-      contents,
-      images, // array of File
-    } = categoryData;
 
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('slug', slug);
-    formData.append('description', description || '');
-    formData.append('type', type);
-    formData.append('isActive', isActive ? 'true' : 'false');
-    formData.append('order', order?.toString() || '0');
-    formData.append('parentId', parentId || '');
-
-    // Nội dung bài viết
-    contents.forEach((content, i) => {
-      formData.append(`contents[${i}]`, content);
-    });
-
-    // Hình ảnh
-    images.forEach((file, i) => {
-      formData.append(`images`, file); // same field name for multiple files
-    });
-
-    try {
-      const response = await axios.put(`${API_URL}categories/${id}`, formData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Accept': 'application/json',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error editing category:", error);
-      throw error;
-    }
-  },
   async deleteCategory(id) {
     try {
-      const response = await axios.delete(`${API_URL}categories/${id}`, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      });
-      return response.data; // Return the response data after deletion
+      const response = await api.delete(`/categories/${id}`);
+      return response.data;
     } catch (error) {
       console.error("Error deleting category:", error);
       throw error;
     }
+  },
+
+  // Lấy danh mục theo type (ví dụ: PRODUCT)
+  async getCategoriesByType(type) {
+    try {
+      const response = await api.get(`/categories/by-type/${type}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching categories by type:", error);
+      throw error;
+    }
   }
-  
+
 }
+
 export default categoryService;

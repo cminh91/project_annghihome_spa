@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import CategoryModal from "./CategoryModal"; 
-import EditCategoryModal from "./CategoryEdit"; 
+import CategoryModal from "./CategoryModal";
+import EditCategoryModal from "./CategoryEdit";
 import categoryService from "../../../functionservice/categoryService";
 
 const CategoryList = () => {
-  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [showModal, setShowModal] = useState(false); 
+  const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [categoriesPerPage] = useState(6); 
+  const [categoriesPerPage] = useState(6);
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -26,29 +24,22 @@ const CategoryList = () => {
 
     fetchCategories();
   }, []);
-
-  const handleOpenTrash = () => {
-    navigate("/admin/category/trash");
-  };
-
   const handleOpenEdit = (category) => {
-    setShowEditModal(category); // Set the category being edited
-    setShowModal(true); // Show the modal for editing
+    setShowEditModal(category);
+    setShowModal(true); 
   };
-
 
   const handleDeleteCategory = async (id) => {
     const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa danh mục này?");
     if (isConfirmed) {
       try {
         await categoryService.deleteCategory(id);
-        setCategories(categories.filter((cat) => cat.id !== id)); // Remove the deleted category from the list
+        setCategories(categories.filter((cat) => cat.id !== id));
       } catch (error) {
         console.error("Error deleting category:", error);
       }
     }
   };
-  
 
   const handleSaveCategory = (newCategory) => {
     setCategories([...categories, { ...newCategory, id: categories.length + 1 }]);
@@ -60,20 +51,23 @@ const CategoryList = () => {
         cat.id === updatedCategory.id ? updatedCategory : cat
       )
     );
-    setShowModal(false); 
+    setShowModal(false);
   };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
+
   const sortedCategories = [...categories].sort((a, b) => b.isActive - a.isActive);
 
   const filteredCategories = sortedCategories.filter((category) =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   const indexOfLastCategory = currentPage * categoriesPerPage;
   const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
   const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
+
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -87,9 +81,7 @@ const CategoryList = () => {
           >
             <i className="bi bi-plus"></i> Thêm danh mục
           </button>
-          <button className="btn btn-danger m-2" onClick={handleOpenTrash}>
-            <i className="bi bi-trash"></i> Thùng rác
-          </button>
+         
         </div>
       </div>
 
@@ -106,11 +98,15 @@ const CategoryList = () => {
       <table className="table table-bordered table-striped">
         <thead className="table-dark">
           <tr>
-            <th>Ảnh</th>
             <th>Tên danh mục</th>
-            <th>ParentCatrgories</th>
+            <th>Slug</th>
+            <th>Mô tả</th>
             <th>Loại</th>
             <th>Trạng thái</th>
+            <th>Thứ tự</th>
+            <th>Level</th>
+            <th>Ngày tạo</th>
+            <th>Ngày cập nhật</th>
             <th>Hành động</th>
           </tr>
         </thead>
@@ -118,39 +114,36 @@ const CategoryList = () => {
           {currentCategories.length > 0 ? (
             currentCategories.map((item) => (
               <tr key={item.id}>
-                <td>
-                  <img
-                    src={item.imageUrl || "default-image-url.jpg"} // Fallback image URL if none provided
-                    alt={item.name}
-                    width="80"
-                    className="rounded"
-                  />
-                </td>
                 <td>{item.name}</td>
-                <td>{item.parentId}</td>
+                <td>{item.slug}</td>
+                <td>{item.description}</td>
                 <td>{item.type}</td>
                 <td>{item.isActive ? "Hiển thị" : "Ẩn"}</td>
+                <td>{item.sortOrder}</td>
+                <td>{item.level}</td>
+                <td>{new Date(item.createdAt).toLocaleString()}</td>
+                <td>{new Date(item.updatedAt).toLocaleString()}</td>
                 <td>
                   <div className="d-flex gap-2">
                     <button
                       className="btn btn-sm btn-warning"
-                      onClick={() => handleOpenEdit(item)} // Open modal for editing category
+                      onClick={() => handleOpenEdit(item)}
                     >
                       <i className="bi bi-pencil-square"></i>
                     </button>
                     <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDeleteCategory(item.id)} 
-                      >
-                        <i className="bi bi-trash"></i>
-                      </button>
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDeleteCategory(item.id)}
+                    >
+                      <i className="bi bi-trash"></i>
+                    </button>
                   </div>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="4" className="text-center">
+              <td colSpan="11" className="text-center">
                 Không có danh mục nào phù hợp với tìm kiếm
               </td>
             </tr>
@@ -171,21 +164,19 @@ const CategoryList = () => {
         </ul>
       </nav>
 
-
-
       {/* Category Modal for adding or editing category */}
       {showEditModal ? (
-        <EditCategoryModal
-          show={showModal}
-          handleClose={() => setShowModal(false)} // Close modal
-          handleSave={handleUpdateCategory} // Save updated category
-          category={showEditModal} // Pass category for editing
-        />
+            <EditCategoryModal
+            show={showModal}
+            handleClose={() => setShowModal(false)}
+            handleUpdate={handleUpdateCategory}
+            category={showEditModal}
+          />
       ) : (
         <CategoryModal
           show={showModal}
-          handleClose={() => setShowModal(false)} // Close modal
-          handleSave={handleSaveCategory} // Save new category
+          handleClose={() => setShowModal(false)} 
+          handleSave={handleSaveCategory}
         />
       )}
     </div>
