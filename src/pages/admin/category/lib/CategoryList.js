@@ -100,14 +100,14 @@ const CategoryList = () => {
     }
   };
 
-  const handleSaveCategory = async (newCategory) => {
+  const handleSaveCategory = async (createdCategory) => {
     setIsLoading(true);
     try {
-      await categoryService.createCategory(newCategory); // Changed from addCategory to createCategory
+      setCategories(prev => [createdCategory, ...prev]);
       const categoriesData = await categoryService.getAllCategories();
       setCategories(categoriesData);
       handleCloseModal();
-      alert("Thêm danh mục thành công!"); // Added success message
+      alert("Thêm danh mục thành công!");
     } catch (error) {
       console.error("Error adding category:", error);
       alert("Thêm danh mục thất bại!");

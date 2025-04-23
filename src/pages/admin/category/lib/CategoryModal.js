@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { Modal, Button, Form, Image, Row, Col } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import slugify from "slugify";
 import categoryService from "../../../functionservice/categoryService";
-
 
 const CategoryModal = ({ show, handleClose, handleSave }) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [type, setType] = useState("product"); // Added type field
+  const [type, setType] = useState("product");
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [sortOrder, setSortOrder] = useState(0);
@@ -65,20 +64,20 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Level</Form.Label>
-            <Form.Control
-              type="number"
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
             <Form.Label>Thứ tự hiển thị</Form.Label>
             <Form.Control
               type="number"
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Level</Form.Label>
+            <Form.Control
+              type="number"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
             />
           </Form.Group>
 
@@ -91,11 +90,10 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
               label={isActive ? "Hiển thị" : "Ẩn"}
             />
           </Form.Group>
-          
-          {/* Add type selection */}
+
           <Form.Group className="mb-3">
             <Form.Label>Loại danh mục</Form.Label>
-            <Form.Select 
+            <Form.Select
               value={type}
               onChange={(e) => setType(e.target.value)}
             >

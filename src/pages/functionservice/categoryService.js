@@ -41,6 +41,10 @@ const categoryService = {
       });
       return response.data;
     } catch (error) {
+      if (error.response && error.response.status === 409) {
+        // Handle duplicate name error
+        throw new Error('Tên danh mục đã tồn tại!');
+      }
       console.error("Chi tiết lỗi:", error.response?.data || error.message);
       throw error;
     }
