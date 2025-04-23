@@ -100,7 +100,19 @@ const categoryService = {
       console.error("Error deleting category:", error);
       throw error;
     }
+  },
+
+  // Lấy danh mục theo type (ví dụ: PRODUCT)
+  async getCategoriesByType(type) {
+    try {
+      const response = await api.get(`/categories/by-type/${type}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching categories by type:", error);
+      throw error;
+    }
   }
+
 }
 
 export default categoryService;

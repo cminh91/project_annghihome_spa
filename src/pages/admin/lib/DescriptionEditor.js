@@ -14,9 +14,9 @@ const DescriptionEditor = ({ value, onChange }) => {
   };
   return (
     <div>
-      <h3>Mô tả</h3>
+      
       <Editor
-        apiKey="l1iwsjkxm1pu64770dvpd8mlc1nryrqv06spylo8baevggrf"  // Optional: Add your API key if necessary
+        apiKey="6p43yk580n1as7qsximjit9ty7ivemqgnjf6ivlis8kpbxmu"  // Optional: Add your API key if necessary
         value={description}
         init={{
           height: 500,

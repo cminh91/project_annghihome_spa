@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import DescriptionEditor from "../../lib/DescriptionEditor";
-import categoryService from "../../../functionservice/categoryService"; // Import categoryService
+import categoryService from "../../../functionservice/categoryService"; //
+import productService from "../../../functionservice/productService"; // Import categoryService
 
 const ProductModal = ({ show, handleClose, handleSave }) => {
   const [formData, setFormData] = useState({
@@ -51,7 +52,7 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
 
   const fetchCategories = async () => {
     try {
-      const data = await categoryService.getAllCategories(); // Fetch categories from API
+      const data = await productService.createProduct(); // Fetch categories from API
       setCategories(data); // Store categories in state
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -193,22 +194,13 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
                   ))}
                 </Form.Control>
               </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Thông số kỹ thuật</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={2}
-                  name="specs"
-                  value={formData.specs}
-                  onChange={handleChange}
-                />
-              </Form.Group>
+              
             </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Mô tả ngắn</Form.Label>
-                <DescriptionEditor
+                <Form.Control
                   as="textarea"
                   name="description"
                   value={formData.description}
@@ -218,12 +210,13 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
               <Form.Group className="mb-3">
                 <Form.Label>Mô tả chi tiết</Form.Label>
                 <DescriptionEditor
+                  name="longDescription"
                   value={formData.longDescription}
                   onChange={handleEditorChange}
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3">
+              {/* <Form.Group className="mb-3">
                 <Form.Check
                   type="checkbox"
                   name="inStock"
@@ -245,7 +238,7 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
                   onChange={handleChange}
                   label="Hiển thị"
                 />
-              </Form.Group>
+              </Form.Group> */}
             </Col>
           </Row>
 

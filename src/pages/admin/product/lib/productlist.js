@@ -5,27 +5,28 @@ import EditProductModal from "./editform"; // Import the EditProductModal
 import productService from "../../../functionservice/productService"; // Import productService
 
 const ProductList = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [products, setProducts] = useState([]);
-  const [showModal, setShowModal] = useState(false); 
+  const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(null); // Keep track of the product to be edited
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(6); 
+  const [productsPerPage] = useState(6);
 
   // Fetch products on component mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const productsData = await productService.getAllProducts();
-        setProducts(productsData);
+        const productsData = await productService.getAllProducts(currentPage, productsPerPage);
+        console.log('Products data:', productsData);
+        setProducts(productsData.products);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [currentPage, productsPerPage]);
 
   const handleOpenTrash = () => {
     navigate("/admin/product/trash");
@@ -65,7 +66,7 @@ const ProductList = () => {
     setSearchTerm(e.target.value);
   };
 
-  const sortedProducts = [...products].sort((a, b) => b.isActive - a.isActive);
+  const sortedProducts = Array.isArray(products) ? [...products].sort((a, b) => b.isActive - a.isActive) : [];
 
   const filteredProducts = sortedProducts.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -137,7 +138,7 @@ const ProductList = () => {
                     </button>
                     <button
                       className="btn btn-sm btn-danger"
-                      onClick={() => handleDeleteProduct(item.id)} 
+                      onClick={() => handleDeleteProduct(item.id)}
                     >
                       <i className="bi bi-trash"></i>
                     </button>
