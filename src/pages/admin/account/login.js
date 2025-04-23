@@ -4,28 +4,29 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('');
+  console.log('API Base URL:', process.env.REACT_APP_API_BASE_URL); // Thêm dòng này để debug
+  const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!fullName || !password) {
       setError('Vui lòng nhập đầy đủ thông tin.');
       return;
     }
 
     try {
-      const res = await axios.post('http://localhost:4000/api/auth/login', {
-        email,
+      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/admin/login`, {
+        fullName,
         password,
       });
-      console.log('API Response:', res.data);
+      //console.log('API Response:', res.data);
 
-      const token = res.data.token; // Adjust if API response uses a different key
+      const token = res.data.accessToken; // Thay đổi từ token sang accessToken
       if (token) {
-        localStorage.setItem('jwt-token', token); // Consistent key: 'jwt-token'
+        localStorage.setItem('jwt-token', token);
         authService().login(token);
         navigate('/admin');
       } else {
@@ -46,15 +47,15 @@ export default function LoginForm() {
       >
         <h2 className="mb-4 text-center">Đăng nhập Admin</h2>
         <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email:
+          <label htmlFor="fullname" className="form-label">
+            Tên người dùng:
           </label>
           <input
-            type="email"
-            id="email"
+            type="text"
+            id="fullname"
             className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
             required
           />
         </div>
