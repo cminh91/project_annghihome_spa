@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import DescriptionEditor from "../../lib/DescriptionEditor";
-import categoryService from "../../../functionservice/categoryService"; //
-import productService from "../../../functionservice/productService"; // Import categoryService
+import serviceService from "../../../functionservice/serviceService"; // Import serviceService
 import uploadService from "../../../functionservice/uploadService"; // Import uploadService
 
-const ProductModal = ({ show, handleClose, handleSave }) => {
+const ServiceModal = ({ show, handleClose, handleSave }) => {
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
+    categoryId: "",
     description: "",
-    longDescription: "",
+    longdescription: "",
+    image: "", // Use 'image' for the main image URL
     price: "",
     salePrice: "",
-    imageUrl: "",
-    categoryId: "", // Category ID will be stored here
-    additionalImages: [],
   });
-  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null); // Use for the single image file
   const [categories, setCategories] = useState([]); // State to hold categories
   const [errors, setErrors] = useState({}); // State to hold validation errors
 
@@ -27,14 +24,14 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
       setFormData({
         name: "",
         slug: "",
+        categoryId: "",
         description: "",
-        longDescription: "",
+        longdescription: "",
+        image: "",
         price: "",
         salePrice: "",
-        imageUrl: "",
-        categoryId: "", // Reset category selection
-        additionalImages: [],
       });
+      setSelectedThumbnail(null); // Reset selected file
       setErrors({}); // Reset errors when modal is opened
       fetchCategories(); // Fetch categories when modal is opened
     }
@@ -42,8 +39,8 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
 
   const fetchCategories = async () => {
     try {
-      // Fetch categories of type 'product'
-      const data = await productService.getCategoriesByType('product');
+      // Fetch categories of type 'service'
+      const data = await serviceService.getCategoriesByType('service');
       setCategories(data); // Store categories in state
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -51,17 +48,17 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
   };
 
   // Function to generate slug from the name
-const generateSlug = (name) => {
-  return name
-    .toLowerCase() // Convert to lowercase
-    .normalize('NFD') // Normalize Vietnamese characters
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[đĐ]/g, 'd') // Replace Vietnamese 'd' character
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-    .trim() // Remove leading/trailing spaces
-    .replace(/\s+/g, '-') // Replace multiple spaces with single hyphen
-    .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
-};
+  const generateSlug = (name) => {
+    return name
+      .toLowerCase() // Convert to lowercase
+      .normalize('NFD') // Normalize Vietnamese characters
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+      .replace(/[đĐ]/g, 'd') // Replace Vietnamese 'd' character
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .trim() // Remove leading/trailing spaces
+      .replace(/\s+/g, '-') // Replace multiple spaces with single hyphen
+      .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -81,32 +78,23 @@ const generateSlug = (name) => {
   };
 
   const handleEditorChange = (value) => {
-    setFormData((prev) => ({ ...prev, longDescription: value }));
+    setFormData((prev) => ({ ...prev, longdescription: value })); // Use 'longdescription'
   };
 
-const handleThumbnailUpload = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    setSelectedThumbnail(file);
-    setFormData((prev) => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
-  }
-};
-
-const handleImagesUpload = (e) => {
-  const files = Array.from(e.target.files);
-  if (files.length > 0) {
-    setSelectedImages(files);
-    const imageUrls = files.map(file => URL.createObjectURL(file));
-    setFormData((prev) => ({ ...prev, additionalImages: imageUrls }));
-  }
-};
+  const handleImageUpload = (e) => { // Renamed from handleThumbnailUpload
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedThumbnail(file); // Store the file
+      setFormData((prev) => ({ ...prev, image: URL.createObjectURL(file) })); // Use 'image'
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
     if (!formData.name.trim()) {
-      newErrors.name = "Tên sản phẩm không được để trống.";
+      newErrors.name = "Tên dịch vụ không được để trống.";
     }
     if (!formData.slug.trim()) {
       newErrors.slug = "Slug không được để trống.";
@@ -131,42 +119,36 @@ const handleImagesUpload = (e) => {
 
     setErrors({}); // Clear errors if validation passes
 
-    let uploadedThumbnailUrl = formData.imageUrl;
-    let uploadedImagesUrls = formData.additionalImages;
+    let uploadedImageUrl = formData.image; // Use 'image'
 
     try {
-      // Upload thumbnail if selected
+      // Upload image if selected
       if (selectedThumbnail) {
-        console.log('Uploading thumbnail:', selectedThumbnail);
+        console.log('Uploading service image:', selectedThumbnail);
         const urls = await uploadService.uploadImages([selectedThumbnail]);
-        console.log('Thumbnail upload result:', urls);
+        console.log('Service image upload result:', urls);
         if (urls && urls.length > 0) {
-          uploadedThumbnailUrl = urls[0];
+          uploadedImageUrl = urls[0];
         }
       }
 
-      // Upload images if selected
-      if (selectedImages.length > 0) {
-        console.log('Uploading additional images:', selectedImages);
-        const urls = await uploadService.uploadImages(selectedImages);
-        console.log('Additional images upload result:', urls);
-        if (urls && urls.length > 0) {
-          uploadedImagesUrls = urls;
-        }
-      }
-
-      // Create product with uploaded image URLs
-      const productData = {
-        ...formData,
-        imageUrl: uploadedThumbnailUrl,
-        additionalImages: uploadedImagesUrls
+      // Create service with uploaded image URL
+      const serviceData = {
+        name: formData.name.trim(),
+        slug: formData.slug.trim(),
+        categoryId: formData.categoryId || '', // Ensure categoryId is not empty string if null/undefined
+        description: formData.description?.trim() || '',
+        longdescription: formData.longdescription?.trim() || '',
+        image: uploadedImageUrl || '',
+        price: Number(formData.price),
+        salePrice: Number(formData.salePrice) || 0, // Default salePrice to 0 if empty or not a valid number
       };
 
-      console.log('Product data before saving:', productData);
-      handleSave(productData);
+      console.log('Service data before saving:', serviceData);
+      handleSave(serviceData);
       handleClose();
     } catch (error) {
-      console.error('Error during product submission:', error);
+      console.error('Error during service submission:', error);
       // Handle error appropriately, e.g., show an error message to the user
     }
   };
@@ -174,14 +156,14 @@ const handleImagesUpload = (e) => {
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered scrollable>
       <Modal.Header closeButton>
-        <Modal.Title>Thêm sản phẩm mới</Modal.Title>
+        <Modal.Title>Thêm dịch vụ mới</Modal.Title> {/* Updated title */}
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Tên sản phẩm</Form.Label>
+                <Form.Label>Tên dịch vụ</Form.Label> {/* Updated label */}
                 <Form.Control
                   name="name"
                   value={formData.name}
@@ -207,7 +189,7 @@ const handleImagesUpload = (e) => {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Giá</Form.Label>
+                <Form.Label>Giá</Form.Label> {/* Updated label */}
                 <Form.Control
                   name="price"
                   type="number"
@@ -220,7 +202,7 @@ const handleImagesUpload = (e) => {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Giá khuyến mãi</Form.Label>
+                <Form.Label>Giá khuyến mãi</Form.Label> {/* Updated label */}
                 <Form.Control
                   name="salePrice"
                   type="number"
@@ -233,30 +215,18 @@ const handleImagesUpload = (e) => {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Ảnh đại diện</Form.Label>
-                <Form.Control type="file" onChange={handleThumbnailUpload} />
-                {formData.imageUrl && typeof formData.imageUrl === 'string' && (
+                <Form.Label>Ảnh đại diện</Form.Label> {/* Updated label */}
+                <Form.Control type="file" onChange={handleImageUpload} /> {/* Renamed handler */}
+                {formData.image && typeof formData.image === 'string' && ( // Use 'image'
                   <img
-                    src={formData.imageUrl}
-                    alt="Thumbnail"
+                    src={formData.image} // Use 'image'
+                    alt="Service Image" // Updated alt text
                     width={100}
                     className="mt-2 rounded"
                   />
                 )}
               </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Thư viện ảnh</Form.Label>
-                <Form.Control
-                  type="file"
-                  multiple
-                  onChange={handleImagesUpload}
-                />
-                <div className="d-flex flex-wrap gap-2 mt-2">
-                  {Array.isArray(formData.additionalImages) && formData.additionalImages.map((img, idx) => (
-                    <img key={idx} src={img} alt="img" width={80} className="rounded" />
-                  ))}
-                </div>
-              </Form.Group>
+              {/* Removed additional images section */}
               <Form.Group className="mb-3">
                 <Form.Label>Danh mục</Form.Label>
                 <Form.Control
@@ -291,37 +261,15 @@ const handleImagesUpload = (e) => {
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Mô tả chi tiết</Form.Label>
+                <Form.Label>Mô tả chi tiết</Form.Label> {/* Updated label */}
                 <DescriptionEditor
-                  name="longDescription"
-                  value={formData.longDescription}
+                  name="longdescription" // Use 'longdescription'
+                  value={formData.longdescription} // Use 'longdescription'
                   onChange={handleEditorChange}
                 />
               </Form.Group>
 
-              {/* <Form.Group className="mb-3">
-                <Form.Check
-                  type="checkbox"
-                  name="inStock"
-                  checked={formData.inStock}
-                  onChange={handleChange}
-                  label="Còn hàng"
-                />
-                <Form.Check
-                  type="checkbox"
-                  name="featured"
-                  checked={formData.featured}
-                  onChange={handleChange}
-                  label="Nổi bật"
-                />
-                <Form.Check
-                  type="checkbox"
-                  name="isActive"
-                  checked={formData.isActive}
-                  onChange={handleChange}
-                  label="Hiển thị"
-                />
-              </Form.Group> */}
+              {/* Removed checkbox group */}
             </Col>
           </Row>
 
@@ -371,4 +319,4 @@ const handleImagesUpload = (e) => {
   );
 };
 
-export default ProductModal;
+export default ServiceModal;
