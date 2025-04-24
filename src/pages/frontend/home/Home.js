@@ -6,6 +6,8 @@ const Home = () => {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   useEffect(() => {
     const fetchBanners = async () => {
       try {
@@ -22,6 +24,15 @@ const Home = () => {
     };
     fetchBanners();
   }, []);
+  useEffect(() => {
+    if (banners.length === 0) return;
+  
+    const timer = setTimeout(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % banners.length);
+    }, 3000);
+  
+    return () => clearTimeout(timer); // clear timeout mỗi lần re-render
+  }, [currentSlide, banners.length]);
   return (
     <div>
       {/* Hero Header */}
@@ -33,7 +44,7 @@ const Home = () => {
                 id="carouselId"
                       className="carousel slide"
                       data-bs-ride="carousel"
-                      data-bs-interval="2000" // Set slide interval to 2000ms
+                    
                     >
                       {loading ? (
                         <div className="text-center py-5">
@@ -50,7 +61,7 @@ const Home = () => {
                           {banners.map((banner, index) => (
                             <div
                               key={banner.id}
-                              className={`carousel-item ${index === 0 ? "active" : ""}`}
+                              className={`carousel-item ${index === currentSlide ? "active" : ""}`}
                             >
                               <div className="position-relative">
                                 <img
@@ -83,7 +94,7 @@ const Home = () => {
                 </div>
               </div>
             
-            </div>
+      </div>
       {/* Hero End */}
 
       {/* Dịch vụ Shop Start */}
