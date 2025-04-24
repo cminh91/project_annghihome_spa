@@ -35,9 +35,8 @@ const SideBar = () => {
             <span className="hide-menu">SYSTEM</span>
           </li>
           {[
-            { to: "/admin/header", icon: "ti ti-layout-navbar", label: "Header" },
-            { to: "/admin/footer", icon: "ti ti-layout-navbar-collapse", label: "Footer" },
             { to: "/admin/store", icon: "ti ti-building-store", label: "Store" },
+            { to: "/admin/storeinfor", icon: "ti ti-building-store", label: "thông tin cửa hàng" },
           ].map(({ to, icon, label }) => (
             <li className="sidebar-item" key={to}>
               <Link className="sidebar-link" to={to}>
@@ -105,7 +104,6 @@ const SideBar = () => {
             { to: "/admin/partner", icon: "ti ti-users", label: "Đối tác" },
             { to: "/admin/Policy", icon: "ti ti-aperture", label: "chính sách" },
             { to: "/admin/faq", icon: "ti ti-aperture", label: "FaQ" },
-            { to: "/admin/storeinfor", icon: "ti ti-building-store", label: "thông tin cửa hàng" },
           ].map(({ to, icon, label }) => (
             <li className="sidebar-item" key={to}>
               <Link className="sidebar-link" to={to}>

@@ -7,7 +7,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-
+  
   useEffect(() => {
     const fetchBanners = async () => {
       try {
@@ -24,76 +24,67 @@ const Home = () => {
     };
     fetchBanners();
   }, []);
+  
   useEffect(() => {
     if (banners.length === 0) return;
   
     const timer = setTimeout(() => {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % banners.length);
-    }, 3000);
+    }, 2000); // Adjusting to 2 seconds
   
-    return () => clearTimeout(timer); // clear timeout mỗi lần re-render
+    return () => clearTimeout(timer);
   }, [currentSlide, banners.length]);
   return (
     <div>
-      {/* Hero Header */}
+      {/* Hero Start */}
       <div className="container-fluid hero-header banner-container mt-5">
         <div className="container p-0">
           <div className="row g-0 align-items-center justify-content-center">
             <div className="col-12">
-             <div
+              <div
                 id="carouselId"
-                      className="carousel slide"
-                      data-bs-ride="carousel"
-                    
-                    >
-                      {loading ? (
-                        <div className="text-center py-5">
-                          <Spinner animation="border" variant="primary" />
-                        </div>
-                      ) : error ? (
-                        <div className="alert alert-danger text-center">{error}</div>
-                      ) : banners.length === 0 ? (
-                        <div className="alert alert-warning text-center">
-                          Không có banner nào để hiển thị.
-                        </div>
-                      ) : (
-                        <div className="carousel-inner">
-                          {banners.map((banner, index) => (
-                            <div
-                              key={banner.id}
-                              className={`carousel-item ${index === currentSlide ? "active" : ""}`}
-                            >
-                              <div className="position-relative">
-                                <img
-                                  src={banner.imageUrl}
-                                  className="d-block w-100 img-fluid rounded"
-                                  style={{ height: "500px", objectFit: "cover" }}
-                                  alt={banner.altText || `Banner ${index + 1}`}
-                                />
-                                {banner.title && (
-                                  <div
-                                    className="position-absolute text-white p-3"
-                                    style={{
-                                      bottom: "20px",
-                                      left: "20px",
-                                      backgroundColor: "rgba(0, 0, 0, 0.5)",
-                                      borderRadius: "5px",
-                                    }}
-                                  >
-                                    <h3>{banner.title}</h3>
-                                    {banner.description && <p>{banner.description}</p>}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                className="carousel slide"
+                data-bs-ride="carousel"
+              >
+                {loading ? (
+                  <div className="text-center py-5">
+                    <Spinner animation="border" variant="primary" />
                   </div>
-                </div>
+                ) : error ? (
+                  <div className="alert alert-danger text-center">{error}</div>
+                ) : banners.length === 0 ? (
+                  <div className="alert alert-warning text-center">
+                    Không có banner nào để hiển thị.
+                  </div>
+                ) : (
+                  <div className="carousel-inner" type="button">
+                    {banners.map((banner, index) => (
+                      <div
+                        key={banner.id}
+                        className={`carousel-item ${index === currentSlide ? "active" : ""}`}
+                      >
+                        <div className="position-relative">
+                          <div
+                            className="position-relative"
+                            onClick={() => window.location.href = banner.link}
+                            style={{ cursor: 'pointer' }}
+                          >                            
+                            <img
+                              src={banner.imageUrl}
+                              className="d-block w-100 img-fluid rounded"
+                              style={{ height: "500px", objectFit: "cover" }}
+                              alt={banner.shortTitle || `Banner ${index + 1}`}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            
+            </div>
+          </div>
+        </div>
       </div>
       {/* Hero End */}
 

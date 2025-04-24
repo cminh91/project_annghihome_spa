@@ -9,7 +9,7 @@ const CategoryList = () => {
   const [showEditModal, setShowEditModal] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [categoriesPerPage] = useState(6);
+  const [categoriesPerPage] = useState(4);
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -105,8 +105,6 @@ const CategoryList = () => {
             <th>Trạng thái</th>
             <th>Thứ tự</th>
             <th>Level</th>
-            <th>Ngày tạo</th>
-            <th>Ngày cập nhật</th>
             <th>Hành động</th>
           </tr>
         </thead>
@@ -121,8 +119,6 @@ const CategoryList = () => {
                 <td>{item.isActive ? "Hiển thị" : "Ẩn"}</td>
                 <td>{item.sortOrder}</td>
                 <td>{item.level}</td>
-                <td>{new Date(item.createdAt).toLocaleString()}</td>
-                <td>{new Date(item.updatedAt).toLocaleString()}</td>
                 <td>
                   <div className="d-flex gap-2">
                     <button

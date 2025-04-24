@@ -1,3 +1,4 @@
+// EditStoreModal.js
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col, Alert } from "react-bootstrap";
 import storeService from "../../../functionservice/storeService";
@@ -19,7 +20,6 @@ const EditStoreModal = ({ show, onClose, onSave, storeData }) => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  // Initialize form data when storeData changes
   useEffect(() => {
     if (show && storeData) {
       setFormData({
@@ -72,19 +72,18 @@ const EditStoreModal = ({ show, onClose, onSave, storeData }) => {
     try {
       const updatedStore = await storeService.editaddresses(formData.id, formData);
       setSuccessMessage("Địa chỉ đã được cập nhật thành công!");
-      onSave(updatedStore); // Notify parent to update the list
+      onSave(updatedStore);
       setTimeout(() => {
-        onClose(); // Delay closing to show success message
+        onClose();
       }, 1000);
     } catch (err) {
       console.error("Submit error:", err.response?.data || err.message);
-      // Handle different error response structures
-      const errorMessage =
+      setError(
         err.response?.data?.message ||
         err.response?.data?.error ||
         err.response?.data?.details ||
-        "Có lỗi xảy ra khi cập nhật địa chỉ. Vui lòng thử lại.";
-      setError(errorMessage);
+        "Có lỗi xảy ra khi cập nhật địa chỉ."
+      );
     } finally {
       setLoading(false);
     }
@@ -96,7 +95,6 @@ const EditStoreModal = ({ show, onClose, onSave, storeData }) => {
         <Modal.Title>Chỉnh sửa địa chỉ</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {/* Success or Error message */}
         {error && <Alert variant="danger">{error}</Alert>}
         {successMessage && <Alert variant="success">{successMessage}</Alert>}
 

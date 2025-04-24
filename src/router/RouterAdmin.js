@@ -1,13 +1,8 @@
 import Dashboard from '../pages/admin/Dashboard';
 import Loginpage from '../pages/admin/LoginPage';
 
-import HeaderPage from '../pages/admin/header/HeaderPage';
-import HeaderTrash from '../pages/admin/header/HeaderTrash';
-import HeaderEdit from '../pages/admin/header/HeaderEdit';
 
-import FooterPage from '../pages/admin/footer/FooterPage';
-import FooterTrash from '../pages/admin/footer/FooterTrash';
-import FooterEdit from '../pages/admin/footer/FooterEdit';
+
 
 import BlogPage from '../pages/admin/blog/BlogPage';
 import BlogEdit from '../pages/admin/blog/BlogEdit';
@@ -59,14 +54,6 @@ import PublicRoute from './PublicRoute';
 const RouterAdmin = [
   { path: '/admin/login', element: <PublicRoute><Loginpage /></PublicRoute> },
   { path: '/admin', element: <PrivateRoute><Dashboard /></PrivateRoute> },
-
-  { path: '/admin/header', element: <PrivateRoute><HeaderPage /></PrivateRoute> },
-  { path: '/admin/header/trash', element: <PrivateRoute><HeaderTrash /></PrivateRoute> },
-  { path: '/admin/header/edit', element: <PrivateRoute><HeaderEdit /></PrivateRoute> },
-
-  { path: '/admin/footer', element: <PrivateRoute><FooterPage /></PrivateRoute> },
-  { path: '/admin/footer/edit', element: <PrivateRoute><FooterEdit /></PrivateRoute> },
-  { path: '/admin/footer/trash', element: <PrivateRoute><FooterTrash /></PrivateRoute> },
 
   { path: '/admin/blog', element: <PrivateRoute><BlogPage /></PrivateRoute> },
   { path: '/admin/blog/edit', element: <PrivateRoute><BlogEdit /></PrivateRoute> },

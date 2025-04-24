@@ -36,7 +36,7 @@ const AboutUs = () => {
         <div className="row text-center">
           <div className="col-md-4 mb-4">
             <img
-              src="https://via.placeholder.com/150"
+              src="https://imgs.search.brave.com/XbL-3u3ZyLxQYPLO0fh1fi7Ke4TO6GDQy_MAPdY1ZyM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90YW1h/bmhob3NwaXRhbC52/bi93cC1jb250ZW50/L3VwbG9hZHMvMjAx/My8xMS9raG9hLXNh/bi1sZS10aGFuaC1o/dW5nLnBuZw"
               alt="Bác sĩ 1"
               className="rounded-circle mb-2"
               width="120"
@@ -45,9 +45,10 @@ const AboutUs = () => {
             <h5>ThS. BS. CKII. Lê Thanh Hùng</h5>
             <small>Bệnh viện Quốc tế Mỹ AIH (Phó khoa Phụ Sản)</small>
           </div>
+
           <div className="col-md-4 mb-4">
             <img
-              src="https://via.placeholder.com/150"
+              src="https://imgs.search.brave.com/XbL-3u3ZyLxQYPLO0fh1fi7Ke4TO6GDQy_MAPdY1ZyM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90YW1h/bmhob3NwaXRhbC52/bi93cC1jb250ZW50/L3VwbG9hZHMvMjAx/My8xMS9raG9hLXNh/bi1sZS10aGFuaC1o/dW5nLnBuZw"
               alt="Bác sĩ 2"
               className="rounded-circle mb-2"
               width="120"
@@ -58,7 +59,7 @@ const AboutUs = () => {
           </div>
           <div className="col-md-4 mb-4">
             <img
-              src="https://via.placeholder.com/150"
+              src="https://imgs.search.brave.com/XbL-3u3ZyLxQYPLO0fh1fi7Ke4TO6GDQy_MAPdY1ZyM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90YW1h/bmhob3NwaXRhbC52/bi93cC1jb250ZW50/L3VwbG9hZHMvMjAx/My8xMS9raG9hLXNh/bi1sZS10aGFuaC1o/dW5nLnBuZw"
               alt="Bác sĩ 3"
               className="rounded-circle mb-2"
               width="120"
