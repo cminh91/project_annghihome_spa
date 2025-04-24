@@ -1,32 +1,47 @@
 import React, { useState } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
+import uploadService from "../../../functionservice/uploadService"; // Import uploadService
 
 const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
   const [name, setName] = useState("");
-  const [position, setPosition] = useState("");
-  const [bio, setBio] = useState("");
-  const [image, setImage] = useState("");
-  const [socialLinks, setSocialLinks] = useState("");
+  const [imageFile, setImageFile] = useState(null); // State to store the selected image file
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSave = () => {
-    const newMember = {
-      id: Date.now().toString(),
-      name,
-      position,
-      bio,
-      image,
-      socialLinks,
-      order: 0,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    onSave(newMember);
-    setName("");
-    setPosition("");
-    setBio("");
-    setImage("");
-    setSocialLinks("");
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]); // Store the selected file
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      let imageUrl = "";
+      if (imageFile) {
+        const uploadedUrls = await uploadService.uploadImages([imageFile]);
+        if (uploadedUrls && uploadedUrls.length > 0) {
+          imageUrl = uploadedUrls[0]; // Get the first uploaded image URL
+        }
+      }
+
+      const newMemberData = {
+        name,
+        image: imageUrl, // Use the uploaded image URL
+        description,
+      };
+
+      onSave(newMemberData);
+      setName("");
+      setImageFile(null); // Reset file state
+      setDescription("");
+      onClose(); // Close modal on successful save
+    } catch (err) {
+      console.error("Error saving team member:", err);
+      setError("Không thể lưu thành viên đội ngũ. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,9 +50,11 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
         <Modal.Title>Thêm thành viên nhóm</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {loading && <Spinner animation="border" />}
+        {error && <Alert variant="danger">{error}</Alert>}
         <Form>
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-12">
               <Form.Group controlId="name">
                 <Form.Label>Họ tên</Form.Label>
                 <Form.Control
@@ -49,47 +66,27 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
               </Form.Group>
             </div>
 
-            <div className="col-md-6">
-              <Form.Group controlId="position">
-                <Form.Label>Chức vụ</Form.Label>
+            <div className="col-md-12">
+              <Form.Group controlId="image">
+                <Form.Label>Ảnh</Form.Label>
                 <Form.Control
-                  type="text"
-                  value={position}
-                  onChange={(e) => setPosition(e.target.value)}
+                  type="file" // Changed to file input
+                  onChange={handleImageChange}
                   required
                 />
+                 {imageFile && <p>Đã chọn tệp: {imageFile.name}</p>} {/* Display selected file name */}
               </Form.Group>
             </div>
 
             <div className="col-md-12">
-              <Form.Group controlId="bio">
-                <Form.Label>Thông tin về thành viên</Form.Label>
+              <Form.Group controlId="description">
+                <Form.Label>Mô tả</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                />
-              </Form.Group>
-            </div>
-
-            <div className="col-md-6">
-              <Form.Group controlId="image">
-                <Form.Label>Ảnh</Form.Label>
-                <Form.Control
-                  type="file"
-                  onChange={(e) => setImage(e.target.files[0])}
-                />
-              </Form.Group>
-            </div>
-
-            <div className="col-md-6">
-              <Form.Group controlId="socialLinks">
-                <Form.Label>Liên kết xã hội</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={socialLinks}
-                  onChange={(e) => setSocialLinks(e.target.value)}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
                 />
               </Form.Group>
             </div>
@@ -97,10 +94,10 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
+        <Button variant="secondary" onClick={onClose} disabled={loading}>
           Đóng
         </Button>
-        <Button variant="primary" onClick={handleSave}>
+        <Button variant="primary" onClick={handleSave} disabled={loading}>
           Lưu
         </Button>
       </Modal.Footer>

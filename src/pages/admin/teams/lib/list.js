@@ -1,40 +1,55 @@
-import React, { useState } from "react";
-import { Table, Button } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Table, Button, Spinner, Alert } from "react-bootstrap";
 import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import CreateTeamMemberModal from "./createmodal";
 import EditTeamMemberModal from "./editmodal";
+import teamService from "../../../functionservice/teamService"; // Import teamService
 
 const TeamMemberList = () => {
-  const [teamMembers, setTeamMembers] = useState([
-    {
-      id: "1",
-      name: "John Doe",
-      position: "CEO",
-      bio: "Founder of XYZ company",
-      image: "path_to_image",
-      socialLinks: "https://facebook.com/johndoe",
-      order: 1,
-      isActive: true,
-      createdAt: "2025-04-01T10:00:00",
-      updatedAt: "2025-04-10T10:00:00",
-    },
-  ]);
-  
+  const [teamMembers, setTeamMembers] = useState([]); // Initialize with empty array
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
 
   const navigate = useNavigate();
 
-  const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa thành viên này không?")) {
-      setTeamMembers(teamMembers.filter((member) => member.id !== id));
+  // Function to fetch team members
+  const fetchTeamMembers = async () => {
+    try {
+      setLoading(true);
+      const data = await teamService.getAllTeams();
+      setTeamMembers(data);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching team members:", err);
+      setError("Không thể tải danh sách thành viên đội ngũ.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleEdit = (id) => {
-    const member = teamMembers.find((member) => member.id === id);
+  // Fetch team members on component mount
+  useEffect(() => {
+    fetchTeamMembers();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Bạn có chắc muốn xóa thành viên này không?")) {
+      try {
+        await teamService.deleteTeam(id);
+        fetchTeamMembers(); // Refetch list after deletion
+      } catch (err) {
+        console.error("Error deleting team member:", err);
+        setError("Không thể xóa thành viên đội ngũ.");
+      }
+    }
+  };
+
+  const handleEdit = (member) => { // Pass member object instead of id
     setSelectedMember(member);
     setShowEditModal(true);
   };
@@ -43,19 +58,35 @@ const TeamMemberList = () => {
     setShowCreateModal(true);
   };
 
-  const handleSave = (newMember) => {
-    setTeamMembers([...teamMembers, newMember]);
-    setShowCreateModal(false);
+  const handleSave = async (newMemberData) => {
+    try {
+      await teamService.createTeam(newMemberData);
+      fetchTeamMembers(); // Refetch list after creation
+      setShowCreateModal(false);
+    } catch (err) {
+      console.error("Error creating team member:", err);
+      setError("Không thể thêm thành viên đội ngũ.");
+    }
   };
 
-  const handleUpdate = (updatedMember) => {
-    setTeamMembers(
-      teamMembers.map((member) =>
-        member.id === updatedMember.id ? updatedMember : member
-      )
-    );
-    setShowEditModal(false);
+  const handleUpdate = async (updatedMemberData) => {
+    try {
+      await teamService.editTeam(selectedMember.id, updatedMemberData);
+      fetchTeamMembers(); // Refetch list after update
+      setShowEditModal(false);
+    } catch (err) {
+      console.error("Error updating team member:", err);
+      setError("Không thể cập nhật thành viên đội ngũ.");
+    }
   };
+
+  if (loading) {
+    return <Spinner animation="border" />;
+  }
+
+  if (error) {
+    return <Alert variant="danger">{error}</Alert>;
+  }
 
   return (
     <div>
@@ -75,8 +106,8 @@ const TeamMemberList = () => {
         <thead>
           <tr>
             <th>Họ tên</th>
-            <th>Chức vụ</th>
-            <th>Bio</th>
+            <th>Hình ảnh</th>
+            <th>Mô tả</th>
             <th>Hành động</th>
           </tr>
         </thead>
@@ -84,13 +115,19 @@ const TeamMemberList = () => {
           {teamMembers.map((member) => (
             <tr key={member.id}>
               <td>{member.name}</td>
-              <td>{member.position}</td>
-              <td>{member.bio}</td>
+              <td>
+                {member.image ? (
+                  <img src={member.image} alt={member.name} style={{ width: '50px', height: 'auto' }} />
+                ) : (
+                  'Không có hình ảnh'
+                )}
+              </td>
+              <td>{member.description}</td>
               <td className="d-flex justify-content-center">
                 <Button
                   variant="warning"
                   size="sm"
-                  onClick={() => handleEdit(member.id)}
+                  onClick={() => handleEdit(member)} // Pass member object
                   className="me-2"
                 >
                   <FaEdit />
