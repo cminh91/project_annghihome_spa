@@ -4,29 +4,31 @@ import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import EditStoreModal from "./editmodal";
 import CreateStoreModal from "./createmodal";
 import { useNavigate } from "react-router-dom";
-import storeService from "../../../functionservice/storeService"; 
+import storeService from "../../../functionservice/storeService";
 
 const StoreList = () => {
   const [stores, setStores] = useState([]);
-  const [paginatedStores, setPaginatedStores] = useState([]); 
+  const [paginatedStores, setPaginatedStores] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [currentStore, setCurrentStore] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(5);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const data = await storeService.getAllStores();
+        const data = await storeService.getAlladdresses();
         setStores(data);
         setPaginatedStores(data.slice(0, perPage));
       } catch (error) {
-        console.error("Error fetching stores:", error);
+        console.error("Error fetching addresses:", error);
       }
     };
     fetchStores();
   }, []);
+
   useEffect(() => {
     const startIndex = (currentPage - 1) * perPage;
     const selectedStores = stores.slice(startIndex, startIndex + perPage);
@@ -39,44 +41,44 @@ const StoreList = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa cửa hàng này không?")) {
+    if (window.confirm("Bạn có chắc muốn xóa địa chỉ này không?")) {
       try {
-        await storeService.deleteStore(id);
-        setStores(stores.filter((store) => store.id !== id)); 
+        await storeService.deleteaddresses(id);
+        setStores(stores.filter((store) => store.id !== id));
       } catch (error) {
-        console.error("Error deleting store:", error);
+        console.error("Error deleting address:", error);
       }
     }
   };
 
   const handleOpenTrash = () => {
-    navigate("/admin/store/trash");
+    navigate("/admin/store/trash"); // Assuming your trash route is similar
   };
 
   const handleAdd = () => {
-    setShowCreateModal(true); 
+    setShowCreateModal(true);
   };
 
   const handleSaveStore = async (newStore) => {
     try {
-      const savedStore = await storeService.createStore(newStore);
+      const savedStore = await storeService.createaddresses(newStore);
       setStores((prevStores) => [...prevStores, savedStore]);
     } catch (error) {
-      console.error("Error creating store:", error);
+      console.error("Error creating address:", error);
     }
   };
 
   const handleUpdateStore = async (updatedStore) => {
     try {
-      const result = await storeService.updateStore(updatedStore.id, updatedStore);
+      const result = await storeService.editaddresses(updatedStore.id, updatedStore);
       setStores((prevStores) =>
         prevStores.map((store) =>
           store.id === updatedStore.id ? result : store
         )
       );
-      setShowEditModal(false); 
+      setShowEditModal(false);
     } catch (error) {
-      console.error("Error updating store:", error);
+      console.error("Error updating address:", error);
     }
   };
 
@@ -87,11 +89,11 @@ const StoreList = () => {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3>Danh sách cửa hàng</h3>
+      <div className="d-flex justify-content-between align-items-center mt-3 mb-3">
+        <h3>Danh sách địa chỉ</h3>
         <div className="d-flex gap-2">
           <Button variant="primary" onClick={handleAdd}>
-            <FaPlus /> Thêm cửa hàng
+            <FaPlus /> Thêm địa chỉ
           </Button>
           <Button variant="danger" onClick={handleOpenTrash}>
             <FaTrashAlt /> Thùng rác
@@ -102,26 +104,28 @@ const StoreList = () => {
       <Table striped bordered hover responsive>
         <thead>
           <tr>
-            <th>Tên</th>
-            <th>Địa chỉ</th>
+            <th>Tên cửa hàng</th>
+            <th>Số điện thoại</th>
+            <th>Đường</th>
+            <th>Phường/Xã</th>
+            <th>Quận/Huyện</th>
             <th>Thành phố</th>
-            <th>Tỉnh</th>
-            <th>Điện thoại</th>
-            <th>Email</th>
-            <th>Giờ mở cửa</th>
+            <th>Mã bưu điện</th>
+            <th>Mặc định</th>
             <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
           {paginatedStores.map((store) => (
             <tr key={store.id}>
-              <td>{store.name}</td>
-              <td>{store.address}</td>
+              <td>{store.fullName}</td>
+              <td>{store.phoneNumber}</td>
+              <td>{store.street}</td>
+              <td>{store.ward}</td>
+              <td>{store.district}</td>
               <td>{store.city}</td>
-              <td>{store.province}</td>
-              <td>{store.phone}</td>
-              <td>{store.email}</td>
-              <td>{store.openingHours}</td>
+              <td>{store.zipCode}</td>
+              <td>{store.isDefault ? "Có" : "Không"}</td>
               <td className="d-flex justify-content-center">
                 <Button
                   variant="warning"
@@ -144,25 +148,24 @@ const StoreList = () => {
         </tbody>
       </Table>
 
-        {/* Pagination */}
-        <nav className="d-flex justify-content-center">
-          <ul className="pagination d-flex flex-row">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <li
-                key={index}
-                className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+      {/* Pagination */}
+      <nav className="d-flex justify-content-center">
+        <ul className="pagination d-flex flex-row">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <li
+              key={index}
+              className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+            >
+              <button
+                className="page-link"
+                onClick={() => handlePageChange(index + 1)}
               >
-                <button
-                  className="page-link"
-                  onClick={() => handlePageChange(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
-</nav>
-
+                {index + 1}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       {/* Modal Thêm cửa hàng */}
       <CreateStoreModal

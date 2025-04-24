@@ -3,25 +3,30 @@ import { Table, Button } from "react-bootstrap";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import CreateSliderModal from "./createmodal";
 import EditSliderModal from "./editmodal";
-import { useNavigate } from "react-router-dom";
 import bannerService from "../../../functionservice/BannerService";
 
 const SliderList = () => {
   const [sliders, setSliders] = useState([]);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [selectedSlider, setSelectedSlider] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [slidersPerPage] = useState(3);
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [error, setError] = useState(null);    // Add error state
 
   useEffect(() => {
     const fetchSliders = async () => {
+      setLoading(true); // Set loading to true before fetching
+      setError(null);
       try {
         const data = await bannerService.getAllBanners();
         setSliders(data);
       } catch (error) {
+        setError(error); // Set error state if fetch fails
         console.error("Failed to fetch sliders:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetch completes
       }
     };
     fetchSliders();
@@ -33,6 +38,7 @@ const SliderList = () => {
         await bannerService.deleteBanner(id);
         setSliders((prev) => prev.filter((slider) => slider.id !== id));
       } catch (error) {
+        setError(error);
         console.error("Failed to delete slider:", error);
       }
     }
@@ -40,56 +46,66 @@ const SliderList = () => {
 
   const handleEdit = (slider) => {
     setSelectedSlider(slider);
-    setShowEditModal(true);
+    setShowModal(true);
+  };
+
+  const handleAdd = () => {
+    setSelectedSlider(null);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedSlider(null);
+    setShowModal(false);
   };
 
   const handleSave = async (newSlider) => {
     try {
       const created = await bannerService.createBanner(newSlider);
       setSliders((prev) => [...prev, created]);
-      setShowCreateModal(false);
+      handleCloseModal();
     } catch (error) {
+      setError(error);
       console.error("Failed to create slider:", error);
+      alert("Failed to create slider. Please check the console for details.");
     }
   };
 
-  const handleSaveEdit = async (updatedSlider) => {
-    try {
-      const updated = await bannerService.editBanner(updatedSlider.id, updatedSlider);
-      setSliders((prev) =>
-        prev.map((slider) => (slider.id === updated.id ? updated : slider))
-      );
-      setShowEditModal(false);
-    } catch (error) {
-      console.error("Failed to update slider:", error);
-    }
+  const handleSaveEdit = (updatedSlider) => {
+    setSliders(
+      sliders.map((banner) =>
+        banner.id === updatedSlider.id ? updatedSlider : banner
+      )
+    );
+    setShowModal(false);
   };
 
-  // Filter sliders based on search term and sort by isActive (active first)
   const filteredSliders = sliders
     .filter((slider) =>
-      slider.title.toLowerCase().includes(searchTerm.toLowerCase())
+      slider.shortTitle.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .sort((a, b) => b.isActive - a.isActive); // Sort by isActive (true first)
-
-  // Paginate data
   const indexOfLastSlider = currentPage * slidersPerPage;
   const indexOfFirstSlider = indexOfLastSlider - slidersPerPage;
   const currentSliders = filteredSliders.slice(indexOfFirstSlider, indexOfLastSlider);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  if (loading) {
+    return <div>Loading...</div>; // Simple loading indicator
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>; // Display error message
+  }
+
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3 mt-4">
         <h3>Slider List</h3>
-        <div className="d-flex gap-2">
-          <Button variant="success me-2" onClick={() => setShowCreateModal(true)}>
-            Add Slider
-          </Button>
-        </div>
+        <Button variant="success me-2" onClick={handleAdd}>
+          Add Slider
+        </Button>
       </div>
-
       <input
         type="text"
         className="form-control mb-3"
@@ -101,10 +117,9 @@ const SliderList = () => {
       <Table striped bordered hover className="mt-3">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Subtitle</th>
+            <th>shortTitle</th>
+            <th>longTitle</th>
             <th>Image</th>
-            <th>Status</th>
             <th>Order</th>
             <th>Actions</th>
           </tr>
@@ -112,17 +127,16 @@ const SliderList = () => {
         <tbody>
           {currentSliders.map((slider) => (
             <tr key={slider.id}>
-              <td>{slider.title}</td>
-              <td>{slider.subtitle}</td>
+              <td>{slider.shortTitle}</td>
+              <td>{slider.longTitle}</td>
               <td>
                 <img
-                  src={slider.url || "default-image-url.jpg"}
-                  alt={slider.title}
+                  src={slider.imageUrl || "default-image-url.jpg"}
+                  alt={slider.shortTitle}
                   width="80"
                   className="rounded"
                 />
               </td>
-              <td>{slider.isActive ? "Hiển Thị" : "Ẩn"}</td>
               <td>{slider.order}</td>
               <td>
                 <Button
@@ -146,7 +160,6 @@ const SliderList = () => {
         </tbody>
       </Table>
 
-      {/* Pagination */}
       <nav className="d-flex justify-content-center">
         <ul className="pagination d-flex flex-row">
           {Array.from({ length: Math.ceil(filteredSliders.length / slidersPerPage) }, (_, index) => (
@@ -159,20 +172,22 @@ const SliderList = () => {
         </ul>
       </nav>
 
-      {/* CreateSliderModal */}
-      <CreateSliderModal
-        show={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onSave={handleSave}
-      />
-
-      {/* EditSliderModal */}
-      <EditSliderModal
-        show={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSave={handleSaveEdit}
-        sliderData={selectedSlider}
-      />
+      {showModal && (
+        selectedSlider ? (
+          <EditSliderModal
+            show={showModal}
+            onClose={handleCloseModal}
+            onSave={handleSaveEdit}
+            sliderData={selectedSlider}
+          />
+        ) : (
+          <CreateSliderModal
+            show={showModal}
+            onClose={handleCloseModal}
+            onSave={handleSave}
+          />
+        )
+      )}
     </div>
   );
 };

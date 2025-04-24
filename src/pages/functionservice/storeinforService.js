@@ -21,51 +21,51 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-const storeService = {
-  async createaddresses(addressesData) {
+const storeinfnorService = {
+  async createStoreinfo(storeinfoData) {
     try {
-      const response = await api.post('/addresses', addressesData);
+      const response = await api.post('/store-info', storeinfoData);
       return response.data;
     } catch (error) {
-      console.error("Error creating addresses:", error.response?.data || error.message);
+      console.error("Error creating store-info:", error.response?.data || error.message);
       throw error;
     }
   },
 
-  async getAlladdresses() {
+  async getAllStoreinfo() {
     try {
-      const response = await api.get('/addresses');
+      const response = await api.get('/store-info');
       return response.data;
     } catch (error) {
-      console.error("Error fetching addresses:", error);
+      console.error("Error fetching store-info:", error);
       throw error;
     }
   },
 
-  async getaddressesById(id) {
+  async getStoreinfoById(id) {
     try {
-      const response = await api.get(`/addresses/${id}`);
+      const response = await api.get(`/store-info/${id}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching addresses by ID:", error);
+      console.error("Error fetching store-info by ID:", error);
       throw error;
     }
   },
 
-  async editaddresses(id, addressesData) {
+  async editStoreinfo(id, storeinfoData) {
     try {
-      const { id: _, ...payload } = addressesData;
-      const response = await api.put(`/addresses/${id}`, payload);
+      const { id: _, ...payload } = storeinfoData;
+      const response = await api.put(`/store-info/${id}`, payload);
       return response.data;
     } catch (error) {
-      console.error("Error editing addresses:", error.response?.data || error.message);
+      console.error("Error editing store-info:", error.response?.data || error.message);
       throw error;
     }
   },
 
-  async deleteaddresses(id) {
+  async deleteStoreinfo(id) {
     try {
-      const response = await api.delete(`/addresses/${id}`);
+      const response = await api.delete(`/store-info/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error deleting store:", error);
@@ -74,4 +74,4 @@ const storeService = {
   },
 };
 
-export default storeService;
+export default storeinfnorService;

@@ -3,59 +3,37 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import bannerService from "../../../functionservice/BannerService";  // Ensure correct path for bannerService
 
 const EditSliderModal = ({ show, onClose, onSave, sliderData }) => {
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [url, setUrl] = useState("");
+  const [shortTitle, setShortTitle] = useState("");
+  const [longTitle, setLongTitle] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [link, setLink] = useState("");
-  const [isActive, setIsActive] = useState(true);
   const [order, setOrder] = useState(0);
-  const [buttonText, setButtonText] = useState("");
-  const [mobileUrl, setMobileUrl] = useState("");
-  const [description, setDescription] = useState("");
 
   useEffect(() => {
     if (sliderData) {
-      setTitle(sliderData.title || "");
-      setSubtitle(sliderData.subtitle || "");
-      setUrl(sliderData.url || "");
+      setShortTitle(sliderData.shortTitle || "");
+      setLongTitle(sliderData.longTitle || "");
+      setImageUrl(sliderData.imageUrl || "");
       setLink(sliderData.link || "");
-      setIsActive(sliderData.isActive ?? true);
       setOrder(sliderData.order || 0);
-      setButtonText(sliderData.buttonText || "");
-      setMobileUrl(sliderData.mobileUrl || "");
-      setDescription(sliderData.description || "");
     }
   }, [sliderData]);
 
   const handleSubmit = async () => {
-    if (!title || !url) {
-      alert("Tiêu đề và URL là bắt buộc.");
-      return;
-    }
-
-    if (url && !mobileUrl) {
-      alert("Cần nhập URL cho ảnh di động.");
-      return;
-    }
-
     const updatedSlider = {
-      title,
-      subtitle,
-      url,
+      shortTitle,
+      longTitle,
+      imageUrl,
       link,
-      isActive,
       order: Number(order),
-      buttonText,
-      mobileUrl,
-      description,
     };
-
     try {
       const response = await bannerService.editBanner(sliderData.id, updatedSlider);
-      onSave(response);  // Return the updated slider to the parent component
-      onClose();  // Close the modal after saving
+      onSave(response); 
+      onClose();
     } catch (error) {
       alert("Không thể chỉnh sửa slider. Vui lòng kiểm tra lại.");
+      console.error("Failed to update slider:", error);
     }
   };
 
@@ -72,8 +50,8 @@ const EditSliderModal = ({ show, onClose, onSave, sliderData }) => {
               <Form.Control
                 type="text"
                 placeholder="Nhập tiêu đề slider"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={shortTitle}
+                onChange={(e) => setShortTitle(e.target.value)}
               />
             </Col>
             <Col md={6}>
@@ -81,8 +59,9 @@ const EditSliderModal = ({ show, onClose, onSave, sliderData }) => {
               <Form.Control
                 type="text"
                 placeholder="Nhập phụ đề slider"
-                value={subtitle}
-                onChange={(e) => setSubtitle(e.target.value)}
+                value={longTitle}
+
+                onChange={(e) => setLongTitle(e.target.value)}
               />
             </Col>
           </Row>
@@ -93,8 +72,8 @@ const EditSliderModal = ({ show, onClose, onSave, sliderData }) => {
               <Form.Control
                 type="text"
                 placeholder="Nhập URL ảnh slider"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
               />
             </Col>
             <Col md={6}>
@@ -117,52 +96,7 @@ const EditSliderModal = ({ show, onClose, onSave, sliderData }) => {
                 onChange={(e) => setOrder(e.target.value)}
               />
             </Col>
-            <Col md={6}>
-              <Form.Label>Văn bản nút</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Nhập văn bản cho nút"
-                value={buttonText}
-                onChange={(e) => setButtonText(e.target.value)}
-              />
-            </Col>
           </Row>
-
-          <Row className="mb-3">
-            <Col md={6}>
-              <Form.Label>URL Ảnh Di động</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Nhập URL ảnh cho di động"
-                value={mobileUrl}
-                onChange={(e) => setMobileUrl(e.target.value)}
-              />
-            </Col>
-            <Col md={6}>
-              <Form.Label>Mô tả</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Nhập mô tả"
-              />
-            </Col>
-          </Row>
-
-          <Row className="mb-3">
-            <Col md={6}>
-              <Form.Label>Trạng thái</Form.Label>
-              <Form.Select
-                value={isActive}
-                onChange={(e) => setIsActive(e.target.value === 'true')}
-              >
-                <option value={true}>Hiển thị</option>
-                <option value={false}>Ẩn</option>
-              </Form.Select>
-            </Col>
-          </Row>
-
         </Form>
       </Modal.Body>
       <Modal.Footer>
