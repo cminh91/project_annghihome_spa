@@ -1,45 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col, Alert } from "react-bootstrap";
-import DescriptionEditor from "../../lib/DescriptionEditor";  // Import DescriptionEditor component
-import storeService from "../../../functionservice/storeService";  // Import storeService
+import storeService from "../../../functionservice/storeService";
 
 const CreateStoreModal = ({ show, onClose, onStoreCreated }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    address: "",
+    fullName: "",
+    phoneNumber: "",
+    street: "",
+    ward: "",
+    district: "",
     city: "",
-    province: "",
-    postalCode: "",
-    phone: "",
-    email: "",
-    openingHours: "",
-    socialLinks: "",
-    metaTitle: "",
-    metaDescription: "",
-    metaKeywords: "",
-    googleMapsUrl: "",
-    latitude: "",
-    longitude: "",
+    zipCode: "",
+    isDefault: false,
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
+  // Reset form and messages when modal opens/closes
+  useEffect(() => {
+    if (show) {
+      setFormData({
+        fullName: "",
+        phoneNumber: "",
+        street: "",
+        ward: "",
+        district: "",
+        city: "",
+        zipCode: "",
+        isDefault: false,
+      });
+      setError(null);
+      setSuccessMessage(null);
+      setLoading(false);
+    }
+  }, [show]);
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleDescriptionChange = (content) => {
-    setFormData((prev) => ({
-      ...prev,
-      description: content,  // Update description content
-    }));
+  const validateForm = () => {
+    if (!formData.fullName || !formData.phoneNumber || !formData.street || !formData.city) {
+      setError("Vui lòng điền đầy đủ các trường bắt buộc (Tên cửa hàng, Số điện thoại, Đường, Thành phố).");
+      return false;
+    }
+    // Optional: Add phone number format validation
+    if (!/^\d{10,11}$/.test(formData.phoneNumber)) {
+      setError("Số điện thoại phải có 10 hoặc 11 chữ số.");
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async () => {
@@ -47,22 +63,31 @@ const CreateStoreModal = ({ show, onClose, onStoreCreated }) => {
     setError(null);
     setSuccessMessage(null);
 
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      const newStore = await storeService.createStore(formData);
-      setSuccessMessage("Cửa hàng đã được tạo thành công!");
-      onStoreCreated(newStore);  // Notify parent to refresh the list or update UI
-      onClose();  // Close modal
+      const newStore = await storeService.createaddresses(formData);
+      setSuccessMessage("Địa chỉ đã được tạo thành công!");
+      onStoreCreated(newStore); // Notify parent to refresh the list
+      setTimeout(() => {
+        onClose(); // Delay closing to show success message
+      }, 1000);
     } catch (err) {
-      setError("Có lỗi xảy ra khi tạo cửa hàng. Vui lòng thử lại.");
+      console.error("Submit error:", err.response?.data || err.message);
+      setError(
+        err.response?.data?.message );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal show={show} onHide={onClose} size="xl">
+    <Modal show={show} onHide={onClose} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Thêm cửa hàng mới</Modal.Title>
+        <Modal.Title>Thêm địa chỉ mới</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {/* Success or Error message */}
@@ -71,24 +96,58 @@ const CreateStoreModal = ({ show, onClose, onStoreCreated }) => {
 
         <Form>
           <Row>
-            {/* Column 1 - Store Information */}
             <Col md={6}>
-              <Form.Group controlId="name">
+              <Form.Group controlId="fullName">
                 <Form.Label>Tên cửa hàng</Form.Label>
                 <Form.Control
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="fullName"
+                  value={formData.fullName}
                   onChange={handleChange}
+                  required
                 />
               </Form.Group>
 
-              <Form.Group controlId="address">
-                <Form.Label>Địa chỉ</Form.Label>
+              <Form.Group controlId="phoneNumber">
+                <Form.Label>Số điện thoại</Form.Label>
                 <Form.Control
                   type="text"
-                  name="address"
-                  value={formData.address}
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="street">
+                <Form.Label>Đường</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="street"
+                  value={formData.street}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="ward">
+                <Form.Label>Phường/Xã</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="ward"
+                  value={formData.ward}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <Form.Group controlId="district">
+                <Form.Label>Quận/Huyện</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="district"
+                  value={formData.district}
                   onChange={handleChange}
                 />
               </Form.Group>
@@ -100,150 +159,26 @@ const CreateStoreModal = ({ show, onClose, onStoreCreated }) => {
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
+                  required
                 />
               </Form.Group>
 
-              <Form.Group controlId="province">
-                <Form.Label>Tỉnh</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="province"
-                  value={formData.province}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="postalCode">
+              <Form.Group controlId="zipCode">
                 <Form.Label>Mã bưu điện</Form.Label>
                 <Form.Control
                   type="text"
-                  name="postalCode"
-                  value={formData.postalCode}
+                  name="zipCode"
+                  value={formData.zipCode}
                   onChange={handleChange}
                 />
               </Form.Group>
 
-              <Form.Group controlId="phone">
-                <Form.Label>Số điện thoại</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="email">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="openingHours">
-                <Form.Label>Giờ mở cửa</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="openingHours"
-                  value={formData.openingHours}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="socialLinks">
-                <Form.Label>Liên kết mạng xã hội</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="socialLinks"
-                  value={formData.socialLinks}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-              
-              <Form.Group controlId="description">
-                <Form.Label>Mô tả</Form.Label>
-                {/* DescriptionEditor for rich-text content */}
-                <DescriptionEditor
-                  value={formData.description}
-                  onChange={handleDescriptionChange}
-                />
-              </Form.Group>
-            </Col>
-
-            {/* Column 2 - SEO Information */}
-            <Col md={6}>
-              <Form.Group controlId="metaTitle">
-                <Form.Label>Meta Title</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="metaTitle"
-                  value={formData.metaTitle}
-                  onChange={handleChange}
-                  placeholder="Nhập meta title"
-                />
-                <Form.Text className="text-muted">
-                  Nếu để trống, tên cửa hàng sẽ được sử dụng làm meta title.
-                </Form.Text>
-              </Form.Group>
-
-              <Form.Group controlId="metaDescription">
-                <Form.Label>Meta Description</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="metaDescription"
-                  value={formData.metaDescription}
-                  onChange={handleChange}
-                  placeholder="Nhập meta description"
-                />
-                <Form.Text className="text-muted">
-                  Mô tả ngắn gọn về cửa hàng, hiển thị trong kết quả tìm kiếm.
-                </Form.Text>
-              </Form.Group>
-
-              <Form.Group controlId="metaKeywords">
-                <Form.Label>Meta Keywords</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="metaKeywords"
-                  value={formData.metaKeywords}
-                  onChange={handleChange}
-                  placeholder="Từ khóa 1, Từ khóa 2, Từ khóa 3"
-                />
-                <Form.Text className="text-muted">
-                  Các từ khóa liên quan đến cửa hàng, phân cách bằng dấu phẩy.
-                </Form.Text>
-              </Form.Group>
-
-              <Form.Group controlId="googleMapsUrl">
-                <Form.Label>Google Maps URL</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="googleMapsUrl"
-                  value={formData.googleMapsUrl}
-                  onChange={handleChange}
-                  placeholder="Nhập URL Google Maps"
-                />
-              </Form.Group>
-
-              <Form.Group controlId="latitude">
-                <Form.Label>Vĩ độ (Latitude)</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="latitude"
-                  value={formData.latitude}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="longitude">
-                <Form.Label>Kinh độ (Longitude)</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="longitude"
-                  value={formData.longitude}
+              <Form.Group controlId="isDefault">
+                <Form.Check
+                  type="checkbox"
+                  name="isDefault"
+                  label="Đặt làm mặc định"
+                  checked={formData.isDefault}
                   onChange={handleChange}
                 />
               </Form.Group>
@@ -255,12 +190,8 @@ const CreateStoreModal = ({ show, onClose, onStoreCreated }) => {
         <Button variant="secondary" onClick={onClose}>
           Đóng
         </Button>
-        <Button
-          variant="primary"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? 'Đang lưu...' : 'Lưu cửa hàng'}
+        <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+          {loading ? "Đang lưu..." : "Lưu địa chỉ"}
         </Button>
       </Modal.Footer>
     </Modal>

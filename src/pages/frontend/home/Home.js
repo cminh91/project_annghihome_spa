@@ -1,57 +1,86 @@
-import React from "react";
+import React,{ useState, useEffect } from "react";
+import bannerService from "../../functionservice/BannerService";
+import { Spinner } from "react-bootstrap";
 
 const Home = () => {
+  const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        setLoading(true);
+        const data = await bannerService.getAllBanners();
+        setBanners(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching banners:", err);
+        setError("Không thể tải banners. Vui lòng thử lại sau.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBanners();
+  }, []);
+  
+  useEffect(() => {
+    if (banners.length === 0) return;
+  
+    const timer = setTimeout(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % banners.length);
+    }, 2000); // Adjusting to 2 seconds
+  
+    return () => clearTimeout(timer);
+  }, [currentSlide, banners.length]);
   return (
     <div>
-      {/* Hero Header */}
+      {/* Hero Start */}
       <div className="container-fluid hero-header banner-container mt-5">
         <div className="container p-0">
           <div className="row g-0 align-items-center justify-content-center">
             <div className="col-12">
-              <div id="carouselId" className="carousel slide" data-bs-ride="carousel">
-                <div className="carousel-inner">
-                  {/* Slide 1 */}
-                  <div className="carousel-item active">
-                    <div className="position-relative">
-                      <img
-                        src="https://imgs.search.brave.com/J3dz5SRsHRyLh445I0LGLOndq3Ad1K-0hWUQa7ieyEY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/ZHJpYmJibGUuY29t/L3VzZXJzLzEyNTUz/MzAvc2NyZWVuc2hv/dHMvMTc1OTIxMTkv/bWVkaWEvOWUzOThh/NDU4ZGFkNDIzZjEy/NjA1MTc3MGI5OWYy/OTMuanBnP3Jlc2l6/ZT00MDB4MA"
-                        className="d-block w-100 img-fluid rounded"
-                        style={{ height: "500px", objectFit: "cover" }}
-                        alt="Slide 1"
-                      />
-                    </div>
+              <div
+                id="carouselId"
+                className="carousel slide"
+                data-bs-ride="carousel"
+              >
+                {loading ? (
+                  <div className="text-center py-5">
+                    <Spinner animation="border" variant="primary" />
                   </div>
-                  {/* Slide 2 */}
-                  <div className="carousel-item">
-                    <div className="position-relative">
-                      <img
-                        src="https://imgs.search.brave.com/J3dz5SRsHRyLh445I0LGLOndq3Ad1K-0hWUQa7ieyEY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/ZHJpYmJibGUuY29t/L3VzZXJzLzEyNTUz/MzAvc2NyZWVuc2hv/dHMvMTc1OTIxMTkv/bWVkaWEvOWUzOThh/NDU4ZGFkNDIzZjEy/NjA1MTc3MGI5OWYy/OTMuanBnP3Jlc2l6/ZT00MDB4MA"
-                        className="d-block w-100 img-fluid rounded"
-                        style={{ height: "500px", objectFit: "cover" }}
-                        alt="Slide 2"
-                      />
-                    </div>
+                ) : error ? (
+                  <div className="alert alert-danger text-center">{error}</div>
+                ) : banners.length === 0 ? (
+                  <div className="alert alert-warning text-center">
+                    Không có banner nào để hiển thị.
                   </div>
-                </div>
-                {/* Điều hướng */}
-                <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#carouselId"
-                  data-bs-slide="prev"
-                >
-                  <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span className="visually-hidden">Previous</span>
-                </button>
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#carouselId"
-                  data-bs-slide="next"
-                >
-                  <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span className="visually-hidden">Next</span>
-                </button>
+                ) : (
+                  <div className="carousel-inner" type="button">
+                    {banners.map((banner, index) => (
+                      <div
+                        key={banner.id}
+                        className={`carousel-item ${index === currentSlide ? "active" : ""}`}
+                      >
+                        <div className="position-relative">
+                          <div
+                            className="position-relative"
+                            onClick={() => window.location.href = banner.link}
+                            style={{ cursor: 'pointer' }}
+                          >                            
+                            <img
+                              src={banner.imageUrl}
+                              className="d-block w-100 img-fluid rounded"
+                              style={{ height: "500px", objectFit: "cover" }}
+                              alt={banner.shortTitle || `Banner ${index + 1}`}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -337,67 +366,67 @@ const Home = () => {
 
       {/* vì sao chọn an nghi home */}
       <div className="container-fluid py-5" style={{ backgroundColor: "skyblue" }}>
-  <div className="container">
-    <div className="row g-4 justify-content-center">
-      <div className="col-lg-4 text-center">
-        <h1
-          className="fw-bold"
-          style={{ whiteSpace: "nowrap", fontSize: "30px", color: "blue" }}
-        >
-          Vì sao nên chọn An Nghi?
-        </h1>
-        <div className="d-flex align-items-center mt-3 justify-content-center">
-          <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
-          <img
-            src="logo.png"
-            alt="Logo"
-            className="mx-3"
-            style={{ width: "40px", height: "40px" }}
-          />
-          <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
-        </div>
-      </div>
-    </div>
-
-    <div className="bg-light p-5 rounded mt-4" style={{ color: "black" }}>
-      <div className="row g-4 justify-content-center">
-        {[
-          {
-            title: "AN TÂM",
-            desc: "Dịch vụ chăm sóc Y tế tại nhà được cấp phép bởi Sở Y Tế TP.HCM, tiêu chuẩn Bộ Y TẾ.",
-          },
-          {
-            title: "AN TOÀN",
-            desc: "Trang thiết bị hiện đại, quy trình kiểm soát nghiêm ngặt đảm bảo an toàn cho mẹ và bé.",
-          },
-          {
-            title: "CHUYÊN NGHIỆP",
-            desc: "Đội ngũ chuyên môn cao, giàu kinh nghiệm từ các bệnh viện lớn như Từ Dũ, AIH, FV,...",
-          },
-          {
-            title: "TẬN TÂM",
-            desc: "Luôn đồng hành, lắng nghe và thấu hiểu nhu cầu mẹ và bé trong từng giai đoạn chăm sóc.",
-          },
-          {
-            title: "TÍN CẬY",
-            desc: "Được khách hàng tin tưởng và đánh giá cao với hàng ngàn ca chăm sóc thành công mỗi năm.",
-          },
-        ].map((item, index) => (
-          <div key={index} className="col-6 col-md-4 col-lg-3 col-xl-2 text-center">
-            <div className="counter bg-white rounded p-4 h-100">
-              <img
-                src="https://www.momcare24h.vn/assets/front/images/infos/tai-sao-chon-momcare24h-1.png"
-                alt={`Icon ${item.title}`}
-                className="mb-3"
-              />
-              <h5 className="fw-bold">{item.title}</h5>
-              <p className="text-dark">{item.desc}</p>
+        <div className="container">
+          <div className="row g-4 justify-content-center">
+            <div className="col-lg-4 text-center">
+              <h1
+                className="fw-bold"
+                style={{ whiteSpace: "nowrap", fontSize: "30px", color: "blue" }}
+              >
+                Vì sao nên chọn An Nghi?
+              </h1>
+              <div className="d-flex align-items-center mt-3 justify-content-center">
+                <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
+                <img
+                  src="logo.png"
+                  alt="Logo"
+                  className="mx-3"
+                  style={{ width: "40px", height: "40px" }}
+                />
+                <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
+
+          <div className="bg-light p-5 rounded mt-4" style={{ color: "black" }}>
+            <div className="row g-4 justify-content-center">
+              {[
+                {
+                  title: "AN TÂM",
+                  desc: "Dịch vụ chăm sóc Y tế tại nhà được cấp phép bởi Sở Y Tế TP.HCM, tiêu chuẩn Bộ Y TẾ.",
+                },
+                {
+                  title: "AN TOÀN",
+                  desc: "Trang thiết bị hiện đại, quy trình kiểm soát nghiêm ngặt đảm bảo an toàn cho mẹ và bé.",
+                },
+                {
+                  title: "CHUYÊN NGHIỆP",
+                  desc: "Đội ngũ chuyên môn cao, giàu kinh nghiệm từ các bệnh viện lớn như Từ Dũ, AIH, FV,...",
+                },
+                {
+                  title: "TẬN TÂM",
+                  desc: "Luôn đồng hành, lắng nghe và thấu hiểu nhu cầu mẹ và bé trong từng giai đoạn chăm sóc.",
+                },
+                {
+                  title: "TÍN CẬY",
+                  desc: "Được khách hàng tin tưởng và đánh giá cao với hàng ngàn ca chăm sóc thành công mỗi năm.",
+                },
+              ].map((item, index) => (
+                <div key={index} className="col-6 col-md-4 col-lg-3 col-xl-2 text-center">
+                  <div className="counter bg-white rounded p-4 h-100">
+                    <img
+                      src="https://www.momcare24h.vn/assets/front/images/infos/tai-sao-chon-momcare24h-1.png"
+                      alt={`Icon ${item.title}`}
+                      className="mb-3"
+                    />
+                    <h5 className="fw-bold">{item.title}</h5>
+                    <p className="text-dark">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
       {/* cảm nhận khách hàng */}
       <div className="container-fluid py-5" style={{ backgroundColor: "whitesmoke" }}>

@@ -1,12 +1,22 @@
 import axios from 'axios';
 
+<<<<<<< HEAD
+const API_URL = process.env.REACT_APP_API_BASE_URL; // Đọc từ biến môi trường
+
+// Tạo instance axios với baseURL
+=======
 const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 // Create axios instance with default headers
+>>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
+<<<<<<< HEAD
+    'Accept': 'application/json',
+  },
+=======
     'Accept': 'application/json'
   }
 });
@@ -20,13 +30,13 @@ api.interceptors.request.use(config => {
   return config;
 }, error => {
   return Promise.reject(error);
+>>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
 });
 
 const productService = {
   async createProduct(productData) {
     const {
       name,
-      slug,
       description,
       longDescription,
       price,
@@ -36,6 +46,24 @@ const productService = {
       categoryId
     } = productData;
 
+<<<<<<< HEAD
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('longDescription', longDescription || '');
+    formData.append('price', price.toString());
+    if (salePrice) formData.append('salePrice', salePrice.toString());
+    formData.append('imageUrl', imageUrl || '');
+    if (additionalImages && additionalImages.length > 0) {
+      additionalImages.forEach((img) => {
+        formData.append('additionalImages', img);
+      });
+    }
+    formData.append('categoryId', categoryId || '');
+
+    try {
+      const response = await api.post('/products', formData, {
+=======
     const productDataToSend = {
       name: name.trim(),
       slug: slug.trim(),
@@ -50,6 +78,7 @@ const productService = {
 
     try {
       const response = await api.post('/products', productDataToSend, {
+>>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
         withCredentials: true,
       });
       return response.data;
@@ -62,6 +91,15 @@ const productService = {
   async getAllProducts(page = 1, limit = 10, searchTerm = '', sortBy = 'createdAt', sortOrder = 'DESC') {
     console.log('Fetching products with page:', page, 'limit:', limit, 'searchTerm:', searchTerm, 'sortBy:', sortBy, 'sortOrder:', sortOrder);
     try {
+<<<<<<< HEAD
+      const response = await api.get('/products', {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+=======
       let apiUrl = `/products?sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&limit=${limit}`;
 
       if (searchTerm) { // Only add searchTerm if it's not empty
@@ -69,6 +107,7 @@ const productService = {
       }
       const response = await api.get(apiUrl);
       return response.data; // API is expected to return { products: [...], total: ... }
+>>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
     } catch (error) {
       console.error("Error fetching products:", error);
       if (error.response && error.response.data && error.response.data.message) {
@@ -82,7 +121,17 @@ const productService = {
 
   async getProductById(id) {
     try {
+<<<<<<< HEAD
+      const response = await api.get(`/products/${id}`, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+=======
       const response = await api.get(`/products/${id}`);
+>>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
       return response.data;
     } catch (error) {
       console.error("Error fetching product by ID:", error);
@@ -93,22 +142,33 @@ const productService = {
   async editProduct(id, productData) {
     const {
       name,
-      slug,
       description,
       longDescription,
       price,
       salePrice,
-      inStock,
-      featured,
-      isActive,
-      categoryId,
-      specs,
-      metaTitle,
-      metaDescription,
-      metaKeywords,
-      images,
+      imageUrl,
+      additionalImages,
+      categoryId
     } = productData;
 
+<<<<<<< HEAD
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('longDescription', longDescription || '');
+    formData.append('price', price.toString());
+    if (salePrice) formData.append('salePrice', salePrice.toString());
+    formData.append('imageUrl', imageUrl || '');
+    if (additionalImages && additionalImages.length > 0) {
+      additionalImages.forEach((img) => {
+        formData.append('additionalImages', img);
+      });
+    }
+    formData.append('categoryId', categoryId || '');
+
+    try {
+      const response = await api.put(`/products/${id}`, formData, {
+=======
     const productDataToSend = {
       name: name.trim(),
       slug: slug.trim(),
@@ -129,6 +189,7 @@ const productService = {
 
     try {
       const response = await api.put(`/products/${id}`, productDataToSend, {
+>>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
         withCredentials: true,
       });
       return response.data;
@@ -140,7 +201,16 @@ const productService = {
 
   async deleteProduct(id) {
     try {
+<<<<<<< HEAD
+      const response = await api.delete(`/products/${id}`, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+=======
       const response = await api.delete(`/products/${id}`);
+>>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
       return response.data;
     } catch (error) {
       console.error("Error deleting product:", error);

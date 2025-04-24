@@ -1,257 +1,201 @@
+// EditStoreModal.js
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Row, Col, Card } from "react-bootstrap";
-import DescriptionEditor from "../../lib/DescriptionEditor";
+import { Modal, Button, Form, Row, Col, Alert } from "react-bootstrap";
+import storeService from "../../../functionservice/storeService";
 
 const EditStoreModal = ({ show, onClose, onSave, storeData }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    address: "",
+    id: "",
+    fullName: "",
+    phoneNumber: "",
+    street: "",
+    ward: "",
+    district: "",
     city: "",
-    province: "",
-    postalCode: "",
-    phone: "",
-    email: "",
-    openingHours: "",
-    socialLinks: "",
-    metaTitle: "",
-    metaDescription: "",
-    metaKeywords: "",
-    googleMapsUrl: "",
-    latitude: "",
-    longitude: "",
+    zipCode: "",
+    isDefault: false,
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+
   useEffect(() => {
-    if (storeData) {
-      setFormData({ ...storeData });
+    if (show && storeData) {
+      setFormData({
+        id: storeData.id || "",
+        fullName: storeData.fullName || "",
+        phoneNumber: storeData.phoneNumber || "",
+        street: storeData.street || "",
+        ward: storeData.ward || "",
+        district: storeData.district || "",
+        city: storeData.city || "",
+        zipCode: storeData.zipCode || "",
+        isDefault: storeData.isDefault || false,
+      });
+      setError(null);
+      setSuccessMessage(null);
+      setLoading(false);
     }
-  }, [storeData]);
+  }, [show, storeData]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleDescriptionChange = (content) => {
-    setFormData((prev) => ({
-      ...prev,
-      description: content,
-    }));
+  const validateForm = () => {
+    if (!formData.fullName || !formData.phoneNumber || !formData.street || !formData.city) {
+      setError("Vui lòng điền đầy đủ các trường bắt buộc (Tên cửa hàng, Số điện thoại, Đường, Thành phố).");
+      return false;
+    }
+    if (!/^\d{10,11}$/.test(formData.phoneNumber)) {
+      setError("Số điện thoại phải có 10 hoặc 11 chữ số.");
+      return false;
+    }
+    return true;
   };
 
-  const handleSubmit = () => {
-    onSave(formData);
-    onClose();
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const updatedStore = await storeService.editaddresses(formData.id, formData);
+      setSuccessMessage("Địa chỉ đã được cập nhật thành công!");
+      onSave(updatedStore);
+      setTimeout(() => {
+        onClose();
+      }, 1000);
+    } catch (err) {
+      console.error("Submit error:", err.response?.data || err.message);
+      setError(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.response?.data?.details ||
+        "Có lỗi xảy ra khi cập nhật địa chỉ."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Modal show={show} onHide={onClose} size="xl">
+    <Modal show={show} onHide={onClose} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Chỉnh sửa cửa hàng</Modal.Title>
+        <Modal.Title>Chỉnh sửa địa chỉ</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Row>
-          {/* Cột thông tin chính */}
-          <Col md={8}>
-            <Form>
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group controlId="name">
-                    <Form.Label>Tên cửa hàng</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group controlId="phone">
-                    <Form.Label>Số điện thoại</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+        {error && <Alert variant="danger">{error}</Alert>}
+        {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group controlId="email">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group controlId="openingHours">
-                    <Form.Label>Giờ mở cửa</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="openingHours"
-                      value={formData.openingHours}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <Form.Group className="mb-3" controlId="address">
-                <Form.Label>Địa chỉ</Form.Label>
+        <Form>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="fullName">
+                <Form.Label>Tên cửa hàng</Form.Label>
                 <Form.Control
                   type="text"
-                  name="address"
-                  value={formData.address}
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="phoneNumber">
+                <Form.Label>Số điện thoại</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="street">
+                <Form.Label>Đường</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="street"
+                  value={formData.street}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="ward">
+                <Form.Label>Phường/Xã</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="ward"
+                  value={formData.ward}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <Form.Group controlId="district">
+                <Form.Label>Quận/Huyện</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="district"
+                  value={formData.district}
                   onChange={handleChange}
                 />
               </Form.Group>
 
-              <Row className="mb-3">
-                <Col md={4}>
-                  <Form.Group controlId="city">
-                    <Form.Label>Thành phố</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={4}>
-                  <Form.Group controlId="province">
-                    <Form.Label>Tỉnh</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="province"
-                      value={formData.province}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={4}>
-                  <Form.Group controlId="postalCode">
-                    <Form.Label>Mã bưu điện</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="postalCode"
-                      value={formData.postalCode}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group controlId="latitude">
-                    <Form.Label>Vĩ độ</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="latitude"
-                      value={formData.latitude}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group controlId="longitude">
-                    <Form.Label>Kinh độ</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="longitude"
-                      value={formData.longitude}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <Form.Group className="mb-3" controlId="googleMapsUrl">
-                <Form.Label>Google Maps URL</Form.Label>
+              <Form.Group controlId="city">
+                <Form.Label>Thành phố</Form.Label>
                 <Form.Control
                   type="text"
-                  name="googleMapsUrl"
-                  value={formData.googleMapsUrl}
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="zipCode">
+                <Form.Label>Mã bưu điện</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="zipCode"
+                  value={formData.zipCode}
                   onChange={handleChange}
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="socialLinks">
-                <Form.Label>Liên kết mạng xã hội</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="socialLinks"
-                  value={formData.socialLinks}
+              <Form.Group controlId="isDefault">
+                <Form.Check
+                  type="checkbox"
+                  name="isDefault"
+                  label="Đặt làm mặc định"
+                  checked={formData.isDefault}
                   onChange={handleChange}
                 />
               </Form.Group>
-
-              <Form.Group className="mb-3" controlId="description">
-                <Form.Label>Mô tả</Form.Label>
-                <DescriptionEditor
-                  value={formData.description}
-                  onChange={handleDescriptionChange}
-                />
-              </Form.Group>
-            </Form>
-          </Col>
-
-          {/* Cột thông tin SEO */}
-          <Col md={4}>
-            <Card>
-              <Card.Header className="fw-bold">Thông tin SEO</Card.Header>
-              <Card.Body>
-                <Form.Group className="mb-3" controlId="metaTitle">
-                  <Form.Label>Meta Title</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="metaTitle"
-                    value={formData.metaTitle}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="metaDescription">
-                  <Form.Label>Meta Description</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="metaDescription"
-                    value={formData.metaDescription}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="metaKeywords">
-                  <Form.Label>Meta Keywords</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="metaKeywords"
-                    value={formData.metaKeywords}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+            </Col>
+          </Row>
+        </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>
           Đóng
         </Button>
-        <Button variant="primary" onClick={handleSubmit}>
-          Lưu thay đổi
+        <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+          {loading ? "Đang lưu..." : "Lưu thay đổi"}
         </Button>
       </Modal.Footer>
     </Modal>
