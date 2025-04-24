@@ -1,10 +1,6 @@
 import React, { useState } from "react";
-<<<<<<< HEAD
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { toast } from 'react-toastify';
-=======
-import { Modal, Button, Form } from "react-bootstrap";
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
 import slugify from "slugify";
 import categoryService from "../../../functionservice/categoryService";
 
@@ -16,7 +12,6 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
   const [isActive, setIsActive] = useState(true);
   const [sortOrder, setSortOrder] = useState(0);
   const [level, setLevel] = useState(0);
-<<<<<<< HEAD
 
   const resetForm = () => {
     setName("");
@@ -27,8 +22,6 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
     setSortOrder(0);
     setLevel(0);
   };
-=======
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
 
  
   
@@ -40,11 +33,7 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
       description,
       isActive,
       sortOrder: Number(sortOrder),
-<<<<<<< HEAD
       level: Number(level),
-=======
-      level: Number(level)
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
     };
 
     try {
@@ -56,16 +45,11 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
       toast.error("Không thể tạo danh mục. Vui lòng thử lại.");
     }
   };
-<<<<<<< HEAD
-  
-=======
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
 
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Body>
         <Form>
-<<<<<<< HEAD
           {/* Tên & Slug */}
           <Row className="mb-3">
             <Col md={6}>
@@ -86,25 +70,6 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
               />
             </Col>
           </Row>
-=======
-          <Form.Group className="mb-3">
-            <Form.Label>Tên danh mục</Form.Label>
-            <Form.Control
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Slug</Form.Label>
-            <Form.Control
-              type="text"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-            />
-          </Form.Group>
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
 
           <Form.Group className="mb-3">
             <Form.Label>Mô tả</Form.Label>
@@ -115,7 +80,6 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
             />
           </Form.Group>
 
-<<<<<<< HEAD
           {/* Loại, Trạng thái, Level */}
           <Row className="mb-3">
             <Col md={4}>
@@ -149,19 +113,12 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
           </Row>
 
           {/* Thứ tự hiển thị */}
-=======
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
           <Form.Group className="mb-3">
             <Form.Label>Thứ tự hiển thị</Form.Label>
             <Form.Control
               type="number"
               value={sortOrder}
-<<<<<<< HEAD
               onChange={(e) => setSortOrder(Number(e.target.value))}
-            />
-          </Form.Group>
-=======
-              onChange={(e) => setSortOrder(e.target.value)}
             />
           </Form.Group>
 
@@ -194,7 +151,6 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
               <option value="service">Dịch vụ</option>
             </Form.Select>
           </Form.Group>
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
         </Form>
       </Modal.Body>
       <Modal.Footer>

@@ -167,11 +167,13 @@ const CategoryList = () => {
           <table className="table table-bordered table-striped">
             <thead className="table-dark">
               <tr>
-                <th>Ảnh</th>
                 <th>Tên danh mục</th>
-                <th>ParentCatrgories</th>
+                <th>Slug</th>
+                <th>Mô tả</th>
                 <th>Loại</th>
                 <th>Trạng thái</th>
+                <th>Thứ tự</th>
+                <th>Level</th>
                 <th>Hành động</th>
               </tr>
             </thead>
@@ -179,22 +181,17 @@ const CategoryList = () => {
               {currentCategories.length > 0 ? (
                 currentCategories.map((item) => (
                   <tr key={item.id}>
-                    <td>
-                      <img
-                        src={item.imageUrl || "default-image-url.jpg"}
-                        alt={item.name}
-                        width="80"
-                        className="rounded"
-                      />
-                    </td>
                     <td>{item.name}</td>
-                    <td>{item.parentId}</td>
+                    <td>{item.slug}</td>
+                    <td>{item.description}</td>
                     <td>{item.type}</td>
                     <td>
                       <span className={`badge ${item.isActive ? 'bg-success' : 'bg-secondary'}`}>
                         {item.isActive ? "Hiển thị" : "Ẩn"}
                       </span>
                     </td>
+                    <td>{item.sortOrder}</td>
+                    <td>{item.level}</td>
                     <td>
                       <div className="d-flex gap-2">
                         <button
@@ -215,7 +212,7 @@ const CategoryList = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center">
+                  <td colSpan="8" className="text-center">
                     Không có danh mục nào phù hợp với tìm kiếm
                   </td>
                 </tr>
