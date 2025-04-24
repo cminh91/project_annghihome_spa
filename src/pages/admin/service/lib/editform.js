@@ -13,8 +13,8 @@ const EditServiceModal = ({ show, handleClose, handleSave, data }) => { // Recei
     description: "",
     longdescription: "",
     image: "",
-    price: "",
-    salePrice: "",
+    price: 0,
+    salePrice: 0,
   });
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [categories, setCategories] = useState([]);

@@ -1,39 +1,26 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
-import uploadService from "../../../functionservice/uploadService"; // Import uploadService
 
 const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
   const [name, setName] = useState("");
-  const [imageFile, setImageFile] = useState(null); // State to store the selected image file
+  const [imageUrl, setImageUrl] = useState(""); // State to store the image URL
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const handleImageChange = (e) => {
-    setImageFile(e.target.files[0]); // Store the selected file
-  };
 
   const handleSave = async () => {
     setLoading(true);
     setError(null);
     try {
-      let imageUrl = "";
-      if (imageFile) {
-        const uploadedUrls = await uploadService.uploadImages([imageFile]);
-        if (uploadedUrls && uploadedUrls.length > 0) {
-          imageUrl = uploadedUrls[0]; // Get the first uploaded image URL
-        }
-      }
-
       const newMemberData = {
         name,
-        image: imageUrl, // Use the uploaded image URL
+        image: imageUrl, // Use the entered image URL
         description,
       };
 
       onSave(newMemberData);
       setName("");
-      setImageFile(null); // Reset file state
+      setImageUrl(""); // Reset URL state
       setDescription("");
       onClose(); // Close modal on successful save
     } catch (err) {
@@ -68,13 +55,14 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
 
             <div className="col-md-12">
               <Form.Group controlId="image">
-                <Form.Label>Ảnh</Form.Label>
+                <Form.Label>Ảnh (URL)</Form.Label>
                 <Form.Control
-                  type="file" // Changed to file input
-                  onChange={handleImageChange}
+                  type="text"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)} // Handle URL input
                   required
                 />
-                 {imageFile && <p>Đã chọn tệp: {imageFile.name}</p>} {/* Display selected file name */}
+                {imageUrl && <p>Đã nhập URL: {imageUrl}</p>} {/* Display entered URL */}
               </Form.Group>
             </div>
 

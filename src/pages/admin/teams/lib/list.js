@@ -116,11 +116,12 @@ const TeamMemberList = () => {
             <tr key={member.id}>
               <td>{member.name}</td>
               <td>
-                {member.image ? (
-                  <img src={member.image} alt={member.name} style={{ width: '50px', height: 'auto' }} />
-                ) : (
-                  'Không có hình ảnh'
-                )}
+              <img
+                  src={member.image || "default-image-url.jpg"}
+                  alt={member.name}
+                  width="80"
+                  className="rounded"
+                />
               </td>
               <td>{member.description}</td>
               <td className="d-flex justify-content-center">
@@ -144,6 +145,7 @@ const TeamMemberList = () => {
           ))}
         </tbody>
       </Table>
+
       <CreateTeamMemberModal
         show={showCreateModal}
         onClose={() => setShowCreateModal(false)}
@@ -153,8 +155,9 @@ const TeamMemberList = () => {
         <EditTeamMemberModal
           show={showEditModal}
           onClose={() => setShowEditModal(false)}
+          onSave={handleUpdate}  
           member={selectedMember}
-          onUpdate={handleUpdate}
+          
         />
       )}
     </div>

@@ -20,6 +20,7 @@ const CategoryList = () => {
       try {
         const categoriesData = await categoryService.getAllCategories();
         setCategories(categoriesData);
+        console.log(categoriesData)
       } catch (error) {
         console.error("Failed to fetch categories:", error);
         alert("Không thể tải danh sách danh mục!");

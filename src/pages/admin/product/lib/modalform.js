@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import DescriptionEditor from "../../lib/DescriptionEditor";
-import productService from "../../../functionservice/productService"; // Import categoryService
-import uploadService from "../../../functionservice/uploadService"; // Import uploadService
+import productService from "../../../functionservice/productService";
+import uploadService from "../../../functionservice/uploadService";
 
 const ProductModal = ({ show, handleClose, handleSave }) => {
-  const [inputValue, setInputValue] = useState(""); 
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
@@ -14,13 +13,17 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
     price: "",
     salePrice: "",
     imageUrl: "",
-    categoryId: "", // Category ID will be stored here
+    categoryId: "",
     additionalImages: [],
+    metaTitle: "",
+    metaDescription: "",
+    metaKeywords: "",
   });
+
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [selectedImages, setSelectedImages] = useState([]);
-  const [categories, setCategories] = useState([]); // State to hold categories
-  const [errors, setErrors] = useState({}); // State to hold validation errors
+  const [categories, setCategories] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (show) {
@@ -32,51 +35,51 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
         price: "",
         salePrice: "",
         imageUrl: "",
-        categoryId: "", // Reset category selection
+        categoryId: "",
         additionalImages: [],
+        metaTitle: "",
+        metaDescription: "",
+        metaKeywords: "",
       });
-      setErrors({}); // Reset errors when modal is opened
-      fetchCategories(); // Fetch categories when modal is opened
+      setSelectedThumbnail(null);
+      setSelectedImages([]);
+      setErrors({});
+      fetchCategories();
     }
   }, [show]);
 
   const fetchCategories = async () => {
     try {
-      // Fetch categories of type 'product'
-      const data = await productService.getCategoriesByType('product');
-      setCategories(data); // Store categories in state
+      const data = await productService.getCategoriesByType("product");
+      setCategories(data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
 
-  // Function to generate slug from the name
-const generateSlug = (name) => {
-  return name
-    .toLowerCase() // Convert to lowercase
-    .normalize('NFD') // Normalize Vietnamese characters
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[đĐ]/g, 'd') // Replace Vietnamese 'd' character
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-    .trim() // Remove leading/trailing spaces
-    .replace(/\s+/g, '-') // Replace multiple spaces with single hyphen
-    .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
-};
+  const generateSlug = (name) => {
+    return name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[đĐ]/g, "d")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const val = type === "checkbox" ? checked : value;
-
+    const { name, value } = e.target;
     if (name === "name") {
-      // Automatically generate the slug when the name is changed
       const generatedSlug = generateSlug(value);
       setFormData((prev) => ({
         ...prev,
-        [name]: value,
-        slug: generatedSlug, // Update slug
+        name: value,
+        slug: generatedSlug,
       }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: val }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -84,90 +87,60 @@ const generateSlug = (name) => {
     setFormData((prev) => ({ ...prev, longDescription: value }));
   };
 
-const handleThumbnailUpload = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    setSelectedThumbnail(file);
-    setFormData((prev) => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
-  }
-};
+  const handleThumbnailUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedThumbnail(file);
+    }
+  };
 
-const handleImagesUpload = (e) => {
-  const files = Array.from(e.target.files);
-  if (files.length > 0) {
-    setSelectedImages(files);
-    const imageUrls = files.map(file => URL.createObjectURL(file));
-    setFormData((prev) => ({ ...prev, additionalImages: imageUrls }));
-  }
-};
+  const handleImagesUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setSelectedImages(files);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const newErrors = {};
-    if (!formData.name.trim()) {
-      newErrors.name = "Tên sản phẩm không được để trống.";
-    }
-    if (!formData.slug.trim()) {
-      newErrors.slug = "Slug không được để trống.";
-    }
-    if (!formData.price || Number(formData.price) <= 0) {
-      newErrors.price = "Giá phải là số dương.";
-    }
-    if (formData.salePrice && Number(formData.salePrice) < 0) {
-      newErrors.salePrice = "Giá khuyến mãi không được là số âm.";
-    }
-    if (formData.salePrice && Number(formData.salePrice) > Number(formData.price)) {
-      newErrors.salePrice = "Giá khuyến mãi không được lớn hơn giá gốc.";
-    }
-    if (!formData.categoryId) {
-      newErrors.categoryId = "Vui lòng chọn danh mục.";
-    }
+    if (!formData.name.trim()) newErrors.name = "Tên sản phẩm không được để trống.";
+    if (!formData.slug.trim()) newErrors.slug = "Slug không được để trống.";
+    if (!formData.price || Number(formData.price) <= 0) newErrors.price = "Giá phải là số dương.";
+    if (formData.salePrice && Number(formData.salePrice) < 0) newErrors.salePrice = "Giá khuyến mãi không được là số âm.";
+    if (formData.salePrice && Number(formData.salePrice) > Number(formData.price)) newErrors.salePrice = "Giá khuyến mãi không được lớn hơn giá gốc.";
+    if (!formData.categoryId) newErrors.categoryId = "Vui lòng chọn danh mục.";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      return; // Stop submission if there are errors
+      return;
     }
 
-    setErrors({}); // Clear errors if validation passes
-
-    let uploadedThumbnailUrl = formData.imageUrl;
-    let uploadedImagesUrls = formData.additionalImages;
+    setErrors({});
+    let uploadedThumbnailUrl = "";
+    let uploadedImagesUrls = [];
 
     try {
-      // Upload thumbnail if selected
       if (selectedThumbnail) {
-        console.log('Uploading thumbnail:', selectedThumbnail);
         const urls = await uploadService.uploadImages([selectedThumbnail]);
-        console.log('Thumbnail upload result:', urls);
-        if (urls && urls.length > 0) {
-          uploadedThumbnailUrl = urls[0];
-        }
+        if (urls && urls.length > 0) uploadedThumbnailUrl = urls[0];
       }
 
-      // Upload images if selected
       if (selectedImages.length > 0) {
-        console.log('Uploading additional images:', selectedImages);
         const urls = await uploadService.uploadImages(selectedImages);
-        console.log('Additional images upload result:', urls);
-        if (urls && urls.length > 0) {
-          uploadedImagesUrls = urls;
-        }
+        if (urls && urls.length > 0) uploadedImagesUrls = urls;
       }
 
-      // Create product with uploaded image URLs
       const productData = {
         ...formData,
         imageUrl: uploadedThumbnailUrl,
-        additionalImages: uploadedImagesUrls
+        additionalImages: uploadedImagesUrls,
       };
 
-      console.log('Product data before saving:', productData);
       handleSave(productData);
       handleClose();
     } catch (error) {
-      console.error('Error during product submission:', error);
-      // Handle error appropriately, e.g., show an error message to the user
+      console.error("Error during product submission:", error);
     }
   };
 
@@ -199,10 +172,10 @@ const handleImagesUpload = (e) => {
                   name="slug"
                   value={formData.slug}
                   onChange={handleChange}
-                  readOnly // Prevent manual editing of the slug
+                  readOnly
                   isInvalid={!!errors.slug}
                 />
-                 <Form.Control.Feedback type="invalid">
+                <Form.Control.Feedback type="invalid">
                   {errors.slug}
                 </Form.Control.Feedback>
               </Form.Group>
@@ -215,7 +188,7 @@ const handleImagesUpload = (e) => {
                   onChange={handleChange}
                   isInvalid={!!errors.price}
                 />
-                 <Form.Control.Feedback type="invalid">
+                <Form.Control.Feedback type="invalid">
                   {errors.price}
                 </Form.Control.Feedback>
               </Form.Group>
@@ -228,34 +201,17 @@ const handleImagesUpload = (e) => {
                   onChange={handleChange}
                   isInvalid={!!errors.salePrice}
                 />
-                 <Form.Control.Feedback type="invalid">
+                <Form.Control.Feedback type="invalid">
                   {errors.salePrice}
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Ảnh đại diện</Form.Label>
-                <Form.Control type="file" onChange={handleThumbnailUpload} />
-                {formData.imageUrl && typeof formData.imageUrl === 'string' && (
-                  <img
-                    src={formData.imageUrl}
-                    alt="Thumbnail"
-                    width={100}
-                    className="mt-2 rounded"
-                  />
-                )}
+                <Form.Control type="text" onChange={handleThumbnailUpload} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Thư viện ảnh</Form.Label>
-                <Form.Control
-                  type="file"
-                  multiple
-                  onChange={handleImagesUpload}
-                />
-                <div className="d-flex flex-wrap gap-2 mt-2">
-                  {Array.isArray(formData.additionalImages) && formData.additionalImages.map((img, idx) => (
-                    <img key={idx} src={img} alt="img" width={80} className="rounded" />
-                  ))}
-                </div>
+                <Form.Control type="text" multiple onChange={handleImagesUpload} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Danh mục</Form.Label>
@@ -273,13 +229,11 @@ const handleImagesUpload = (e) => {
                     </option>
                   ))}
                 </Form.Control>
-                 <Form.Control.Feedback type="invalid">
+                <Form.Control.Feedback type="invalid">
                   {errors.categoryId}
                 </Form.Control.Feedback>
               </Form.Group>
-
             </Col>
-
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Mô tả ngắn</Form.Label>
