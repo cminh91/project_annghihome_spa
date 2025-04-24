@@ -137,7 +137,9 @@ const handleImagesUpload = (e) => {
     try {
       // Upload thumbnail if selected
       if (selectedThumbnail) {
+        console.log('Uploading thumbnail:', selectedThumbnail);
         const urls = await uploadService.uploadImages([selectedThumbnail]);
+        console.log('Thumbnail upload result:', urls);
         if (urls && urls.length > 0) {
           uploadedThumbnailUrl = urls[0];
         }
@@ -145,7 +147,9 @@ const handleImagesUpload = (e) => {
 
       // Upload images if selected
       if (selectedImages.length > 0) {
+        console.log('Uploading additional images:', selectedImages);
         const urls = await uploadService.uploadImages(selectedImages);
+        console.log('Additional images upload result:', urls);
         if (urls && urls.length > 0) {
           uploadedImagesUrls = urls;
         }
@@ -158,6 +162,7 @@ const handleImagesUpload = (e) => {
         additionalImages: uploadedImagesUrls
       };
 
+      console.log('Product data before saving:', productData);
       handleSave(productData);
       handleClose();
     } catch (error) {
