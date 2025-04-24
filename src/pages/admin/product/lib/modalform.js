@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import DescriptionEditor from "../../lib/DescriptionEditor";
-import categoryService from "../../../functionservice/categoryService"; //
 import productService from "../../../functionservice/productService"; // Import categoryService
 import uploadService from "../../../functionservice/uploadService"; // Import uploadService
 
 const ProductModal = ({ show, handleClose, handleSave }) => {
+  const [inputValue, setInputValue] = useState(""); 
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
@@ -298,30 +298,6 @@ const handleImagesUpload = (e) => {
                   onChange={handleEditorChange}
                 />
               </Form.Group>
-
-              {/* <Form.Group className="mb-3">
-                <Form.Check
-                  type="checkbox"
-                  name="inStock"
-                  checked={formData.inStock}
-                  onChange={handleChange}
-                  label="Còn hàng"
-                />
-                <Form.Check
-                  type="checkbox"
-                  name="featured"
-                  checked={formData.featured}
-                  onChange={handleChange}
-                  label="Nổi bật"
-                />
-                <Form.Check
-                  type="checkbox"
-                  name="isActive"
-                  checked={formData.isActive}
-                  onChange={handleChange}
-                  label="Hiển thị"
-                />
-              </Form.Group> */}
             </Col>
           </Row>
 
