@@ -1,28 +1,17 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from "react";
-=======
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
 import CategoryModal from "./CategoryModal";
 import EditCategoryModal from "./CategoryEdit";
 import categoryService from "../../../functionservice/categoryService";
 
 const CategoryList = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-<<<<<<< HEAD
-  const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [categoriesPerPage] = useState(4);
-=======
   const [isLoading, setIsLoading] = useState(false);
   const [modalState, setModalState] = useState({ isOpen: false, type: null, category: null });
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [categoriesPerPage] = useState(6);
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
 
   // Fetch categories
   useEffect(() => {
@@ -41,13 +30,6 @@ const CategoryList = () => {
 
     fetchCategories();
   }, []);
-<<<<<<< HEAD
-  const handleOpenEdit = (category) => {
-    setShowEditModal(category);
-    setShowModal(true); 
-  };
-
-=======
 
   // Delayed search
   useEffect(() => {
@@ -63,7 +45,7 @@ const CategoryList = () => {
   }, [searchTerm]);
 
   // Handle search input
-  const handelSearch = (e) => {
+  const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
@@ -85,9 +67,9 @@ const CategoryList = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // const handleOpenTrash = () => {
-  //   navigate("/admin/category/trash");
-  // };
+  const handleOpenTrash = () => {
+    navigate("/admin/category/trash");
+  };
 
   const handleOpenAdd = () => {
     setModalState({ isOpen: true, type: "add", category: null });
@@ -101,19 +83,14 @@ const CategoryList = () => {
     setModalState({ isOpen: false, type: null, category: null });
   };
 
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
   const handleDeleteCategory = async (id) => {
     const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa danh mục này?");
     if (isConfirmed) {
       setIsLoading(true);
       try {
         await categoryService.deleteCategory(id);
-<<<<<<< HEAD
-        setCategories(categories.filter((cat) => cat.id !== id));
-=======
         const categoriesData = await categoryService.getAllCategories();
         setCategories(categoriesData);
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
       } catch (error) {
         console.error("Error deleting category:", error);
         alert("Xóa danh mục thất bại!");
@@ -139,37 +116,10 @@ const CategoryList = () => {
     }
   };
 
-<<<<<<< HEAD
-  const handleUpdateCategory = (updatedCategory) => {
-    setCategories(
-      categories.map((cat) =>
-        cat.id === updatedCategory.id ? updatedCategory : cat
-      )
-    );
-    setShowModal(false);
-  };
-
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const sortedCategories = [...categories].sort((a, b) => b.isActive - a.isActive);
-
-  const filteredCategories = sortedCategories.filter((category) =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const indexOfLastCategory = currentPage * categoriesPerPage;
-  const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
-  const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-=======
   const handleUpdateCategory = async (updatedCategory) => {
     setIsLoading(true);
     try {
-      await categoryService.editCategory(updatedCategory.id, updatedCategory); // Fixed: use editCategory and pass id
+      await categoryService.editCategory(updatedCategory.id, updatedCategory);
       const categoriesData = await categoryService.getAllCategories();
       setCategories(categoriesData);
       handleCloseModal();
@@ -182,22 +132,17 @@ const CategoryList = () => {
     }
   };
 
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Danh sách danh mục</h2>
+        <h2>Danh sách danh mục dịch vụ</h2>
         <div className="d-flex gap-2">
           <button className="btn btn-primary m-2" onClick={handleOpenAdd}>
             <i className="bi bi-plus"></i> Thêm danh mục
           </button>
-<<<<<<< HEAD
-         
-=======
-          {/* <button className="btn btn-danger m-2" onClick={handleOpenTrash}>
+          <button className="btn btn-danger m-2" onClick={handleOpenTrash}>
             <i className="bi bi-trash"></i> Thùng rác
-          </button> */}
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
+          </button>
         </div>
       </div>
 
@@ -207,63 +152,10 @@ const CategoryList = () => {
           className="form-control"
           placeholder="Tìm kiếm danh mục"
           value={searchTerm}
-          onChange={handelSearch}
+          onChange={handleSearch}
         />
       </div>
 
-<<<<<<< HEAD
-      <table className="table table-bordered table-striped">
-        <thead className="table-dark">
-          <tr>
-            <th>Tên danh mục</th>
-            <th>Slug</th>
-            <th>Mô tả</th>
-            <th>Loại</th>
-            <th>Trạng thái</th>
-            <th>Thứ tự</th>
-            <th>Level</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentCategories.length > 0 ? (
-            currentCategories.map((item) => (
-              <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.slug}</td>
-                <td>{item.description}</td>
-                <td>{item.type}</td>
-                <td>{item.isActive ? "Hiển thị" : "Ẩn"}</td>
-                <td>{item.sortOrder}</td>
-                <td>{item.level}</td>
-                <td>
-                  <div className="d-flex gap-2">
-                    <button
-                      className="btn btn-sm btn-warning"
-                      onClick={() => handleOpenEdit(item)}
-                    >
-                      <i className="bi bi-pencil-square"></i>
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDeleteCategory(item.id)}
-                    >
-                      <i className="bi bi-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="11" className="text-center">
-                Không có danh mục nào phù hợp với tìm kiếm
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-=======
       {isLoading ? (
         <div className="text-center py-4">
           <div className="spinner-border" role="status">
@@ -278,54 +170,61 @@ const CategoryList = () => {
                 <th>Tên danh mục</th>
                 <th>Slug</th>
                 <th>Mô tả</th>
-                <th>Level</th>
-                <th>Sắp xếp</th>
+                <th>Loại</th>
                 <th>Trạng thái</th>
+                <th>Thứ tự</th>
+                <th>Level</th>
                 <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
-              {currentCategories.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>{item.slug}</td>
-                  <td>{item.description}</td>
-                  <td>{item.level}</td>
-                  <td>{item.sortOrder}</td>
-                  <td>
-                    <span className={`badge ${item.isActive ? 'bg-success' : 'bg-secondary'}`}>
-                      {item.isActive ? "Hiển thị" : "Ẩn"}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="d-flex gap-2">
-                      <button
-                        className="btn btn-sm btn-warning"
-                        onClick={() => handleOpenEdit(item)}
-                      >
-                        <i className="bi bi-pencil-square"></i>
-                      </button>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDeleteCategory(item.id)}
-                      >
-                        <i className="bi bi-trash"></i>
-                      </button>
-                    </div>
+              {currentCategories.length > 0 ? (
+                currentCategories.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.name}</td>
+                    <td>{item.slug}</td>
+                    <td>{item.description}</td>
+                    <td>{item.type}</td>
+                    <td>
+                      <span className={`badge ${item.isActive ? 'bg-success' : 'bg-secondary'}`}>
+                        {item.isActive ? "Hiển thị" : "Ẩn"}
+                      </span>
+                    </td>
+                    <td>{item.sortOrder}</td>
+                    <td>{item.level}</td>
+                    <td>
+                      <div className="d-flex gap-2">
+                        <button
+                          className="btn btn-sm btn-warning"
+                          onClick={() => handleOpenEdit(item)}
+                        >
+                          <i className="bi bi-pencil-square"></i>
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDeleteCategory(item.id)}
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="text-center">
+                    Không có danh mục nào phù hợp với tìm kiếm
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
 
           {/* Pagination */}
           <nav className="d-flex justify-content-center">
             <ul className="pagination d-flex flex-row">
               {(() => {
-                const totalPages = Math.ceil(
-                  filteredCategories.length / categoriesPerPage
-                );
+                const totalPages = Math.ceil(filteredCategories.length / categoriesPerPage);
                 const maxPagesToShow = 5;
                 const pages = [];
                 const startPage = Math.max(
@@ -334,22 +233,6 @@ const CategoryList = () => {
                 );
                 const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
 
-<<<<<<< HEAD
-      {/* Category Modal for adding or editing category */}
-      {showEditModal ? (
-            <EditCategoryModal
-            show={showModal}
-            handleClose={() => setShowModal(false)}
-            handleUpdate={handleUpdateCategory}
-            category={showEditModal}
-          />
-      ) : (
-        <CategoryModal
-          show={showModal}
-          handleClose={() => setShowModal(false)} 
-          handleSave={handleSaveCategory}
-        />
-=======
                 if (startPage > 1) {
                   pages.push(
                     <li key="1" className="page-item">
@@ -405,7 +288,6 @@ const CategoryList = () => {
             </ul>
           </nav>
         </>
->>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
       )}
 
       {/* Modal */}
