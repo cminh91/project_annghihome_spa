@@ -14,16 +14,16 @@ const DescriptionEditor = ({ value, onChange }) => {
   };
   return (
     <div>
-      <h3>Mô tả</h3>
+      
       <Editor
-        apiKey="l1iwsjkxm1pu64770dvpd8mlc1nryrqv06spylo8baevggrf"  // Optional: Add your API key if necessary
+        apiKey="6p43yk580n1as7qsximjit9ty7ivemqgnjf6ivlis8kpbxmu"  // Optional: Add your API key if necessary
         value={description}
         init={{
           height: 500,
           menubar: true,
           plugins: [
             'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
-            'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf', 'textcolor', 'fullscreen', 'directionality', 'insertdatetime', 'paste', 'nonbreaking', 'save', 'visualchars', 'wordcount'
+            'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'mentions', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf', 'textcolor', 'fullscreen', 'directionality', 'insertdatetime', 'paste', 'nonbreaking', 'save', 'visualchars', 'wordcount'
           ],
           toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat | forecolor backcolor | fullscreen | insertdatetime nonbreaking | save | preview',  // Toolbar includes color options, full screen, save, etc.
           content_css: '//www.tiny.cloud/css/codepen.min.css',  // Optional: Add custom CSS for styling

@@ -22,8 +22,14 @@ export default function LoginForm() {
         fullName,
         password,
       });
+<<<<<<< HEAD
 
       const token = res.data.accessToken; 
+=======
+      //console.log('API Response:', res.data);
+
+      const token = res.data.accessToken; // Thay đổi từ token sang accessToken
+>>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
       if (token) {
         localStorage.setItem('jwt-token', token);
         authService().login(token);

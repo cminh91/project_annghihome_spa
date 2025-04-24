@@ -114,4 +114,8 @@ const categoryService = {
 
 }
 
+<<<<<<< HEAD
 export default categoryService;
+=======
+export default categoryService;
+>>>>>>> 59c4cef98ebb6fc0a6d548ca4f10f9f53900d236
