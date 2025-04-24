@@ -36,30 +36,21 @@ const productService = {
       categoryId
     } = productData;
 
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('slug', slug);
-    formData.append('description', description || '');
-    formData.append('longDescription', longDescription || '');
-    formData.append('price', price);
-    if (salePrice) {
-      formData.append('salePrice', salePrice);
-    }
-    formData.append('imageUrl', imageUrl || '');
-
-    if (additionalImages && additionalImages.length > 0) {
-      additionalImages.forEach((image) => {
-        formData.append('additionalImages', image);
-      });
-    }
-    formData.append('categoryId', categoryId || '');
+    const productDataToSend = {
+      name: name.trim(),
+      slug: slug.trim(),
+      description: description?.trim() || '',
+      longDescription: longDescription?.trim() || '',
+      price: Number(price),
+      salePrice: salePrice ? Number(salePrice) : null,
+      imageUrl: imageUrl || '',
+      additionalImages: additionalImages || [],
+      categoryId: categoryId || ''
+    };
 
     try {
-      const response = await api.post('/products', formData, {
+      const response = await api.post('/products', productDataToSend, {
         withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
       });
       return response.data;
     } catch (error) {
@@ -68,13 +59,23 @@ const productService = {
     }
   },
 
-  async getAllProducts(page = 1, limit = 10) {
-    console.log('Fetching products with page:', page, 'and limit:', limit);
+  async getAllProducts(page = 1, limit = 10, searchTerm = '', sortBy = 'createdAt', sortOrder = 'DESC') {
+    console.log('Fetching products with page:', page, 'limit:', limit, 'searchTerm:', searchTerm, 'sortBy:', sortBy, 'sortOrder:', sortOrder);
     try {
-      const response = await api.get(`/products?page=${page}&limit=${limit}`);
-      return response.data;
+      let apiUrl = `/products?sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&limit=${limit}`;
+
+      if (searchTerm) { // Only add searchTerm if it's not empty
+        apiUrl += `&searchTerm=${searchTerm}`;
+      }
+      const response = await api.get(apiUrl);
+      return response.data; // API is expected to return { products: [...], total: ... }
     } catch (error) {
       console.error("Error fetching products:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        console.error("Error message from backend:", error.response.data.message);
+      } else {
+        console.error("Error response data:", error.response.data);
+      }
       throw error;
     }
   },
@@ -108,35 +109,27 @@ const productService = {
       images,
     } = productData;
 
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('slug', slug);
-    formData.append('description', description || '');
-    formData.append('longDescription', longDescription || '');
-    formData.append('price', price.toString());
-    if (salePrice) formData.append('salePrice', salePrice.toString());
-    formData.append('inStock', inStock ? 'true' : 'false');
-    formData.append('featured', featured ? 'true' : 'false');
-    formData.append('isActive', isActive ? 'true' : 'false');
-    formData.append('categoryId', categoryId || '');
-    formData.append('specs', specs || '');
-    formData.append('metaTitle', metaTitle || '');
-    formData.append('metaDescription', metaDescription || '');
-    formData.append('metaKeywords', metaKeywords || '');
-
-    if (images && images.length > 0) {
-      images.forEach((img) => {
-        formData.append('images', img);
-      });
-    }
+    const productDataToSend = {
+      name: name.trim(),
+      slug: slug.trim(),
+      description: description?.trim() || '',
+      longDescription: longDescription?.trim() || '',
+      price: Number(price),
+      salePrice: salePrice ? Number(salePrice) : null,
+      inStock: Boolean(inStock),
+      featured: Boolean(featured),
+      isActive: Boolean(isActive),
+      categoryId: categoryId || '',
+      specs: specs || '',
+      metaTitle: metaTitle || '',
+      metaDescription: metaDescription || '',
+      metaKeywords: metaKeywords || '',
+      images: images || []
+    };
 
     try {
-      const response = await api.put(`/products/${id}`, formData, {
+      const response = await api.put(`/products/${id}`, productDataToSend, {
         withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Accept': 'application/json',
-        },
       });
       return response.data;
     } catch (error) {
@@ -155,5 +148,17 @@ const productService = {
     }
   },
 };
+
+async function getCategoriesByType(type) {
+  try {
+    const response = await api.get(`/categories/by-type/${type}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching categories by type ${type}:`, error);
+    throw error;
+  }
+}
+
+productService.getCategoriesByType = getCategoriesByType;
 
 export default productService;

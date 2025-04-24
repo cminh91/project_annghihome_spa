@@ -3,6 +3,7 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import DescriptionEditor from "../../lib/DescriptionEditor";
 import categoryService from "../../../functionservice/categoryService"; //
 import productService from "../../../functionservice/productService"; // Import categoryService
+import uploadService from "../../../functionservice/uploadService"; // Import uploadService
 
 const ProductModal = ({ show, handleClose, handleSave }) => {
   const [formData, setFormData] = useState({
@@ -12,19 +13,14 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
     longDescription: "",
     price: "",
     salePrice: "",
-    inStock: true,
-    featured: false,
-    isActive: true,
+    imageUrl: "",
     categoryId: "", // Category ID will be stored here
-    specs: "",
-    metaTitle: "",
-    metaDescription: "",
-    metaKeywords: "",
-    thumbnail: "",
-    images: [],
+    additionalImages: [],
   });
-
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+  const [selectedImages, setSelectedImages] = useState([]);
   const [categories, setCategories] = useState([]); // State to hold categories
+  const [errors, setErrors] = useState({}); // State to hold validation errors
 
   useEffect(() => {
     if (show) {
@@ -35,24 +31,19 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
         longDescription: "",
         price: "",
         salePrice: "",
-        inStock: true,
-        featured: false,
-        isActive: true,
+        imageUrl: "",
         categoryId: "", // Reset category selection
-        specs: "",
-        metaTitle: "",
-        metaDescription: "",
-        metaKeywords: "",
-        thumbnail: "",
-        images: [],
+        additionalImages: [],
       });
+      setErrors({}); // Reset errors when modal is opened
       fetchCategories(); // Fetch categories when modal is opened
     }
   }, [show]);
 
   const fetchCategories = async () => {
     try {
-      const data = await productService.createProduct(); // Fetch categories from API
+      // Fetch categories of type 'product'
+      const data = await productService.getCategoriesByType('product');
       setCategories(data); // Store categories in state
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -60,12 +51,17 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
   };
 
   // Function to generate slug from the name
-  const generateSlug = (name) => {
-    return name
-      .toLowerCase()
-      .replace(/ /g, "-") // Replace spaces with hyphens
-      .replace(/[^\w-]/g, ""); // Remove any special characters
-  };
+const generateSlug = (name) => {
+  return name
+    .toLowerCase() // Convert to lowercase
+    .normalize('NFD') // Normalize Vietnamese characters
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[đĐ]/g, 'd') // Replace Vietnamese 'd' character
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+    .trim() // Remove leading/trailing spaces
+    .replace(/\s+/g, '-') // Replace multiple spaces with single hyphen
+    .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+};
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -88,24 +84,86 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
     setFormData((prev) => ({ ...prev, longDescription: value }));
   };
 
-  const handleThumbnailUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, thumbnail: url }));
-    }
-  };
+const handleThumbnailUpload = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setSelectedThumbnail(file);
+    setFormData((prev) => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
+  }
+};
 
-  const handleImagesUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const urls = files.map((file) => URL.createObjectURL(file));
-    setFormData((prev) => ({ ...prev, images: urls }));
-  };
+const handleImagesUpload = (e) => {
+  const files = Array.from(e.target.files);
+  if (files.length > 0) {
+    setSelectedImages(files);
+    const imageUrls = files.map(file => URL.createObjectURL(file));
+    setFormData((prev) => ({ ...prev, additionalImages: imageUrls }));
+  }
+};
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleSave(formData);
-    handleClose();
+
+    const newErrors = {};
+    if (!formData.name.trim()) {
+      newErrors.name = "Tên sản phẩm không được để trống.";
+    }
+    if (!formData.slug.trim()) {
+      newErrors.slug = "Slug không được để trống.";
+    }
+    if (!formData.price || Number(formData.price) <= 0) {
+      newErrors.price = "Giá phải là số dương.";
+    }
+    if (formData.salePrice && Number(formData.salePrice) < 0) {
+      newErrors.salePrice = "Giá khuyến mãi không được là số âm.";
+    }
+    if (formData.salePrice && Number(formData.salePrice) > Number(formData.price)) {
+      newErrors.salePrice = "Giá khuyến mãi không được lớn hơn giá gốc.";
+    }
+    if (!formData.categoryId) {
+      newErrors.categoryId = "Vui lòng chọn danh mục.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return; // Stop submission if there are errors
+    }
+
+    setErrors({}); // Clear errors if validation passes
+
+    let uploadedThumbnailUrl = formData.imageUrl;
+    let uploadedImagesUrls = formData.additionalImages;
+
+    try {
+      // Upload thumbnail if selected
+      if (selectedThumbnail) {
+        const urls = await uploadService.uploadImages([selectedThumbnail]);
+        if (urls && urls.length > 0) {
+          uploadedThumbnailUrl = urls[0];
+        }
+      }
+
+      // Upload images if selected
+      if (selectedImages.length > 0) {
+        const urls = await uploadService.uploadImages(selectedImages);
+        if (urls && urls.length > 0) {
+          uploadedImagesUrls = urls;
+        }
+      }
+
+      // Create product with uploaded image URLs
+      const productData = {
+        ...formData,
+        imageUrl: uploadedThumbnailUrl,
+        additionalImages: uploadedImagesUrls
+      };
+
+      handleSave(productData);
+      handleClose();
+    } catch (error) {
+      console.error('Error during product submission:', error);
+      // Handle error appropriately, e.g., show an error message to the user
+    }
   };
 
   return (
@@ -123,8 +181,12 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
+                  isInvalid={!!errors.name}
                   required
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.name}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Slug</Form.Label>
@@ -133,7 +195,11 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
                   value={formData.slug}
                   onChange={handleChange}
                   readOnly // Prevent manual editing of the slug
+                  isInvalid={!!errors.slug}
                 />
+                 <Form.Control.Feedback type="invalid">
+                  {errors.slug}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Giá</Form.Label>
@@ -142,7 +208,11 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
                   type="number"
                   value={formData.price}
                   onChange={handleChange}
+                  isInvalid={!!errors.price}
                 />
+                 <Form.Control.Feedback type="invalid">
+                  {errors.price}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Giá khuyến mãi</Form.Label>
@@ -151,14 +221,18 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
                   type="number"
                   value={formData.salePrice}
                   onChange={handleChange}
+                  isInvalid={!!errors.salePrice}
                 />
+                 <Form.Control.Feedback type="invalid">
+                  {errors.salePrice}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Ảnh đại diện</Form.Label>
                 <Form.Control type="file" onChange={handleThumbnailUpload} />
-                {formData.thumbnail && (
+                {formData.imageUrl && typeof formData.imageUrl === 'string' && (
                   <img
-                    src={formData.thumbnail}
+                    src={formData.imageUrl}
                     alt="Thumbnail"
                     width={100}
                     className="mt-2 rounded"
@@ -173,7 +247,7 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
                   onChange={handleImagesUpload}
                 />
                 <div className="d-flex flex-wrap gap-2 mt-2">
-                  {formData.images.map((img, idx) => (
+                  {Array.isArray(formData.additionalImages) && formData.additionalImages.map((img, idx) => (
                     <img key={idx} src={img} alt="img" width={80} className="rounded" />
                   ))}
                 </div>
@@ -185,6 +259,7 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
                   name="categoryId"
                   value={formData.categoryId}
                   onChange={handleChange}
+                  isInvalid={!!errors.categoryId}
                 >
                   <option value="">Chọn danh mục</option>
                   {categories.map((category) => (
@@ -193,8 +268,11 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
                     </option>
                   ))}
                 </Form.Control>
+                 <Form.Control.Feedback type="invalid">
+                  {errors.categoryId}
+                </Form.Control.Feedback>
               </Form.Group>
-              
+
             </Col>
 
             <Col md={6}>

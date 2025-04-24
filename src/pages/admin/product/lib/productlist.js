@@ -12,21 +12,25 @@ const ProductList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
+  const [sortBy, setSortBy] = useState("createdAt"); // Default sort by createdAt
+  const [sortOrder, setSortOrder] = useState("DESC"); // Default sort order DESC
+  const [totalProducts, setTotalProducts] = useState(0); // State to hold total number of products
 
-  // Fetch products on component mount
+  // Fetch products on component mount or when pagination/search/sort changes
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const productsData = await productService.getAllProducts(currentPage, productsPerPage);
+        const productsData = await productService.getAllProducts(currentPage, productsPerPage, searchTerm, sortBy, sortOrder);
         console.log('Products data:', productsData);
         setProducts(productsData.products);
+        setTotalProducts(productsData.total); // Set total products from API
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
     };
 
     fetchProducts();
-  }, [currentPage, productsPerPage]);
+  }, [currentPage, productsPerPage, searchTerm, sortBy, sortOrder]); // Add dependencies
 
   const handleOpenTrash = () => {
     navigate("/admin/product/trash");
@@ -49,32 +53,38 @@ const ProductList = () => {
     }
   };
 
-  const handleSaveProduct = (newProduct) => {
-    setProducts([...products, { ...newProduct, id: products.length + 1 }]);
+  const handleSaveProduct = async (newProduct) => {
+    try {
+      await productService.createProduct(newProduct);
+      // Fetch products again to update the list after adding a new product
+      const productsData = await productService.getAllProducts(currentPage, productsPerPage);
+      setProducts(productsData.products);
+      setShowModal(false); // Close the modal after saving
+    } catch (error) {
+      console.error("Error creating product:", error);
+      // Handle error appropriately, e.g., display an error message
+    }
   };
 
-  const handleUpdateProduct = (updatedProduct) => {
-    setProducts(
-      products.map((prod) =>
-        prod.id === updatedProduct.id ? updatedProduct : prod
-      )
-    );
-    setShowModal(false); // Close the modal after updating
+  const handleUpdateProduct = async (updatedProduct) => {
+    try {
+      await productService.editProduct(updatedProduct.id, updatedProduct);
+      // Fetch products again to update the list after editing a product
+      const productsData = await productService.getAllProducts(currentPage, productsPerPage);
+      setProducts(productsData.products);
+      setShowModal(false); // Close the modal after updating
+    } catch (error) {
+      console.error("Error updating product:", error);
+      // Handle error appropriately, e.g., display an error message
+    }
   };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
   };
 
-  const sortedProducts = Array.isArray(products) ? [...products].sort((a, b) => b.isActive - a.isActive) : [];
-
-  const filteredProducts = sortedProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+ 
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -115,19 +125,19 @@ const ProductList = () => {
           </tr>
         </thead>
         <tbody>
-          {currentProducts.length > 0 ? (
-            currentProducts.map((item) => (
+          {products.length > 0 ? (
+            products.map((item) => (
               <tr key={item.id}>
                 <td>
                   <img
-                    src={item.thumbnail || "default-image-url.jpg"} // Fallback image URL if none provided
+                    src={item.imageUrl || "default-image-url.jpg"} // Use imageUrl from API
                     alt={item.name}
                     width="80"
                     className="rounded"
                   />
                 </td>
                 <td>{item.name}</td>
-                <td>{item.isActive ? "Hiển thị" : "Ẩn"}</td>
+                <td>{item.slug}</td>
                 <td>
                   <div className="d-flex gap-2">
                     <button
@@ -159,7 +169,8 @@ const ProductList = () => {
       {/* Pagination */}
       <nav className="d-flex justify-content-center">
         <ul className="pagination d-flex flex-row">
-          {Array.from({ length: Math.ceil(filteredProducts.length / productsPerPage) }, (_, index) => (
+          {/* Use totalProducts from state for pagination */}
+          {Array.from({ length: Math.ceil(totalProducts / productsPerPage) }, (_, index) => (
             <li key={index} className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
               <button className="page-link" onClick={() => paginate(index + 1)}>
                 {index + 1}
@@ -175,7 +186,7 @@ const ProductList = () => {
           show={showModal}
           handleClose={() => setShowModal(false)} // Close modal
           handleSave={handleUpdateProduct} // Save updated product
-          product={showEditModal} // Pass product for editing
+          data={showEditModal} // Pass product for editing
         />
       ) : (
         <ProductModal
