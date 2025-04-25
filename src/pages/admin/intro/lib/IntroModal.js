@@ -1,37 +1,45 @@
 import React, { useState } from "react";
-import { Modal, Button, Form, Image } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
+import DescriptionEditor from "../../lib/DescriptionEditor"; 
+import aboutService from "../../../functionservice/aboutService";
 
 const IntroModal = ({ show, handleClose, handleSave }) => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState(""); // danh mục bài viết
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState("");
+  const [mission, setMission] = useState("");
+  const [vision, setVision] = useState("");
+  const [history, setHistory] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file));
-    }
-  };
-
-  const handleSubmit = () => {
-    const newIntro = {
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError("");
+    const newAbout = {
       title,
-      category,
       content,
-      image,
+      mission,
+      vision,
+      history,
     };
-    handleSave(newIntro);
-    handleClose();
 
-    // Reset form
-    setTitle("");
-    setCategory("");
-    setContent("");
-    setImage(null);
-    setPreview("");
+    try {
+      // Call the createAbout service to save the data
+      await aboutService.createAbout(newAbout);
+      handleSave(newAbout); // Optional: If you want to update the parent component's state
+      handleClose(); // Close the modal
+      // Reset form
+      setTitle("");
+      setContent("");
+      setMission("");
+      setVision("");
+      setHistory("");
+    } catch (err) {
+      setError("Failed to save data. Please try again.");
+      console.error("Error saving About:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,46 +60,46 @@ const IntroModal = ({ show, handleClose, handleSave }) => {
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Danh mục</Form.Label>
-            <Form.Control
-              type="text"
-              value={category}
-              placeholder="Ví dụ: Giới thiệu, Tầm nhìn, Sứ mệnh..."
-              onChange={(e) => setCategory(e.target.value)}
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Ảnh đại diện</Form.Label>
-            <Form.Control type="file" accept="image/*" onChange={handleImageChange} />
-            {preview && (
-              <Image
-                src={preview}
-                rounded
-                className="mt-2"
-                style={{ width: "150px", objectFit: "cover" }}
-              />
-            )}
-          </Form.Group>
-
-          <Form.Group className="mb-3">
             <Form.Label>Nội dung bài viết</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={6}
+            <DescriptionEditor
               value={content}
-              placeholder="Nhập nội dung chi tiết..."
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(content) => setContent(content)}
             />
           </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Sứ mệnh</Form.Label>
+            <DescriptionEditor
+              value={mission}
+              onChange={(mission) => setMission(mission)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Tầm nhìn</Form.Label>
+            <DescriptionEditor
+              value={vision}
+              onChange={(vision) => setVision(vision)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Lịch sử</Form.Label>
+            <DescriptionEditor
+              value={history}
+              onChange={(history) => setHistory(history)}
+            />
+          </Form.Group>
+
+          {error && <p className="text-danger">{error}</p>}
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose} disabled={loading}>
           Hủy
         </Button>
-        <Button variant="primary" onClick={handleSubmit}>
-          Lưu bài viết
+        <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+          {loading ? "Đang lưu..." : "Lưu bài viết"}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -152,34 +152,33 @@ const Header = () => {
             <div className="top-info">
               <small className="me-3">
                 <i className="fas fa-map-marker-alt me-2 text-secondary"></i>
-                <a href="#st" className="text-white">
-                  123 Street, New York
+                <a href={storeInfos[0]?.googleMap || '#'} className="text-white">
+                  10B Phan Đình Phùng
                 </a>
               </small>
               <small className="me-3">
-                <i className="fas fa-envelope me-2 text-secondary"></i>
-                <a href="#st" className="text-white">
-                  Email@Example.com
+                <i className="fas fa-phone me-2 text-secondary"></i>
+                <a href= {storeInfos[0]?.hotline || '#'} className="text-white">
+                082 620 4747
                 </a>
               </small>
               <small className="me-3">
                 <i className="fa fa-clock me-2 text-secondary"></i>
                 <a href="#st" className="text-white">
-                  8h - 17h T2 đến T7
+                  {storeInfos[0]?.workingHours}
                 </a>
               </small>
             </div>
-            <div className="top-link">
-              <a href="#st" className="text-white">
-                <small className="mx-2">Terms of Use</small>/{" "}
-              </a>
-              <a href="#st" className="text-white">
-                <small className="mx-2">Sales and Refunds</small>/{" "}
-              </a>
-              <a href="#st" className="text-white">
-                <small className="mx-2">Liên Hệ</small>
-              </a>
-            </div>
+            <div className="top-link d-flex gap-2">
+                <a href="https://zalo.me/" className="text-white" target="_blank" rel="noopener noreferrer">
+                  <i className="fab fa-zalo fa-lg me-2 "></i>
+                  Zalo
+                </a>
+                <a href={storeInfos[0]?.facebook|| '#'} className="text-white" target="_blank" rel="noopener noreferrer">
+                  <i className="fab fa-facebook fa-lg me-2"></i>
+                </a>
+              </div>
+
           </div>
         </div>
 

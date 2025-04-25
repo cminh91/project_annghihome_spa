@@ -3,7 +3,7 @@ import LayoutAdmin from './layouts/admin/index';
 import LayoutFrontend from './layouts/frontend/index';
 import NotFound from './pages/NotFound';
 import RouterAdmin from './router/RouterAdmin';
-import RouterFrontend from './router/RouterFrontend ';
+import RouterFrontend from './router/RouterFrontend';
 function App() {
   let element = useRoutes([
     {

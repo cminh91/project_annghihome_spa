@@ -1,55 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import contactService from "../../../functionservice/contactService"; // Import contactService
 
 const ContactList = () => {
-  // Dữ liệu cứng cho danh sách các liên hệ
-  const [contacts] = useState([
-    {
-      id: "1",
-      name: "Nguyễn Văn A",
-      email: "nguyenvana@example.com",
-      phone: "0123456789",
-      subject: "Hỏi về sản phẩm",
-      message: "Tôi muốn biết thêm thông tin về sản phẩm A.",
-      read: false,
-      createdAt: "2025-04-12T08:30:00",
-      updatedAt: "2025-04-12T09:00:00",
-    },
-    {
-      id: "2",
-      name: "Trần Thị B",
-      email: "tranthib@example.com",
-      phone: "0987654321",
-      subject: "Vấn đề giao hàng",
-      message: "Tôi chưa nhận được đơn hàng của mình.",
-      read: true,
-      createdAt: "2025-04-11T10:00:00",
-      updatedAt: "2025-04-11T11:00:00",
-    },
-    // Thêm dữ liệu ở đây nếu cần
-  ]);
+  const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const handleOpenTrash = () => {   
-    navigate("/admin/contact/trash");
+
+  useEffect(() => {
+    // Check if the user is logged in
+    const token = localStorage.getItem("jwt-token");
+    if (!token) {
+      console.warn("User is not logged in. Redirecting to login...");
+      navigate("/login"); // Redirect to login page if not logged in
+      return;
+    }
+
+    // Fetch contacts when the component mounts
+    const fetchContacts = async () => {
+      try {
+        const data = await contactService.getAllContact();
+        setContacts(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message || "Failed to fetch contacts");
+        setLoading(false);
+      }
     };
 
-  const handleMarkAsRead = (id) => {
-    console.log(`Đánh dấu đã đọc liên hệ với ID: ${id}`);
-    // Thêm logic cập nhật trạng thái 'read' ở đây
+    fetchContacts();
+  }, [navigate]);
+
+  const handleOpenTrash = () => {
+    navigate("/admin/contact/trash");
   };
 
-  const handleDelete = (id) => {
-    console.log(`Xóa liên hệ với ID: ${id}`);
-    // Thêm logic xóa liên hệ ở đây
+  const handleMarkAsRead = async (id) => {
+    console.log(`Marking contact ID ${id} as read`);
+    // Logic to update 'read' status here
   };
+
+  const handleDelete = async (id) => {
+    console.log(`Deleting contact ID ${id}`);
+    try {
+      await contactService.deleteContact(id);
+      setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== id));
+    } catch (err) {
+      setError(err.message || "Failed to delete contact");
+    }
+  };
+
+  if (loading) {
+    return <p>Loading contacts...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
     <Card className="p-4 mt-4 container">
       <h3 className="mb-3">Danh sách Liên hệ</h3>
       <div className="d-flex gap-2 ms-auto mb-3">
-        <Button variant="danger" size="sm">
-            <i className="bi bi-trash me-2" onClick={handleOpenTrash}>thùng rác</i>
+        <Button variant="danger" size="sm" onClick={handleOpenTrash}>
+          <i className="bi bi-trash me-2"></i> Thùng rác
         </Button>
       </div>
       <Table striped bordered hover>

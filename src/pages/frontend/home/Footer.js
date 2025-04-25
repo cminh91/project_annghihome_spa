@@ -11,14 +11,16 @@ const Footer = () => {
             {/* Google Map */}
             <div className="col-lg-3 col-md-6">
               <div className="h-100 rounded overflow-hidden">
-                <iframe
-                  className="w-100 h-100"
-                  style={{ minHeight: "250px", border: 0 }}
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387191.33750346623!2d-73.97968099999999!3d40.6974881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1694259649153!5m2!1sen!2sbd"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Google Map"
-                ></iframe>
+              <iframe
+                title="map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3912.778222884797!2d108.0598662!3d12.6904525!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDQxJzI2LjMiTiAxMDjCsDAzJzM1LjMiRQ!5e0!3m2!1svi!2s!4v1714030501234!5m2!1svi!2s"
+                width="100%"
+                height="250"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+              ></iframe>
+
               </div>
             </div>
 
@@ -54,16 +56,16 @@ const Footer = () => {
               <div className="footer-item">
                 <h4 className="text-white mb-3">Liên Hệ</h4>
                 <p className="mb-2">
-                  <i className="fa fa-map-marker-alt me-2"></i>123 Y Wuong, EaTam, TP BMT, Đắk Lắk
+                  <i className="fa fa-map-marker-alt me-2"></i>10B Phan Đình Phùng P Thành Nhất, Buon Ma Thuot, Vietnam
                 </p>
                 <p className="mb-2">
-                  <i className="fa fa-envelope me-2"></i>hotline@annghia.vn
+                  <i className="fa fa-envelope me-2"></i>hoanghanggldl@gmail.com
                 </p>
                 <p className="mb-2">
-                  <i className="fa fa-phone me-2"></i>0826 204 747
+                  <i className="fa fa-phone me-2"></i>082 620 4747
                 </p>
                 <p className="mb-3">
-                  <i className="fa fa-clock me-2"></i>8h - 17h T2 đến T7
+                  <i className="fa fa-clock me-2"></i>8:00 - 20:00 (T2 - CN)
                 </p>
               </div>
               <div className="d-flex pt-2">
@@ -89,8 +91,7 @@ const Footer = () => {
                   className="mb-3"
                 />
                 <h5 className="text-white mb-2">Giờ làm việc</h5>
-                <p className="mb-1">Thứ 2 - Thứ 7: 8:00 - 17:00</p>
-                <p>Chủ nhật & ngày lễ: Nghỉ</p>
+                <p className="mb-1">8:00 - 20:00 (T2 - CN)</p>
               </div>
             </div>
           </div>

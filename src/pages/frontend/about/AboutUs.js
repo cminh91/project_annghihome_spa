@@ -1,94 +1,59 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import aboutService from "../../functionservice/aboutService"; // Import aboutService
 
 const AboutUs = () => {
+  const [aboutData, setAboutData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAboutData = async () => {
+      try {
+        const data = await aboutService.getAllAbout(); // Fetch data from API
+        // Assuming the API returns an array and we need the first record
+        setAboutData(data[0]); // Get the first item in the array
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to fetch About data");
+        setLoading(false);
+      }
+    };
+
+    fetchAboutData();
+  }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-danger">{error}</p>;
+  }
+
   return (
     <div className="container py-5">
+      {/* Nội dung chính */}
+      <div className="text-center mb-5">
+        <h2 className="mb-3">{aboutData.title}</h2>
+        <p className="w-75 mx-auto">{aboutData.content}</p>
+      </div>
+
       {/* Tầm Nhìn & Sứ Mệnh */}
       <div className="row mb-5">
         <div className="col-md-6">
-          <h2 className="mb-3">Tầm Nhìn</h2>
-          <p>
-            Trở thành biểu tượng niềm tin số 1 Việt Nam về dịch vụ chăm sóc cho Mẹ và Bé trước và sau sinh tại nhà.
-          </p>
+          <h3 className="mb-3">Tầm Nhìn</h3>
+          <p>{aboutData.vision}</p>
         </div>
         <div className="col-md-6">
-          <h2 className="mb-3">Sứ Mệnh</h2>
-          <p>
-            Cam kết mang đến cho cộng đồng dịch vụ Y tế chăm sóc Mẹ & Bé trước và sau sinh tại nhà an toàn nhất,
-            hiệu quả nhất và chuyên nghiệp nhất bằng chính sự trân trọng, đồng cảm và trách nhiệm cao của chúng tôi
-            đối với cuộc sống con người và xã hội.
-          </p>
+          <h3 className="mb-3">Sứ Mệnh</h3>
+          <p>{aboutData.mission}</p>
         </div>
       </div>
 
-      {/* Giá Trị Cốt Lõi */}
+      {/* Lịch Sử */}
       <div className="text-center mb-5">
-        <h2 className="mb-3">Giá Trị Cốt Lõi</h2>
-        <p className="w-75 mx-auto">
-          Trình độ chuyên môn và Y đức của Đội ngũ Bác Sĩ và Điều dưỡng – Sự tận tâm đối với Khách hàng – Đạo đức
-          trong kinh doanh.
-        </p>
-      </div>
-
-      {/* Đội Ngũ */}
-      <div className="mb-5">
-        <h2 className="text-center mb-4">Đội Ngũ Bác Sĩ</h2>
-        <div className="row text-center">
-          <div className="col-md-4 mb-4">
-            <img
-              src="https://imgs.search.brave.com/XbL-3u3ZyLxQYPLO0fh1fi7Ke4TO6GDQy_MAPdY1ZyM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90YW1h/bmhob3NwaXRhbC52/bi93cC1jb250ZW50/L3VwbG9hZHMvMjAx/My8xMS9raG9hLXNh/bi1sZS10aGFuaC1o/dW5nLnBuZw"
-              alt="Bác sĩ 1"
-              className="rounded-circle mb-2"
-              width="120"
-              height="120"
-            />
-            <h5>ThS. BS. CKII. Lê Thanh Hùng</h5>
-            <small>Bệnh viện Quốc tế Mỹ AIH (Phó khoa Phụ Sản)</small>
-          </div>
-
-          <div className="col-md-4 mb-4">
-            <img
-              src="https://imgs.search.brave.com/XbL-3u3ZyLxQYPLO0fh1fi7Ke4TO6GDQy_MAPdY1ZyM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90YW1h/bmhob3NwaXRhbC52/bi93cC1jb250ZW50/L3VwbG9hZHMvMjAx/My8xMS9raG9hLXNh/bi1sZS10aGFuaC1o/dW5nLnBuZw"
-              alt="Bác sĩ 2"
-              className="rounded-circle mb-2"
-              width="120"
-              height="120"
-            />
-            <h5>ThS. Trần Thị Sáng</h5>
-            <small>Bệnh viện Từ Dũ, Bệnh viện FV</small>
-          </div>
-          <div className="col-md-4 mb-4">
-            <img
-              src="https://imgs.search.brave.com/XbL-3u3ZyLxQYPLO0fh1fi7Ke4TO6GDQy_MAPdY1ZyM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90YW1h/bmhob3NwaXRhbC52/bi93cC1jb250ZW50/L3VwbG9hZHMvMjAx/My8xMS9raG9hLXNh/bi1sZS10aGFuaC1o/dW5nLnBuZw"
-              alt="Bác sĩ 3"
-              className="rounded-circle mb-2"
-              width="120"
-              height="120"
-            />
-            <h5>BS. CKI. Huỳnh Khắc Luân</h5>
-            <small>Bệnh viện Nhi Đồng 2</small>
-          </div>
-        </div>
-      </div>
-
-      {/* Vì Sao Chọn Chúng Tôi */}
-      <div>
-        <h2 className="text-center mb-4">Vì Sao Chọn Chúng Tôi?</h2>
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <h5>An Tâm</h5>
-            <p>
-              Dịch vụ chăm sóc Y tế tại nhà uy tín hàng đầu hiện nay và được Sở Y Tế TP.HCM cấp giấy phép hoạt động.
-            </p>
-          </div>
-          <div className="col-md-6 mb-3">
-            <h5>An Toàn - Hiệu Quả</h5>
-            <p>
-              Đội ngũ Bác sĩ uy tín ở các lĩnh vực Sản – Nhi – Chăm sóc sau sinh phụ trách xây dựng liệu trình chăm
-              sóc khoa học toàn diện.
-            </p>
-          </div>
-        </div>
+        <h3 className="mb-3">Lịch Sử</h3>
+        <p className="w-75 mx-auto">{aboutData.history}</p>
       </div>
     </div>
   );

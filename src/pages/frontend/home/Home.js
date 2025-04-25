@@ -4,15 +4,14 @@ import HomeService from "../service/HomeService";
 import { Spinner } from "react-bootstrap";
 import HomeProduct from "../product/HomeProduct";
 import storeinforService from "../../functionservice/storeinforService";
+import HomeTeam from "../team/HomeTeam";
 
 
 const Home = () => {
   const [banners, setBanners] = useState([]);
   const [storeInfos, setStoreInfos] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     const fetchBanners = async () => {
       try {
@@ -272,7 +271,7 @@ const Home = () => {
                 <div className="d-flex align-items-center mt-3 justify-content-center">
                     <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
                     <img
-                    src="logo.png"
+                    src={storeInfos?.favicon}
                     alt="Logo"
                     className="mx-3"
                     style={{ width: "40px", height: "40px" }}
@@ -280,54 +279,15 @@ const Home = () => {
                     <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
                 </div>
                 </div>
-
                 <p className="text-dark mt-3 text-start">
                 An Nghi HOME có Đội ngũ Bác sĩ uy tín hàng đầu hiện nay ở cả 3 lĩnh vực Sản Khoa – Nhi Khoa – Chăm sóc Tiền / Hậu Sản.
                 Đội ngũ Bác sĩ tại An Nghi HOME có rất nhiều năm kinh nghiệm về chuyên môn và đảm trách nhiệm vụ, vị trí công tác quan trọng
                 ở các Bệnh viện hàng đầu Việt Nam như: Bệnh viện Quốc tế Mỹ AIH, Bệnh viện Từ Dũ, Bệnh viện FV, Bệnh viện Nhi Đồng 2, CMI Việt Nam.
                 </p>
             </div>
-
-            <div className="row g-4 mt-4 justify-content-center tab-pane fade show p-0 active">
-                {[ // Danh sách bác sĩ
-                {
-                    name: "ThS. BS. CKII. Lê Thanh Hùng",
-                    hospital: "Bệnh viện Quốc tế Mỹ AIH\nGiảng viên Đại học Y Khoa",
-                    img: "https://imgs.search.brave.com/XbL-3u3ZyLxQYPLO0fh1fi7Ke4TO6GDQy_MAPdY1ZyM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90YW1h/bmhob3NwaXRhbC52/bi93cC1jb250ZW50/L3VwbG9hZHMvMjAx/My8xMS9raG9hLXNh/bi1sZS10aGFuaC1o/dW5nLnBuZw"
-                },
-                {
-                    name: "ThS. Trần Thị Sáng",
-                    hospital: "Bệnh viện Từ Dũ\nBệnh viện FV\nCMI Việt Nam",
-                    img: "https://imgs.search.brave.com/R-bMYVGYnSHtkqG1QhoOXt079eUZCSz_1Jmb-4zKhe0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90YW1h/bmhob3NwaXRhbC52/bi93cC1jb250ZW50/L3VwbG9hZHMvMjAy/Mi8xMi90cmFuLXBo/dW9uZy12eS5wbmc"
-                },
-                {
-                    name: "BS. CKI. Huỳnh Khắc Luân",
-                    hospital: "Bệnh viện Nhi Đồng 2",
-                    img: "https://imgs.search.brave.com/ifFuP4aBFwXayJsDcCEdiwbJe8KaEUZ5HXaiMyPNVmQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9iZW5o/dmllbm1hdHBodXll/bi52bi9fbmV4dC9p/bWFnZT91cmw9aHR0/cDovL3Jlcy5jbG91/ZGluYXJ5LmNvbS9k/endjeGtlbmEvaW1h/Z2UvdXBsb2FkL3Yx/NzM1ODk0MTQ2L2J2/bS9kcXJldmZqOThy/ZmQydDc1ZHRiZy5w/bmcmdz0zODQwJnE9/NzU"
-                }
-                ].map((doctor, index) => (
-                <div key={index} className="col-md-4 col-lg-3 text-center">
-                    <div className="overflow-hidden rounded">
-                    <img
-                        src={doctor.img}
-                        alt={doctor.name}
-                        className="img-fluid rounded transition"
-                        style={{
-                        maxHeight: "200px",
-                        objectFit: "cover",
-                        transition: "transform 0.3s ease-in-out"
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.1)"}
-                        onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
-                    />
-                    </div>
-                    <h5 className="fw-bold mt-2">{doctor.name}</h5>
-                    <p className="text-muted" style={{ whiteSpace: "pre-line" }}>{doctor.hospital}</p>
-                </div>
-                ))}
-            </div>
-            </div>
+            <HomeTeam/>
         </div>
+      </div>
       </div>
 
       {/* vì sao chọn an nghi home */}
