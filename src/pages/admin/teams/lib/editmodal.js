@@ -1,41 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import DescriptionEditor from "../../lib/DescriptionEditor"; 
+import teamService from "../../../functionservice/teamService"; 
 
 const EditTeamMemberModal = ({ show, onClose, member, onUpdate }) => {
   const [name, setName] = useState("");
-  const [position, setPosition] = useState("");
-  const [bio, setBio] = useState("");
-  const [image, setImage] = useState(null);  
-  const [socialLinks, setSocialLinks] = useState("");
+  const [description, setDescription] = useState("");  
+  const [image, setImage] = useState("");
+    const [error, setError] = useState(null);
 
-  // Khi modal mở, gán giá trị của thành viên vào các trường
   useEffect(() => {
     if (member) {
       setName(member.name);
-      setPosition(member.position);
-      setBio(member.bio);
-      setImage(member.image); 
-      setSocialLinks(member.socialLinks);
+      setDescription(member.bio || ""); 
+      setImage(member.image || "");
     }
   }, [member]);
 
-  const handleUpdate = () => {
-    const updatedMember = {
-      ...member,
-      name,
-      position,
-      bio,
-      image,
-      socialLinks,
-      updatedAt: new Date().toISOString(),
-    };
-    onUpdate(updatedMember); // Gọi hàm onUpdate từ props để lưu lại thay đổi
-  };
+  const handleUpdate = async () => {
+    if (!name || !image || !description) {
+      setError("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(file); // Cập nhật ảnh mới
+    try {
+      const updatedMember = {
+        ...member,
+        name,
+        description,
+        image: image || '', 
+        updatedAt: new Date().toISOString(),
+      };
+
+      const updatedData = await teamService.editTeam(member.id, updatedMember);
+      onUpdate(updatedData);
+      onClose();
+    } catch (err) {
+      console.error("Error updating team member:", err);
+      setError("Không thể cập nhật thành viên. Vui lòng thử lại.");
     }
   };
 
@@ -45,9 +47,10 @@ const EditTeamMemberModal = ({ show, onClose, member, onUpdate }) => {
         <Modal.Title>Chỉnh sửa thành viên nhóm</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {error && <div className="alert alert-danger">{error}</div>}
         <Form>
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-12">
               <Form.Group controlId="name">
                 <Form.Label>Họ tên</Form.Label>
                 <Form.Control
@@ -59,48 +62,24 @@ const EditTeamMemberModal = ({ show, onClose, member, onUpdate }) => {
               </Form.Group>
             </div>
 
-            <div className="col-md-6">
-              <Form.Group controlId="position">
-                <Form.Label>Chức vụ</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={position}
-                  onChange={(e) => setPosition(e.target.value)}
-                  required
+            <div className="col-md-12">
+              <Form.Group controlId="description">
+                <Form.Label>Thông tin về thành viên</Form.Label>
+                <DescriptionEditor 
+                  value={description} 
+                  onChange={setDescription} 
                 />
               </Form.Group>
             </div>
 
             <div className="col-md-12">
-              <Form.Group controlId="bio">
-                <Form.Label>Thông tin về thành viên</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                />
-              </Form.Group>
-            </div>
-
-            <div className="col-md-6">
               <Form.Group controlId="image">
-                <Form.Label>Ảnh</Form.Label>
-                <Form.Control
-                  type="file"
-                  onChange={handleImageChange} // Lấy ảnh từ người dùng
-                />
-                {image && <div>Ảnh đã chọn: {image.name}</div>}
-              </Form.Group>
-            </div>
-
-            <div className="col-md-6">
-              <Form.Group controlId="socialLinks">
-                <Form.Label>Liên kết xã hội</Form.Label>
+                <Form.Label>URL ảnh</Form.Label>
                 <Form.Control
                   type="text"
-                  value={socialLinks}
-                  onChange={(e) => setSocialLinks(e.target.value)}
+                  value={image || ""}
+                  onChange={(e) => setImage(e.target.value)}
+                  placeholder="Nhập URL ảnh (ví dụ: https://example.com/image.jpg)"
                 />
               </Form.Group>
             </div>
@@ -112,7 +91,7 @@ const EditTeamMemberModal = ({ show, onClose, member, onUpdate }) => {
         <Button variant="secondary" onClick={onClose}>
           Đóng
         </Button>
-        <Button variant="primary" onClick={handleUpdate}>
+        <Button variant="primary" onClick={handleUpdate} disabled={!name || !image || !description}>
           Cập nhật
         </Button>
       </Modal.Footer>

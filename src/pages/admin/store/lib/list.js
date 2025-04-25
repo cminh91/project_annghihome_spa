@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination } from "react-bootstrap";
+import { Table, Button } from "react-bootstrap";
 import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import EditStoreModal from "./editmodal";
 import CreateStoreModal from "./createmodal";
@@ -33,7 +33,7 @@ const StoreList = () => {
     const startIndex = (currentPage - 1) * perPage;
     const selectedStores = stores.slice(startIndex, startIndex + perPage);
     setPaginatedStores(selectedStores);
-  }, [currentPage, stores]);
+  }, [currentPage, perPage, stores]);
 
   const handleEdit = (store) => {
     setCurrentStore(store);
