@@ -61,7 +61,7 @@ const blogService = {
   async getAllBlogs() {
     try {
       const response = await api.get('/posts');
-      return response.data;
+      return response.data.posts;
     } catch (error) {
       console.error("Error fetching blogs:", error);
       throw error;

@@ -13,7 +13,7 @@ const CategoryDetail = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchServicesAndProducts = async () => {
+    const fetchCategoryById = async () => {
       try {
         // Fetch all services
         const serviceData = await serviceService.getAllServices(1, 6);
@@ -29,9 +29,9 @@ const CategoryDetail = () => {
 
         // Fetch all blogs
         const blogData = await blogService.getAllBlogs();
-        console.log(blogData)
-        const filteredBlogs = blogData.posts.filter(
-          posts => posts.category?.slug === slug && posts.category?.type === "post"
+        console.log(blogData);
+        const filteredBlogs = blogData.filter(
+          post => post.slug === slug 
         );
         setPosts(filteredBlogs);
 
@@ -42,7 +42,7 @@ const CategoryDetail = () => {
       }
     };
 
-    fetchServicesAndProducts();
+    fetchCategoryById();
   }, [slug]);
 
   if (loading) {
@@ -84,7 +84,6 @@ const CategoryDetail = () => {
       {/* Display services */}
       {services.length > 0 && (
         <div>
-          <h2>Services in this category:</h2>
           <div className="row g-4">
             {services.map((service) => (
               <div key={service.id} className="col-md-6 col-lg-4 col-xl-3">
@@ -109,19 +108,16 @@ const CategoryDetail = () => {
       {/* Display blogs */}
       {posts.length > 0 && (
         <div>
-          <h3>Blogs in this category:</h3>
-          <div className="row g-4">
+          <div className="">
             {posts.map((post) => (
-              <div key={post.id} className="col-md-6 col-lg-4 col-xl-3">
-                <div className="card">
+              <div key={post.id} className="">
+                <div className="text-center">
                   <img
                     src={post.imageUrl || "/default-image.jpg"}
                     className="card-img-top"
                     alt={post.title || "Blog post image"}
                   />
                   <div className="card-body">
-                    <h5 className="card-title">{post.title}</h5>
-                    {/* Check if content is available */}
                     <div
                       className="card-text"
                       dangerouslySetInnerHTML={{
@@ -135,6 +131,7 @@ const CategoryDetail = () => {
           </div>
         </div>
       )}
+
 
 
       {/* If no products, services, or blogs */}
