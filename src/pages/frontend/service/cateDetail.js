@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import serviceService from "../../functionservice/servicesFunction";
 import productService from "../../functionservice/productService";
 import blogService from "../../functionservice/BlogService";
+import { useNavigate } from "react-router-dom";
+
 
 const CategoryDetail = () => {
   const { slug } = useParams();
@@ -11,6 +13,8 @@ const CategoryDetail = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchCategoryById = async () => {
@@ -51,7 +55,14 @@ const CategoryDetail = () => {
 
   if (error) {
     return <div>{error}</div>;
-  }
+  } 
+  const handleProductClick = (id) => {
+    navigate(`/san-pham/${id}`);
+  };
+  const handleServiceClick = (id) => {
+    navigate(`/dich-vu/${id}`);
+  };
+
 
   return (
     <div className="container py-5">
@@ -60,9 +71,9 @@ const CategoryDetail = () => {
       {/* Display products if category type is 'product' */}
       {products.length > 0 && (
         <div>
-          <div className="row g-4">
+          <div className="row g-4 ">
             {products.map((product) => (
-              <div key={product.id} className="col-md-6 col-lg-4 col-xl-3">
+              <div key={product.id} className="col-md-6 col-lg-4 col-xl-3" type="button" onClick={() => handleProductClick(product.id)}>
                 <div className="card">
                   <img
                     src={product.imageUrl || "/default-image.jpg"}
@@ -86,7 +97,7 @@ const CategoryDetail = () => {
         <div>
           <div className="row g-4">
             {services.map((service) => (
-              <div key={service.id} className="col-md-6 col-lg-4 col-xl-3">
+              <div key={service.id} className="col-md-6 col-lg-4 col-xl-3" type="button" onClick={() => handleServiceClick(service.id)}>
                 <div className="card">
                   <img
                     src={service.image || "/default-image.jpg"}
@@ -108,9 +119,9 @@ const CategoryDetail = () => {
       {/* Display blogs */}
       {posts.length > 0 && (
         <div>
-          <div className="">
+          <div className="" >
             {posts.map((post) => (
-              <div key={post.id} className="">
+              <div key={post.id} >
                 <div className="text-center">
                   <img
                     src={post.imageUrl || "/default-image.jpg"}

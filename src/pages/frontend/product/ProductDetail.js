@@ -40,7 +40,7 @@ const ProductDetail = () => {
   return (
     <div>
       <Header />
-      <main style={{ paddingTop: "80px" }}>
+      <main style={{ paddingTop: "110px" }}>
         <div className="container py-5">
           <h1 className="text-center mb-4">{product.name}</h1>
           <div className="row">
