@@ -4,8 +4,6 @@ import DescriptionEditor from "../../lib/DescriptionEditor";
 
 const CreateAboutModal = ({ show, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    title: "",
-    content: "",
     mission: "",
     vision: "",
     history: "",
@@ -15,8 +13,6 @@ const CreateAboutModal = ({ show, onClose, onSave }) => {
     if (show) {
       // Reset khi mở modal
       setFormData({
-        title: "",
-        content: "",
         mission: "",
         vision: "",
         history: "",
@@ -24,26 +20,17 @@ const CreateAboutModal = ({ show, onClose, onSave }) => {
     }
   }, [show]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // Xử lý thay đổi cho các trường sử dụng DescriptionEditor
+  const handleEditorChange = (name, content) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleEditorChange = (content) => {
-    setFormData((prev) => ({
-      ...prev,
-      content,
+      [name]: content,
     }));
   };
 
   const handleSubmit = () => {
     const newItem = {
       ...formData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
     onSave(newItem);
     onClose();
@@ -57,54 +44,39 @@ const CreateAboutModal = ({ show, onClose, onSave }) => {
       <Modal.Body>
         <Form>
           <Row>
+            <Col md={12}>
+            </Col>
+          </Row>
+          <Row>
             <Col md={6}>
-              <Form.Group controlId="title" className="mb-3">
-                <Form.Label>Tiêu đề</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  placeholder="Nhập tiêu đề"
-                />
-              </Form.Group>
               <Form.Group controlId="mission" className="mb-3">
                 <Form.Label>Sứ mệnh</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="mission"
+                <DescriptionEditor
                   value={formData.mission}
-                  onChange={handleChange}
+                  onChange={(content) => handleEditorChange("mission", content)}
                   placeholder="Nhập sứ mệnh"
-                />
-              </Form.Group>
-              <Form.Group controlId="vision" className="mb-3">
-                <Form.Label>Tầm nhìn</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="vision"
-                  value={formData.vision}
-                  onChange={handleChange}
-                  placeholder="Nhập tầm nhìn"
-                />
-              </Form.Group>
-              <Form.Group controlId="history" className="mb-3">
-                <Form.Label>Lịch sử</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="history"
-                  value={formData.history}
-                  onChange={handleChange}
-                  placeholder="Nhập lịch sử phát triển"
                 />
               </Form.Group>
             </Col>
             <Col md={6}>
-              <Form.Group controlId="content" className="mb-3">
-                <Form.Label>Nội dung</Form.Label>
+              <Form.Group controlId="vision" className="mb-3">
+                <Form.Label>Tầm nhìn</Form.Label>
                 <DescriptionEditor
-                  value={formData.content}
-                  onChange={handleEditorChange}
+                  value={formData.vision}
+                  onChange={(content) => handleEditorChange("vision", content)}
+                  placeholder="Nhập tầm nhìn"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <Form.Group controlId="history" className="mb-3">
+                <Form.Label>Lịch sử</Form.Label>
+                <DescriptionEditor
+                  value={formData.history}
+                  onChange={(content) => handleEditorChange("history", content)}
+                  placeholder="Nhập lịch sử phát triển"
                 />
               </Form.Group>
             </Col>
