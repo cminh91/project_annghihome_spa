@@ -376,7 +376,7 @@ const Home = () => {
             </div>
 
             {/* Cảm nhận khách hàng */}
-            <div className="row g-4 mt-5">
+            {/* <div className="row g-4 mt-5">
             <div className="col-lg-12">
                 <div id="testimonialCarousel" className="carousel slide" data-bs-ride="carousel">
                 <div className="carousel-inner">
@@ -419,7 +419,7 @@ const Home = () => {
                 </div>
                 </div>
             </div>
-            </div>
+            </div> */}
 
             {/* Slider Video */}
             <VideoList/>
@@ -445,9 +445,8 @@ const Home = () => {
       </div>
 
       {/* hình ảnh */}
-      <div className="container-fluid py-5" style={{ backgroundColor: 'whitesmoke' }}>
+      {/* <div className="container-fluid py-5" style={{ backgroundColor: 'whitesmoke' }}>
         <div className="container py-5">
-            {/* Tiêu đề */}
             <div className="row g-4 justify-content-center">
             <div className="col-lg-4 text-center">
                 <h1 className="fw-bold" style={{ fontSize: '36px', color: '#0000FF' }}>Hình ảnh</h1>
@@ -459,12 +458,10 @@ const Home = () => {
             </div>
             </div>
 
-            {/* Slider hình ảnh */}
             <div className="row mt-5">
             <div className="col-lg-12">
                 <div id="videoCarousel" className="carousel slide" data-bs-ride="carousel">
                 <div className="carousel-inner">
-                    {/* Slide 1 */}
                     <div className="carousel-item active">
                     <div className="row g-4 justify-content-center">
                         {[...Array(4)].map((_, i) => (
@@ -483,8 +480,6 @@ const Home = () => {
                         ))}
                     </div>
                     </div>
-
-                    {/* Slide 2 */}
                     <div className="carousel-item">
                     <div className="row g-4 justify-content-center">
                         {[...Array(4)].map((_, i) => (
@@ -517,7 +512,7 @@ const Home = () => {
             </div>
             </div>
         </div>
-     </div>
+     </div> */}
 
      {/* blog */}
      <div className="container-fluid fruite py-5" style={{backgroundColor:"skyblue"}}>
