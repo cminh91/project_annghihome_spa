@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import videoService from "../../../functionservice/videoService";
 
 const EditVideoModal = ({ show, onClose, onSave, initialData }) => {
   const [formData, setFormData] = useState({
     id: "",
     tieuDe: "",
-    linkYtb: "", 
+    linkYtb: "",
   });
 
+  // Khi modal mở, cập nhật form với dữ liệu ban đầu
   useEffect(() => {
     if (initialData) {
       setFormData({
         id: initialData.id,
-        tieuDe: initialData.tieuDe || "",
-        linkYtb: initialData.linkYtb || "",
+        tieuDe: initialData.tieuDe,
+        linkYtb: initialData.linkYtb,
       });
     }
   }, [initialData]);
@@ -27,34 +27,34 @@ const EditVideoModal = ({ show, onClose, onSave, initialData }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    const { id, ...videoDataWithoutId } = formData;
-
-
-    try {
-      const updatedVideo = await videoService.editVideo(formData.id, videoDataWithoutId);
-      console.log("Video updated successfully:", updatedVideo);
-
-      onSave(updatedVideo);
-      onClose();
-    } catch (error) {
-      console.error("Error updating video:", error);
+    if (!formData.tieuDe || !formData.linkYtb) {
+      alert("Vui lòng nhập đầy đủ thông tin.");
+      return;
     }
+
+    // Save and close modal
+    onSave(formData);
+    onClose();
+    setFormData({  id: "",tieuDe: "", linkYtb: "" });  // Reset form data after saving
+  };
+
+  const handleClose = () => {
+    onClose();
+    setFormData({ id: "", tieuDe: "", linkYtb: "" });  // Reset form data when closing
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
+    <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Chỉnh sửa video</Modal.Title>
+        <Modal.Title>Chỉnh sửa Video</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Control type="hidden" name="id" value={formData.id} />
-
+        <input type="hidden" name="id" value={formData.id} />
           <Form.Group className="mb-3">
-            <Form.Label>Tựa đề</Form.Label>
+            <Form.Label>Tiêu Đề</Form.Label>
             <Form.Control
               type="text"
               name="tieuDe"
@@ -71,7 +71,6 @@ const EditVideoModal = ({ show, onClose, onSave, initialData }) => {
               name="linkYtb"
               value={formData.linkYtb}
               onChange={handleChange}
-              placeholder="https://www.youtube.com/watch?v=..."
               required
             />
           </Form.Group>

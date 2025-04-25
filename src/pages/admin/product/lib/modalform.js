@@ -60,13 +60,13 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
   const generateSlug = (name) => {
     return name
       .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[đĐ]/g, 'd')
-      .replace(/[^a-z0-9\s-]/g, '')
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[đĐ]/g, "d")
+      .replace(/[^a-z0-9\s-]/g, "")
       .trim()
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-');
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
   };
 
   const handleChange = (e) => {
@@ -75,8 +75,8 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
       const generatedSlug = generateSlug(value);
       setFormData((prev) => ({
         ...prev,
-        [name]: value,
         name: value,
+        slug: generatedSlug,
       }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -91,7 +91,6 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedThumbnail(file);
-      setFormData((prev) => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
     }
   };
 
@@ -99,8 +98,6 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
       setSelectedImages(files);
-      const imageUrls = files.map(file => URL.createObjectURL(file));
-      setFormData((prev) => ({ ...prev, additionalImages: imageUrls }));
     }
   };
 

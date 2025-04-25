@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import DescriptionEditor from "../../lib/DescriptionEditor";
-<<<<<<< HEAD
-import serviceService from "../../../functionservice/servicesFunction"; // Import serviceService
-=======
 import serviceService from "../../../functionservice/serviceService"; // Import serviceService
->>>>>>> main
 import uploadService from "../../../functionservice/uploadService"; // Import uploadService
 
 const ServiceModal = ({ show, handleClose, handleSave }) => {

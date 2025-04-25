@@ -24,7 +24,7 @@ import ContactTrash from '../pages/admin/contact/ContactTrash';
 import ServicePage from '../pages/admin/service/ServicePage';
 
 import ImagePage from '../pages/admin/image/ImagePage';
-import VideoPages from '../pages/admin/video/VideoPages';
+import VideoPage from '../pages/admin/video/VideoPage';
 
 import SliderPage from '../pages/admin/banner/SliderPage';
 import SliderTrash from '../pages/admin/banner/SliderTrash';
@@ -75,8 +75,7 @@ const RouterAdmin = [
   { path: '/admin/service', element: <PrivateRoute><ServicePage /></PrivateRoute> },
 
   { path: '/admin/image', element: <PrivateRoute><ImagePage /></PrivateRoute> },
-
-  {path: '/admin/video', element:<PrivateRoute><VideoPages/></PrivateRoute>},
+  {path : '/admin/video', element:<PrivateRoute><VideoPage /></PrivateRoute> },
 
 
   { path: '/admin/slider', element: <PrivateRoute><SliderPage /></PrivateRoute> },

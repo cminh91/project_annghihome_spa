@@ -52,10 +52,7 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-<<<<<<< HEAD
-=======
           {/* Tên & Slug */}
->>>>>>> main
           <Row className="mb-3">
             <Col md={6}>
               <Form.Label>Tên danh mục</Form.Label>
@@ -86,10 +83,7 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
             />
           </Form.Group>
 
-<<<<<<< HEAD
-=======
           {/* Loại, Trạng thái, Level */}
->>>>>>> main
           <Row className="mb-3">
             <Col md={4}>
               <Form.Label>Loại</Form.Label>
@@ -122,10 +116,7 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
             </Col>
           </Row>
 
-<<<<<<< HEAD
-=======
           {/* Thứ tự hiển thị */}
->>>>>>> main
           <Form.Group className="mb-3">
             <Form.Label>Thứ tự hiển thị</Form.Label>
             <Form.Control
@@ -134,8 +125,6 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
               onChange={(e) => setSortOrder(Number(e.target.value))}
             />
           </Form.Group>
-<<<<<<< HEAD
-=======
 
           <Form.Group className="mb-3">
             <Form.Label>Level</Form.Label>
@@ -166,7 +155,6 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
               <option value="service">Dịch vụ</option>
             </Form.Select>
           </Form.Group>
->>>>>>> main
         </Form>
       </Modal.Body>
       <Modal.Footer>

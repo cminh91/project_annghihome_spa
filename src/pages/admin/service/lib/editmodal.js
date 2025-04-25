@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import DescriptionEditor from "../../lib/DescriptionEditor";
-<<<<<<< HEAD
-import serviceService from "../../../functionservice/servicesFunction"; // Import serviceService
-=======
 import serviceService from "../../../functionservice/serviceService"; // Import serviceService
->>>>>>> main
 import uploadService from "../../../functionservice/uploadService"; // Import uploadService
 
 const EditServiceModal = ({ show, handleClose, handleSave, data }) => { // Receive 'data' prop
@@ -17,13 +13,8 @@ const EditServiceModal = ({ show, handleClose, handleSave, data }) => { // Recei
     description: "",
     longdescription: "",
     image: "",
-<<<<<<< HEAD
-    price: "",
-    salePrice: "",
-=======
     price: 0,
     salePrice: 0,
->>>>>>> main
   });
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -244,10 +235,7 @@ const EditServiceModal = ({ show, handleClose, handleSave, data }) => { // Recei
                 <Form.Label>Ảnh đại diện</Form.Label>
                 <Form.Control type="file" onChange={handleImageUpload} />
                 {formData.image && typeof formData.image === 'string' && (
-<<<<<<< HEAD
-=======
                   // eslint-disable-next-line jsx-a11y/img-redundant-alt
->>>>>>> main
                   <img
                     src={formData.image}
                     alt="Service Image"
@@ -337,11 +325,7 @@ const EditServiceModal = ({ show, handleClose, handleSave, data }) => { // Recei
             </Button>
             <Button type="submit" variant="primary">
               Lưu thay đổi
-<<<<<<< HEAD
-            </Button> {/* Updated button text */}
-=======
             </Button>
->>>>>>> main
           </div>
         </Form>
       </Modal.Body>

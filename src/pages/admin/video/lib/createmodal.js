@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import videoService from "../../../functionservice/videoService";
 
 const CreateVideoModal = ({ show, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -16,26 +15,6 @@ const CreateVideoModal = ({ show, onClose, onSave }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.tieuDe || !formData.linkYtb) {
-      alert("Vui lòng điền đầy đủ tiêu đề và link YouTube.");
-      return;
-    }
-
-    try {
-      const newVideo = await videoService.createVideo(formData);
-      onSave(newVideo);
-      onClose();
-      setFormData({
-        tieuDe: "",
-        linkYtb: "",
-      });
-    } catch (error) {
-      alert("Lỗi khi lưu video.");
-      console.error("Error saving video:", error);
-    }
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -53,13 +32,11 @@ const CreateVideoModal = ({ show, onClose, onSave }) => {
   return (
     <Modal show={show} onHide={onClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Thêm Video mới</Modal.Title>
         <Modal.Title>Thêm Video Mới</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
-            <Form.Label>Tiêu đề</Form.Label>
             <Form.Label>Tiêu Đề</Form.Label>
             <Form.Control
               type="text"
@@ -77,20 +54,17 @@ const CreateVideoModal = ({ show, onClose, onSave }) => {
               name="linkYtb"
               value={formData.linkYtb}
               onChange={handleChange}
-              placeholder="https://www.youtube.com/watch?v=..."
               required
             />
           </Form.Group>
 
           <Button variant="primary" type="submit">
-            Lưu video
             Lưu Video
           </Button>
         </Form>
       </Modal.Body>
     </Modal>
   );
-}
 };
 
 export default CreateVideoModal;

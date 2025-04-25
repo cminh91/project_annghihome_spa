@@ -127,8 +127,4 @@ const EditCategoryModal = ({ show, handleClose, handleSave, category }) => {
   );
 };
 
-<<<<<<< HEAD
 export default EditCategoryModal;
-=======
-export default EditCategoryModal;
->>>>>>> main
