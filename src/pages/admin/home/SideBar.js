@@ -62,6 +62,7 @@ const SideBar = () => {
             { to: "/admin/intro", icon: "ti ti-id-badge-2", label: "Giới Thiệu" },
             { to: "/admin/contact", icon: "ti ti-phone", label: "Liên Hệ" },
             { to: "/admin/image", icon: "ti ti-photo", label: "Hình Ảnh" },
+            { to: "/admin/video", icon: "ti ti-photo", label: "Videos" },
             { to: "/admin/cart", icon: "ti ti-shopping-cart", label: "Cart" },
             { to: "/admin/users", icon: "ti ti-users", label: "Người dùng" },
           ].map(({ to, icon, label }) => (
