@@ -1,18 +1,33 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { Table, Button } from "react-bootstrap";
+=======
+import { Table, Button, Spinner, Alert } from "react-bootstrap";
+>>>>>>> main
 import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import CreateTeamMemberModal from "./createmodal";
 import EditTeamMemberModal from "./editmodal";
+<<<<<<< HEAD
 import teamService from "../../../functionservice/teamService"; // Adjust the path to your teamService file
 
 const TeamMemberList = () => {
   const [teamMembers, setTeamMembers] = useState([]);
+=======
+import teamService from "../../../functionservice/teamService"; // Import teamService
+
+const TeamMemberList = () => {
+  const [teamMembers, setTeamMembers] = useState([]); // Initialize with empty array
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+>>>>>>> main
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const navigate = useNavigate();
 
+<<<<<<< HEAD
   // Fetch team members on component mount
   useEffect(() => {
     const fetchTeams = async () => {
@@ -31,11 +46,41 @@ const TeamMemberList = () => {
       const updatedTeamMembers = teamMembers.filter((member) => member.id !== id);
       setTeamMembers(updatedTeamMembers);
       teamService.deleteTeam(id); // Add the call to delete member in backend
+=======
+  // Function to fetch team members
+  const fetchTeamMembers = async () => {
+    try {
+      setLoading(true);
+      const data = await teamService.getAllTeams();
+      setTeamMembers(data);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching team members:", err);
+      setError("Không thể tải danh sách thành viên đội ngũ.");
+    } finally {
+      setLoading(false);
+>>>>>>> main
     }
   };
 
-  const handleEdit = (id) => {
-    const member = teamMembers.find((member) => member.id === id);
+  // Fetch team members on component mount
+  useEffect(() => {
+    fetchTeamMembers();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Bạn có chắc muốn xóa thành viên này không?")) {
+      try {
+        await teamService.deleteTeam(id);
+        fetchTeamMembers(); // Refetch list after deletion
+      } catch (err) {
+        console.error("Error deleting team member:", err);
+        setError("Không thể xóa thành viên đội ngũ.");
+      }
+    }
+  };
+
+  const handleEdit = (member) => { // Pass member object instead of id
     setSelectedMember(member);
     setShowEditModal(true);
   };
@@ -44,6 +89,7 @@ const TeamMemberList = () => {
     setShowCreateModal(true);
   };
 
+<<<<<<< HEAD
   const handleSave = (newMember) => {
     setTeamMembers((prevMembers) => [...prevMembers, newMember]);
     setShowCreateModal(false);
@@ -55,7 +101,37 @@ const TeamMemberList = () => {
     );
     setTeamMembers(updatedTeamMembers);
     setShowEditModal(false);
+=======
+  const handleSave = async (newMemberData) => {
+    try {
+      await teamService.createTeam(newMemberData);
+      fetchTeamMembers(); // Refetch list after creation
+      setShowCreateModal(false);
+    } catch (err) {
+      console.error("Error creating team member:", err);
+      setError("Không thể thêm thành viên đội ngũ.");
+    }
   };
+
+  const handleUpdate = async (updatedMemberData) => {
+    try {
+      await teamService.editTeam(selectedMember.id, updatedMemberData);
+      fetchTeamMembers(); // Refetch list after update
+      setShowEditModal(false);
+    } catch (err) {
+      console.error("Error updating team member:", err);
+      setError("Không thể cập nhật thành viên đội ngũ.");
+    }
+>>>>>>> main
+  };
+
+  if (loading) {
+    return <Spinner animation="border" />;
+  }
+
+  if (error) {
+    return <Alert variant="danger">{error}</Alert>;
+  }
 
   return (
     <div>
@@ -75,8 +151,13 @@ const TeamMemberList = () => {
         <thead>
           <tr>
             <th>Họ tên</th>
+<<<<<<< HEAD
             <th>mô tả</th>
             <th>Hình ảnh</th>
+=======
+            <th>Hình ảnh</th>
+            <th>Mô tả</th>
+>>>>>>> main
             <th>Hành động</th>
           </tr>
         </thead>
@@ -84,6 +165,7 @@ const TeamMemberList = () => {
           {teamMembers.map((member) => (
             <tr key={member.id}>
               <td>{member.name}</td>
+<<<<<<< HEAD
               <td>{member.description || "N/A"}</td>
               <td>
                 {member.image ? (
@@ -92,11 +174,22 @@ const TeamMemberList = () => {
                   "N/A"
                 )}
               </td>
+=======
+              <td>
+              <img
+                  src={member.image || "default-image-url.jpg"}
+                  alt={member.name}
+                  width="80"
+                  className="rounded"
+                />
+              </td>
+              <td>{member.description}</td>
+>>>>>>> main
               <td className="d-flex justify-content-center">
                 <Button
                   variant="warning"
                   size="sm"
-                  onClick={() => handleEdit(member.id)}
+                  onClick={() => handleEdit(member)} // Pass member object
                   className="me-2"
                 >
                   <FaEdit />
@@ -113,6 +206,7 @@ const TeamMemberList = () => {
           ))}
         </tbody>
       </Table>
+
       <CreateTeamMemberModal
         show={showCreateModal}
         onClose={() => setShowCreateModal(false)}
@@ -122,8 +216,9 @@ const TeamMemberList = () => {
         <EditTeamMemberModal
           show={showEditModal}
           onClose={() => setShowEditModal(false)}
+          onSave={handleUpdate}  
           member={selectedMember}
-          onUpdate={handleUpdate}
+          
         />
       )}
     </div>

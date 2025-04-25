@@ -1,31 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import DescriptionEditor from "../../lib/DescriptionEditor";
-<<<<<<< HEAD
-import serviceService from "../../../functionservice/servicesFunction"; // Import serviceService
-=======
 import serviceService from "../../../functionservice/serviceService"; // Import serviceService
->>>>>>> main
 import uploadService from "../../../functionservice/uploadService"; // Import uploadService
 
-const ServiceModal = ({ show, handleClose, handleSave }) => {
+const EditServiceModal = ({ show, handleClose, handleSave, data }) => { // Receive 'data' prop
   const [formData, setFormData] = useState({
+    id: "", // Add ID for editing
     name: "",
     slug: "",
     categoryId: "",
     description: "",
     longdescription: "",
-    image: "", // Use 'image' for the main image URL
-    price: "",
-    salePrice: "",
+    image: "",
+    price: 0,
+    salePrice: 0,
   });
-  const [selectedThumbnail, setSelectedThumbnail] = useState(null); // Use for the single image file
-  const [categories, setCategories] = useState([]); // State to hold categories
-  const [errors, setErrors] = useState({}); // State to hold validation errors
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (show) {
+    if (show && data) { // Populate form when modal is shown and data is available
       setFormData({
+        id: data.id || "",
+        name: data.name || "",
+        slug: data.slug || "",
+        categoryId: data.categoryId || "",
+        description: data.description || "",
+        longdescription: data.longdescription || "",
+        image: data.image || "",
+        price: data.price || "",
+        salePrice: data.salePrice || "",
+      });
+      setSelectedThumbnail(null); // Reset selected file
+      setErrors({}); // Reset errors
+      fetchCategories(); // Fetch categories
+    } else if (show && !data) {
+       // Handle case where modal is shown but no data is passed (shouldn't happen with proper usage)
+       console.warn("EditServiceModal opened without data.");
+       setFormData({ // Reset form if no data
+        id: "",
         name: "",
         slug: "",
         categoryId: "",
@@ -35,33 +50,31 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
         price: "",
         salePrice: "",
       });
-      setSelectedThumbnail(null); // Reset selected file
-      setErrors({}); // Reset errors when modal is opened
-      fetchCategories(); // Fetch categories when modal is opened
+      setSelectedThumbnail(null);
+      setErrors({});
+      fetchCategories();
     }
-  }, [show]);
+  }, [show, data]); // Depend on show and data
 
   const fetchCategories = async () => {
     try {
-      // Fetch categories of type 'service'
       const data = await serviceService.getCategoriesByType('service');
-      setCategories(data); // Store categories in state
+      setCategories(data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
 
-  // Function to generate slug from the name
   const generateSlug = (name) => {
     return name
-      .toLowerCase() // Convert to lowercase
-      .normalize('NFD') // Normalize Vietnamese characters
-      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-      .replace(/[đĐ]/g, 'd') // Replace Vietnamese 'd' character
-      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-      .trim() // Remove leading/trailing spaces
-      .replace(/\s+/g, '-') // Replace multiple spaces with single hyphen
-      .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[đĐ]/g, 'd')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
   };
 
   const handleChange = (e) => {
@@ -69,12 +82,11 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
     const val = type === "checkbox" ? checked : value;
 
     if (name === "name") {
-      // Automatically generate the slug when the name is changed
       const generatedSlug = generateSlug(value);
       setFormData((prev) => ({
         ...prev,
         [name]: value,
-        slug: generatedSlug, // Update slug
+        slug: generatedSlug,
       }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: val }));
@@ -82,14 +94,14 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
   };
 
   const handleEditorChange = (value) => {
-    setFormData((prev) => ({ ...prev, longdescription: value })); // Use 'longdescription'
+    setFormData((prev) => ({ ...prev, longdescription: value }));
   };
 
-  const handleImageUpload = (e) => { // Renamed from handleThumbnailUpload
+  const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedThumbnail(file); // Store the file
-      setFormData((prev) => ({ ...prev, image: URL.createObjectURL(file) })); // Use 'image'
+      setSelectedThumbnail(file);
+      setFormData((prev) => ({ ...prev, image: URL.createObjectURL(file) }));
     }
   };
 
@@ -112,32 +124,33 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
     if (formData.salePrice && Number(formData.salePrice) > Number(formData.price)) {
       newErrors.salePrice = "Giá khuyến mãi không được lớn hơn giá gốc.";
     }
-    if (!formData.categoryId) {
+     if (!formData.categoryId) {
       newErrors.categoryId = "Vui lòng chọn danh mục.";
     }
 
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      return; // Stop submission if there are errors
+      return;
     }
 
-    setErrors({}); // Clear errors if validation passes
+    setErrors({});
 
-    let uploadedImageUrl = formData.image; // Use 'image'
+    let uploadedImageUrl = formData.image;
 
     try {
-      // Upload image if selected
+      // Upload image if a new one is selected
       if (selectedThumbnail) {
-        console.log('Uploading service image:', selectedThumbnail);
+         console.log('Uploading updated service image:', selectedThumbnail);
         const urls = await uploadService.uploadImages([selectedThumbnail]);
-        console.log('Service image upload result:', urls);
+        console.log('Updated service image upload result:', urls);
         if (urls && urls.length > 0) {
           uploadedImageUrl = urls[0];
         }
       }
 
-      // Create service with uploaded image URL
       const serviceData = {
+        id: formData.id, // Include ID for update
         name: formData.name.trim(),
         slug: formData.slug.trim(),
         categoryId: formData.categoryId || '', // Ensure categoryId is not empty string if null/undefined
@@ -148,26 +161,26 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
         salePrice: Number(formData.salePrice) || 0, // Default salePrice to 0 if empty or not a valid number
       };
 
-      console.log('Service data before saving:', serviceData);
-      handleSave(serviceData);
+      console.log('Service data before updating:', serviceData);
+      handleSave(serviceData); // Call handleSave with updated data
       handleClose();
     } catch (error) {
-      console.error('Error during service submission:', error);
-      // Handle error appropriately, e.g., show an error message to the user
+      console.error('Error during service update submission:', error);
+      // Handle error appropriately
     }
   };
 
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered scrollable>
       <Modal.Header closeButton>
-        <Modal.Title>Thêm dịch vụ mới</Modal.Title> {/* Updated title */}
+        <Modal.Title>Chỉnh sửa dịch vụ</Modal.Title> {/* Updated title */}
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Tên dịch vụ</Form.Label> {/* Updated label */}
+                <Form.Label>Tên dịch vụ</Form.Label>
                 <Form.Control
                   name="name"
                   value={formData.name}
@@ -185,7 +198,7 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
                   name="slug"
                   value={formData.slug}
                   onChange={handleChange}
-                  readOnly // Prevent manual editing of the slug
+                  readOnly
                   isInvalid={!!errors.slug}
                 />
                  <Form.Control.Feedback type="invalid">
@@ -193,7 +206,7 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Giá</Form.Label> {/* Updated label */}
+                <Form.Label>Giá</Form.Label>
                 <Form.Control
                   name="price"
                   type="number"
@@ -206,7 +219,7 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Giá khuyến mãi</Form.Label> {/* Updated label */}
+                <Form.Label>Giá khuyến mãi</Form.Label>
                 <Form.Control
                   name="salePrice"
                   type="number"
@@ -219,19 +232,18 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Ảnh đại diện</Form.Label> {/* Updated label */}
-                <Form.Control type="file" onChange={handleImageUpload} /> {/* Renamed handler */}
-                {formData.image && typeof formData.image === 'string' && ( // Use 'image'
+                <Form.Label>Ảnh đại diện</Form.Label>
+                <Form.Control type="file" onChange={handleImageUpload} />
+                {formData.image && typeof formData.image === 'string' && (
                   <img
-                    src={formData.image} // Use 'image'
-                    alt="Service Image" // Updated alt text
+                    src={formData.image}
+                    alt="Service Image"
                     width={100}
                     className="mt-2 rounded"
                   />
                 )}
               </Form.Group>
-              {/* Removed additional images section */}
-              <Form.Group className="mb-3">
+               <Form.Group className="mb-3">
                 <Form.Label>Danh mục</Form.Label>
                 <Form.Control
                   as="select"
@@ -251,7 +263,6 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
                   {errors.categoryId}
                 </Form.Control.Feedback>
               </Form.Group>
-
             </Col>
 
             <Col md={6}>
@@ -265,15 +276,13 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Mô tả chi tiết</Form.Label> {/* Updated label */}
+                <Form.Label>Mô tả chi tiết</Form.Label>
                 <DescriptionEditor
-                  name="longdescription" // Use 'longdescription'
-                  value={formData.longdescription} // Use 'longdescription'
+                  name="longdescription"
+                  value={formData.longdescription}
                   onChange={handleEditorChange}
                 />
               </Form.Group>
-
-              {/* Removed checkbox group */}
             </Col>
           </Row>
 
@@ -314,8 +323,8 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
               Hủy
             </Button>
             <Button type="submit" variant="primary">
-              Lưu
-            </Button>
+              Lưu thay đổi
+            </Button> {/* Updated button text */}
           </div>
         </Form>
       </Modal.Body>
@@ -323,4 +332,4 @@ const ServiceModal = ({ show, handleClose, handleSave }) => {
   );
 };
 
-export default ServiceModal;
+export default EditServiceModal;

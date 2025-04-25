@@ -25,8 +25,11 @@ export default function LoginForm() {
 
 
 // Remove duplicate token declaration since it's declared again below
+<<<<<<< HEAD
 
       //console.log('API Response:', res.data);
+=======
+>>>>>>> main
 
       const token = res.data.accessToken; // Thay đổi từ token sang accessToken
 

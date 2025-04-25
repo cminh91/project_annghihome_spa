@@ -36,17 +36,31 @@ const CreateVideoModal = ({ show, onClose, onSave }) => {
       alert("Lỗi khi lưu video.");
       console.error("Error saving video:", error);
     }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Ensure both fields are filled
+    if (!formData.tieuDe || !formData.linkYtb) {
+      alert("Vui lòng nhập đầy đủ thông tin.");
+      return;
+    }
+
+    onSave(formData);  // Save the new video
+    onClose();  // Close the modal
+    setFormData({ tieuDe: "", linkYtb: "" });  // Clear form
   };
 
   return (
     <Modal show={show} onHide={onClose}>
       <Modal.Header closeButton>
         <Modal.Title>Thêm Video mới</Modal.Title>
+        <Modal.Title>Thêm Video Mới</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Tiêu đề</Form.Label>
+            <Form.Label>Tiêu Đề</Form.Label>
             <Form.Control
               type="text"
               name="tieuDe"
@@ -70,11 +84,13 @@ const CreateVideoModal = ({ show, onClose, onSave }) => {
 
           <Button variant="primary" type="submit">
             Lưu video
+            Lưu Video
           </Button>
         </Form>
       </Modal.Body>
     </Modal>
   );
+}
 };
 
 export default CreateVideoModal;

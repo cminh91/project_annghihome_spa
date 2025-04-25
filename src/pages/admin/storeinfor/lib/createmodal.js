@@ -1,6 +1,7 @@
+// components/admin/storeinfo/CreateStoreInfoModal.js
 import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import storeinfnorService from "../../../functionservice/storeinforService"; // Đảm bảo đường dẫn đúng
+import storeinforService from "../../../functionservice/storeinforService";
 
 const CreateStoreInfoModal = ({ show, onClose, onCreate }) => {
   const [form, setForm] = useState({
@@ -20,17 +21,19 @@ const CreateStoreInfoModal = ({ show, onClose, onCreate }) => {
 
   const handleSubmit = async () => {
     try {
-      // Gọi API để tạo cửa hàng mới
-      const createdStore = await storeinfnorService.createStoreinfo({
-        ...form,
-        id: Date.now().toString(), // Tạo ID giả
+      const createdStore = await storeinforService.createStoreinfo(form);
+      if (onCreate) onCreate(createdStore);
+      onClose();
+      setForm({
+        logo: "",
+        favicon: "",
+        facebook: "",
+        youtube: "",
+        googleMap: "",
+        hotline: "",
+        zalo: "",
+        workingHours: "",
       });
-      
-      // Nếu có callback `onCreate` từ component cha, gọi nó để cập nhật danh sách
-      if (onCreate) {
-        onCreate(createdStore); // Cập nhật cửa hàng mới
-      }
-      onClose(); // Đóng modal sau khi tạo thành công
     } catch (error) {
       console.error("Lỗi khi tạo cửa hàng:", error);
     }
@@ -44,11 +47,11 @@ const CreateStoreInfoModal = ({ show, onClose, onCreate }) => {
       <Form onSubmit={(e) => e.preventDefault()}>
         <Modal.Body>
           <Row>
-            {/* Cột trái */}
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Logo</Form.Label>
                 <Form.Control
+                  type="url"
                   name="logo"
                   value={form.logo}
                   onChange={handleChange}
@@ -57,6 +60,7 @@ const CreateStoreInfoModal = ({ show, onClose, onCreate }) => {
               <Form.Group className="mb-3">
                 <Form.Label>Favicon</Form.Label>
                 <Form.Control
+                  type="url"
                   name="favicon"
                   value={form.favicon}
                   onChange={handleChange}
@@ -73,6 +77,7 @@ const CreateStoreInfoModal = ({ show, onClose, onCreate }) => {
               <Form.Group className="mb-3">
                 <Form.Label>Facebook</Form.Label>
                 <Form.Control
+                  type="url"
                   name="facebook"
                   value={form.facebook}
                   onChange={handleChange}
@@ -81,6 +86,7 @@ const CreateStoreInfoModal = ({ show, onClose, onCreate }) => {
               <Form.Group className="mb-3">
                 <Form.Label>Youtube</Form.Label>
                 <Form.Control
+                  type="url"
                   name="youtube"
                   value={form.youtube}
                   onChange={handleChange}
@@ -89,6 +95,7 @@ const CreateStoreInfoModal = ({ show, onClose, onCreate }) => {
               <Form.Group className="mb-3">
                 <Form.Label>Google Map</Form.Label>
                 <Form.Control
+                  type="url"
                   name="googleMap"
                   value={form.googleMap}
                   onChange={handleChange}
@@ -96,11 +103,11 @@ const CreateStoreInfoModal = ({ show, onClose, onCreate }) => {
               </Form.Group>
             </Col>
 
-            {/* Cột phải */}
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Zalo</Form.Label>
                 <Form.Control
+                  type="url"
                   name="zalo"
                   value={form.zalo}
                   onChange={handleChange}

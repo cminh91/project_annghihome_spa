@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+<<<<<<< HEAD
 import { Modal, Button, Form } from "react-bootstrap";
 import teamService from "../../../functionservice/teamService";
 
@@ -41,6 +42,37 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
     } catch (err) {
       console.error("Error creating team member:", err);
       setError("Không thể tạo thành viên. Vui lòng thử lại.");
+=======
+import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
+
+const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
+  const [name, setName] = useState("");
+  const [imageUrl, setImageUrl] = useState(""); // State to store the image URL
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSave = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const newMemberData = {
+        name,
+        image: imageUrl, // Use the entered image URL
+        description,
+      };
+
+      onSave(newMemberData);
+      setName("");
+      setImageUrl(""); // Reset URL state
+      setDescription("");
+      onClose(); // Close modal on successful save
+    } catch (err) {
+      console.error("Error saving team member:", err);
+      setError("Không thể lưu thành viên đội ngũ. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+>>>>>>> main
     }
   };
 
@@ -50,7 +82,12 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
         <Modal.Title>Thêm thành viên nhóm</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+<<<<<<< HEAD
         {error && <div className="alert alert-danger">{error}</div>}
+=======
+        {loading && <Spinner animation="border" />}
+        {error && <Alert variant="danger">{error}</Alert>}
+>>>>>>> main
         <Form>
           <div className="row">
             <div className="col-md-12">
@@ -66,6 +103,7 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
             </div>
 
             <div className="col-md-12">
+<<<<<<< HEAD
               <Form.Group controlId="description">
                 <Form.Label>Thông tin về thành viên</Form.Label>
                 <Form.Control
@@ -73,11 +111,22 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+=======
+              <Form.Group controlId="image">
+                <Form.Label>Ảnh (URL)</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)} // Handle URL input
+                  required
+>>>>>>> main
                 />
+                {imageUrl && <p>Đã nhập URL: {imageUrl}</p>} {/* Display entered URL */}
               </Form.Group>
             </div>
 
             <div className="col-md-12">
+<<<<<<< HEAD
               <Form.Group controlId="image">
                 <Form.Label>URL ảnh</Form.Label>
                 <Form.Control
@@ -85,6 +134,16 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
                   placeholder="Nhập URL ảnh (ví dụ: https://example.com/image.jpg)"
+=======
+              <Form.Group controlId="description">
+                <Form.Label>Mô tả</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+>>>>>>> main
                 />
               </Form.Group>
             </div>
@@ -92,10 +151,14 @@ const CreateTeamMemberModal = ({ show, onClose, onSave }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
+        <Button variant="secondary" onClick={onClose} disabled={loading}>
           Đóng
         </Button>
+<<<<<<< HEAD
         <Button variant="primary" onClick={handleSave} disabled={!name || !image || !description}>
+=======
+        <Button variant="primary" onClick={handleSave} disabled={loading}>
+>>>>>>> main
           Lưu
         </Button>
       </Modal.Footer>

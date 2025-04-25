@@ -52,6 +52,10 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
+<<<<<<< HEAD
+=======
+          {/* Tên & Slug */}
+>>>>>>> main
           <Row className="mb-3">
             <Col md={6}>
               <Form.Label>Tên danh mục</Form.Label>
@@ -82,6 +86,10 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
             />
           </Form.Group>
 
+<<<<<<< HEAD
+=======
+          {/* Loại, Trạng thái, Level */}
+>>>>>>> main
           <Row className="mb-3">
             <Col md={4}>
               <Form.Label>Loại</Form.Label>
@@ -114,6 +122,10 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
             </Col>
           </Row>
 
+<<<<<<< HEAD
+=======
+          {/* Thứ tự hiển thị */}
+>>>>>>> main
           <Form.Group className="mb-3">
             <Form.Label>Thứ tự hiển thị</Form.Label>
             <Form.Control
@@ -122,6 +134,39 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
               onChange={(e) => setSortOrder(Number(e.target.value))}
             />
           </Form.Group>
+<<<<<<< HEAD
+=======
+
+          <Form.Group className="mb-3">
+            <Form.Label>Level</Form.Label>
+            <Form.Control
+              type="number"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Trạng thái</Form.Label>
+            <Form.Check
+              type="switch"
+              checked={isActive}
+              onChange={() => setIsActive(!isActive)}
+              label={isActive ? "Hiển thị" : "Ẩn"}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Loại danh mục</Form.Label>
+            <Form.Select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              <option value="product">Sản phẩm</option>
+              <option value="service">Dịch vụ</option>
+            </Form.Select>
+          </Form.Group>
+>>>>>>> main
         </Form>
       </Modal.Body>
       <Modal.Footer>

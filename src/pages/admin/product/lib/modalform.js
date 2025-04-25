@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import DescriptionEditor from "../../lib/DescriptionEditor";
-import categoryService from "../../../functionservice/categoryService";
 import productService from "../../../functionservice/productService";
 import uploadService from "../../../functionservice/uploadService";
 
@@ -14,9 +13,13 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
     price: 0,
     salePrice: 0,
     imageUrl: "",
+    categoryId: "",
     additionalImages: [],
-    categoryId: "", // Category ID will be stored here
+    metaTitle: "",
+    metaDescription: "",
+    metaKeywords: "",
   });
+
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [selectedImages, setSelectedImages] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -24,45 +27,31 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
 
   useEffect(() => {
     if (show) {
-      // Reset form data if not editing or load initial data if editing
-      if (initialData) {
-        setFormData({
-          name: initialData.name || "",
-          slug: initialData.slug || "",
-          description: initialData.description || "",
-          longDescription: initialData.longDescription || "",
-          price: initialData.price || 0,
-          salePrice: initialData.salePrice || 0,
-          imageUrl: initialData.imageUrl || "",
-          additionalImages: initialData.additionalImages || [],
-          categoryId: initialData.categoryId || "",
-        });
-        setSelectedThumbnail(null); // Reset thumbnail if editing
-        setSelectedImages([]); // Reset additional images if editing
-      } else {
-        setFormData({
-          name: "",
-          slug: "",
-          description: "",
-          longDescription: "",
-          price: 0,
-          salePrice: 0,
-          imageUrl: "",
-          additionalImages: [],
-          categoryId: "",
-        });
-        setSelectedThumbnail(null);
-        setSelectedImages([]);
-      }
+      setFormData({
+        name: "",
+        slug: "",
+        description: "",
+        longDescription: "",
+        price: "",
+        salePrice: "",
+        imageUrl: "",
+        categoryId: "",
+        additionalImages: [],
+        metaTitle: "",
+        metaDescription: "",
+        metaKeywords: "",
+      });
+      setSelectedThumbnail(null);
+      setSelectedImages([]);
       setErrors({});
-      fetchCategories(); // Fetch categories when modal is opened
+      fetchCategories();
     }
   }, [show, initialData]);
 
   const fetchCategories = async () => {
     try {
-      const data = await productService.getCategoriesByType('product');
-      setCategories(data); // Store categories in state
+      const data = await productService.getCategoriesByType("product");
+      setCategories(data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -81,18 +70,16 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const val = type === "checkbox" ? checked : value;
-
+    const { name, value } = e.target;
     if (name === "name") {
       const generatedSlug = generateSlug(value);
       setFormData((prev) => ({
         ...prev,
         [name]: value,
-        slug: generatedSlug,
+        name: value,
       }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: val }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -119,26 +106,13 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const newErrors = {};
-    if (!formData.name.trim()) {
-      newErrors.name = "Tên sản phẩm không được để trống.";
-    }
-    if (!formData.slug.trim()) {
-      newErrors.slug = "Slug không được để trống.";
-    }
-    if (!formData.price || Number(formData.price) <= 0) {
-      newErrors.price = "Giá phải là số dương.";
-    }
-    if (formData.salePrice && Number(formData.salePrice) < 0) {
-      newErrors.salePrice = "Giá khuyến mãi không được là số âm.";
-    }
-    if (formData.salePrice && Number(formData.salePrice) > Number(formData.price)) {
-      newErrors.salePrice = "Giá khuyến mãi không được lớn hơn giá gốc.";
-    }
-    if (!formData.categoryId) {
-      newErrors.categoryId = "Vui lòng chọn danh mục.";
-    }
+    if (!formData.name.trim()) newErrors.name = "Tên sản phẩm không được để trống.";
+    if (!formData.slug.trim()) newErrors.slug = "Slug không được để trống.";
+    if (!formData.price || Number(formData.price) <= 0) newErrors.price = "Giá phải là số dương.";
+    if (formData.salePrice && Number(formData.salePrice) < 0) newErrors.salePrice = "Giá khuyến mãi không được là số âm.";
+    if (formData.salePrice && Number(formData.salePrice) > Number(formData.price)) newErrors.salePrice = "Giá khuyến mãi không được lớn hơn giá gốc.";
+    if (!formData.categoryId) newErrors.categoryId = "Vui lòng chọn danh mục.";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -146,23 +120,18 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
     }
 
     setErrors({});
-
-    let uploadedThumbnailUrl = formData.imageUrl;
-    let uploadedImagesUrls = formData.additionalImages;
+    let uploadedThumbnailUrl = "";
+    let uploadedImagesUrls = [];
 
     try {
       if (selectedThumbnail) {
         const urls = await uploadService.uploadImages([selectedThumbnail]);
-        if (urls && urls.length > 0) {
-          uploadedThumbnailUrl = urls[0];
-        }
+        if (urls && urls.length > 0) uploadedThumbnailUrl = urls[0];
       }
 
       if (selectedImages.length > 0) {
         const urls = await uploadService.uploadImages(selectedImages);
-        if (urls && urls.length > 0) {
-          uploadedImagesUrls = urls;
-        }
+        if (urls && urls.length > 0) uploadedImagesUrls = urls;
       }
 
       const productData = {
@@ -174,7 +143,7 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
       handleSave(productData);
       handleClose();
     } catch (error) {
-      console.error('Error during product submission:', error);
+      console.error("Error during product submission:", error);
     }
   };
 
@@ -241,28 +210,11 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Ảnh đại diện</Form.Label>
-                <Form.Control type="file" onChange={handleThumbnailUpload} />
-                {formData.imageUrl && typeof formData.imageUrl === 'string' && (
-                  <img
-                    src={formData.imageUrl}
-                    alt="Thumbnail"
-                    width={100}
-                    className="mt-2 rounded"
-                  />
-                )}
+                <Form.Control type="text" onChange={handleThumbnailUpload} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Thư viện ảnh</Form.Label>
-                <Form.Control
-                  type="file"
-                  multiple
-                  onChange={handleImagesUpload}
-                />
-                <div className="d-flex flex-wrap gap-2 mt-2">
-                  {formData.additionalImages.map((img, idx) => (
-                    <img key={idx} src={img} alt="img" width={80} className="rounded" />
-                  ))}
-                </div>
+                <Form.Control type="text" multiple onChange={handleImagesUpload} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Danh mục</Form.Label>
@@ -285,7 +237,6 @@ const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Mô tả ngắn</Form.Label>

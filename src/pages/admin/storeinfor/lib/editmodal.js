@@ -1,3 +1,4 @@
+// components/admin/storeinfo/EditStoreModal.js
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 
@@ -13,6 +14,7 @@ const EditStoreModal = ({ show, onClose, store, onUpdate }) => {
     workingHours: "",
   });
 
+  // Cập nhật form khi store thay đổi
   useEffect(() => {
     if (store) {
       setForm(store);
@@ -24,8 +26,9 @@ const EditStoreModal = ({ show, onClose, store, onUpdate }) => {
   };
 
   const handleUpdate = () => {
+    // Truyền thông tin đã chỉnh sửa lên component cha
     onUpdate({ ...form, updatedAt: new Date().toISOString() });
-    onClose();
+    onClose(); // Đóng modal sau khi cập nhật
   };
 
   return (
