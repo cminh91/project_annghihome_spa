@@ -6,6 +6,8 @@ import ContactPage from '../pages/frontend/ContactPage';
 import ServicePages from '../pages/frontend/Services';
 import CategoryDetail from '../pages/frontend/CategoryDetail'
 import ServiceDetail from '../pages/frontend/service/ServiceDetail';
+import ProductPage from '../pages/frontend/ProductPages';
+import ProductDetail from '../pages/frontend/product/ProductDetail';
 const RouterFrontend = [
     { path: "/", element: <Home /> },  
     { path: "/blog", element: <Blog /> },
@@ -14,6 +16,9 @@ const RouterFrontend = [
     { path: "/lien-he", element: <ContactPage /> },
     { path :"/dich-vu",element:<ServicePages/>},
     { path :"/dich-vu/:id",element:<ServiceDetail />},
+    {path: '/san-pham',element:<ProductPage/>},
+    {path: '/san-pham/:id',element:<ProductDetail/>},
+
 
     {path:"/category/:slug", element:<CategoryDetail />},
 ];

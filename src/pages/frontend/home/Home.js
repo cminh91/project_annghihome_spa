@@ -1,7 +1,8 @@
 import React,{ useState, useEffect } from "react";
 import bannerService from "../../functionservice/BannerService";
-import AllService from "../service/AllServices";
+import HomeService from "../service/HomeService";
 import { Spinner } from "react-bootstrap";
+import HomeProduct from "../product/HomeProduct";
 
 const Home = () => {
   const [banners, setBanners] = useState([]);
@@ -93,7 +94,39 @@ const Home = () => {
       <div className="container-fluid fruite py-5">
         <div className="container py-5">
           <div className="tab-class text-center">
-            <AllService/>
+          <div className="row g-4 justify-content-center">
+              <div className="col-lg-4 text-center">
+                <h1
+                  className="fw-bold"
+                  style={{ whiteSpace: "nowrap", fontSize: "36px", color: "#0000FF" }}
+                >
+                  Dịch Vụ An Nghi Home
+                </h1>
+                <div className="d-flex align-items-center mt-3 justify-content-center">
+                  <div
+                    className="border-top border-dark flex-grow-1"
+                    style={{ maxWidth: "50px" }}
+                  ></div>
+                  <img
+                    src="logo.png"
+                    alt="Logo"
+                    className="mx-3"
+                    style={{ width: "40px", height: "40px" }}
+                  />
+                  <div
+                    className="border-top border-dark flex-grow-1"
+                    style={{ maxWidth: "50px" }}
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit sed do
+                  eiusmod te incididunt
+                </p>
+              </div>
+            </div>
+            <HomeService/>
           </div>
         </div>
       </div>
@@ -144,6 +177,48 @@ const Home = () => {
             </div>
         </div>
       </div>
+      
+      {/* Dịch vụ Shop Start */}
+      <div className="container-fluid fruite py-5">
+        <div className="container py-5">
+          <div className="tab-class text-center">
+          <div className="row g-4 justify-content-center">
+              <div className="col-lg-4 text-center">
+                <h1
+                  className="fw-bold"
+                  style={{ whiteSpace: "nowrap", fontSize: "36px", color: "#0000FF" }}
+                >
+                  Sản Phẩm An Nghi Home
+                </h1>
+                <div className="d-flex align-items-center mt-3 justify-content-center">
+                  <div
+                    className="border-top border-dark flex-grow-1"
+                    style={{ maxWidth: "50px" }}
+                  ></div>
+                  <img
+                    src="logo.png"
+                    alt="Logo"
+                    className="mx-3"
+                    style={{ width: "40px", height: "40px" }}
+                  />
+                  <div
+                    className="border-top border-dark flex-grow-1"
+                    style={{ maxWidth: "50px" }}
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit sed do
+                  eiusmod te incididunt
+                </p>
+              </div>
+            </div>
+            <HomeProduct/>
+          </div>
+        </div>
+      </div>
+      {/* Dịch Shop End */}
 
       {/* đôi ngũ */}
       <div className="container-fluid fruite py-5 btn-light">
