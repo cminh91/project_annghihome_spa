@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import serviceService from "../../functionservice/servicesFunction";
 import productService from "../../functionservice/productService";
+import blogService from "../../functionservice/BlogService";
 
 const CategoryDetail = () => {
   const { slug } = useParams();
   const [services, setServices] = useState([]);
-  const [products, setProducts] = useState([]);  // State to store products
+  const [products, setProducts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,17 +17,23 @@ const CategoryDetail = () => {
       try {
         // Fetch all services
         const serviceData = await serviceService.getAllServices(1, 6);
-        console.log("Fetched services:", serviceData);
         const filteredServices = serviceData.filter(service => service.category?.slug === slug);
         setServices(filteredServices);
 
         // Fetch all products
         const productData = await productService.getAllProducts(1, 6);
-        console.log("Fetched products:", productData);
         const filteredProducts = productData.products.filter(
           product => product.category?.slug === slug && product.category?.type === 'product'
         );
         setProducts(filteredProducts);
+
+        // Fetch all blogs
+        const blogData = await blogService.getAllBlogs();
+        console.log(blogData)
+        const filteredBlogs = blogData.posts.filter(
+          posts => posts.category?.slug === slug && posts.category?.type === "post"
+        );
+        setPosts(filteredBlogs);
 
         setLoading(false);
       } catch (err) {
@@ -47,7 +55,7 @@ const CategoryDetail = () => {
 
   return (
     <div className="container py-5">
-      <h1 className="text-center"> {slug}</h1>
+      <h1 className="text-center">{slug}</h1>
 
       {/* Display products if category type is 'product' */}
       {products.length > 0 && (
@@ -76,7 +84,7 @@ const CategoryDetail = () => {
       {/* Display services */}
       {services.length > 0 && (
         <div>
-          <h2>{slug}</h2>
+          <h2>Services in this category:</h2>
           <div className="row g-4">
             {services.map((service) => (
               <div key={service.id} className="col-md-6 col-lg-4 col-xl-3">
@@ -98,10 +106,41 @@ const CategoryDetail = () => {
         </div>
       )}
 
-      {/* If no products or services */}
-      {products.length === 0 && services.length === 0 && (
+      {/* Display blogs */}
+      {posts.length > 0 && (
+        <div>
+          <h3>Blogs in this category:</h3>
+          <div className="row g-4">
+            {posts.map((post) => (
+              <div key={post.id} className="col-md-6 col-lg-4 col-xl-3">
+                <div className="card">
+                  <img
+                    src={post.imageUrl || "/default-image.jpg"}
+                    className="card-img-top"
+                    alt={post.title || "Blog post image"}
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{post.title}</h5>
+                    {/* Check if content is available */}
+                    <div
+                      className="card-text"
+                      dangerouslySetInnerHTML={{
+                        __html: post.content || "<p>No content available</p>"
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+
+      {/* If no products, services, or blogs */}
+      {products.length === 0 && services.length === 0 && posts.length === 0 && (
         <div className="col-12">
-          <p>No products or services available in this category.</p>
+          <p>No products, services, or blogs available in this category.</p>
         </div>
       )}
     </div>

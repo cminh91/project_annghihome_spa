@@ -21,7 +21,7 @@ const RouterFrontend = [
     {path: '/san-pham',element:<ProductPage/>},
     {path: '/san-pham/:id',element:<ProductDetail/>},
     {path:"/category/:slug", element:<CategoryDetail />},
-    {path:"/dich-vu/:slug",element:<ProductWithCategory/>},
+    // {path:"/dich-vu/:slug",element:<ProductWithCategory/>},
 ];
 
 export default RouterFrontend;

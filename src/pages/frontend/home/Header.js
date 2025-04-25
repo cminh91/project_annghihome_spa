@@ -89,6 +89,12 @@ const Header = () => {
                   >
                     {subcategory.name}
                   </Link>
+                  <Link
+                    to={`/bai-viet/${subcategory.slug}`}
+                    className="dropdown-item"
+                  >
+                    {subcategory.name}
+                  </Link>
                   {renderSubCategories(subcategory)}
                 </div>
               ))}
