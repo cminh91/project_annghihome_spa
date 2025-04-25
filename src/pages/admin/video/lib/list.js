@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button } from "react-bootstrap";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
-import videoService from "../../../functionservice/videoService"; // Đường dẫn tuỳ thuộc vào cấu trúc thư mục của bạn
+import videoService from "../../../functionservice/videoService";
 import CreateVideoModal from "./createmodal";
 import EditVideoModal from "./editmodal";
 
@@ -79,7 +79,7 @@ const VideoList = () => {
               </td>
               <td>{new Date(video.createdAt).toLocaleString()}</td>
               <td>{new Date(video.updatedAt).toLocaleString()}</td>
-              <td>
+              <td className="d-flex gap-2 mt-2"> 
                 <Button
                   variant="warning"
                   size="sm"
@@ -92,6 +92,7 @@ const VideoList = () => {
                   variant="danger"
                   size="sm"
                   onClick={() => handleDelete(video.id)}
+                  className="me-2"
                 >
                   <FaTrashAlt />
                 </Button>

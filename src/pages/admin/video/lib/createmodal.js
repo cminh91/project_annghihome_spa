@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import videoService from "../../../functionservice/videoService";
 
-const CreateImageModal = ({ show, onClose, onSave }) => {
+const CreateVideoModal = ({ show, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    url: "",
-    alt: "",
-    productId: "",
-    serviceId: "",
-    newsId: "",
-    aboutId: "",
+    tieuDe: "",
+    linkYtb: "",
   });
 
   const handleChange = (e) => {
@@ -19,97 +16,60 @@ const CreateImageModal = ({ show, onClose, onSave }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Kiểm tra chỉ liên kết với 1 bảng
-    const linkedTables = ["productId", "serviceId", "newsId", "aboutId"].filter(
-      (key) => formData[key]
-    );
-    if (linkedTables.length > 1) {
-      alert("Chỉ được liên kết ảnh với một bảng!");
+
+    if (!formData.tieuDe || !formData.linkYtb) {
+      alert("Vui lòng điền đầy đủ tiêu đề và link YouTube.");
       return;
     }
 
-    onSave(formData);
-    onClose();
-    setFormData({
-      url: "",
-      alt: "",
-      productId: "",
-      serviceId: "",
-      newsId: "",
-      aboutId: "",
-    });
+    try {
+      const newVideo = await videoService.createVideo(formData);
+      onSave(newVideo);
+      onClose();
+      setFormData({
+        tieuDe: "",
+        linkYtb: "",
+      });
+    } catch (error) {
+      alert("Lỗi khi lưu video.");
+      console.error("Error saving video:", error);
+    }
   };
 
   return (
     <Modal show={show} onHide={onClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Thêm ảnh mới</Modal.Title>
+        <Modal.Title>Thêm Video mới</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
-            <Form.Label>URL ảnh</Form.Label>
+            <Form.Label>Tiêu đề</Form.Label>
             <Form.Control
               type="text"
-              name="url"
-              value={formData.url}
+              name="tieuDe"
+              value={formData.tieuDe}
               onChange={handleChange}
               required
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Alt (mô tả)</Form.Label>
+            <Form.Label>Link YouTube</Form.Label>
             <Form.Control
               type="text"
-              name="alt"
-              value={formData.alt}
+              name="linkYtb"
+              value={formData.linkYtb}
               onChange={handleChange}
+              placeholder="https://www.youtube.com/watch?v=..."
+              required
             />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Liên kết với:</Form.Label>
-            <Form.Control
-              type="text"
-              name="productId"
-              placeholder="ID sản phẩm (nếu có)"
-              value={formData.productId}
-              onChange={handleChange}
-            />
-            <Form.Control
-              type="text"
-              name="serviceId"
-              placeholder="ID dịch vụ (nếu có)"
-              value={formData.serviceId}
-              onChange={handleChange}
-              className="mt-2"
-            />
-            <Form.Control
-              type="text"
-              name="newsId"
-              placeholder="ID tin tức (nếu có)"
-              value={formData.newsId}
-              onChange={handleChange}
-              className="mt-2"
-            />
-            <Form.Control
-              type="text"
-              name="aboutId"
-              placeholder="ID giới thiệu (nếu có)"
-              value={formData.aboutId}
-              onChange={handleChange}
-              className="mt-2"
-            />
-            <Form.Text className="text-muted">
-              Chỉ điền **một** ID trong số các trường trên.
-            </Form.Text>
           </Form.Group>
 
           <Button variant="primary" type="submit">
-            Lưu ảnh
+            Lưu video
           </Button>
         </Form>
       </Modal.Body>
@@ -117,4 +77,4 @@ const CreateImageModal = ({ show, onClose, onSave }) => {
   );
 };
 
-export default CreateImageModal;
+export default CreateVideoModal;

@@ -75,7 +75,7 @@ const EditStoreModal = ({ show, onClose, onSave, storeData }) => {
       onSave(updatedStore);
       setTimeout(() => {
         onClose();
-      }, 1000);
+      }, 500);
     } catch (err) {
       console.error("Submit error:", err.response?.data || err.message);
       setError(

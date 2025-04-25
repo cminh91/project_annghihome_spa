@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import videoService from "../../../functionservice/videoService";
 
-const EditImageModal = ({ show, onClose, onSave, initialData }) => {
+const EditVideoModal = ({ show, onClose, onSave, initialData }) => {
   const [formData, setFormData] = useState({
-    url: "",
-    alt: "",
-    productId: "",
-    serviceId: "",
-    newsId: "",
-    aboutId: "",
+    id: "",
+    tieuDe: "",
+    linkYtb: "", 
   });
 
-  // Khi modal mở, cập nhật form với dữ liệu ban đầu
   useEffect(() => {
     if (initialData) {
       setFormData({
-        url: initialData.url,
-        alt: initialData.alt,
-        productId: initialData.productId || "",
-        serviceId: initialData.serviceId || "",
-        newsId: initialData.newsId || "",
-        aboutId: initialData.aboutId || "",
+        id: initialData.id,
+        tieuDe: initialData.tieuDe || "",
+        linkYtb: initialData.linkYtb || "",
       });
     }
   }, [initialData]);
@@ -33,78 +27,52 @@ const EditImageModal = ({ show, onClose, onSave, initialData }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData); // Gửi dữ liệu sửa đổi lên cha
-    onClose(); // Đóng modal sau khi lưu
+
+    const { id, ...videoDataWithoutId } = formData;
+
+
+    try {
+      const updatedVideo = await videoService.editVideo(formData.id, videoDataWithoutId);
+      console.log("Video updated successfully:", updatedVideo);
+
+      onSave(updatedVideo);
+      onClose();
+    } catch (error) {
+      console.error("Error updating video:", error);
+    }
   };
 
   return (
     <Modal show={show} onHide={onClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Chỉnh sửa ảnh</Modal.Title>
+        <Modal.Title>Chỉnh sửa video</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
+          <Form.Control type="hidden" name="id" value={formData.id} />
+
           <Form.Group className="mb-3">
-            <Form.Label>URL</Form.Label>
+            <Form.Label>Tựa đề</Form.Label>
             <Form.Control
               type="text"
-              name="url"
-              value={formData.url}
+              name="tieuDe"
+              value={formData.tieuDe}
               onChange={handleChange}
               required
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Alt Text</Form.Label>
+            <Form.Label>Link YouTube</Form.Label>
             <Form.Control
               type="text"
-              name="alt"
-              value={formData.alt}
+              name="linkYtb"
+              value={formData.linkYtb}
               onChange={handleChange}
+              placeholder="https://www.youtube.com/watch?v=..."
               required
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Sản phẩm ID</Form.Label>
-            <Form.Control
-              type="text"
-              name="productId"
-              value={formData.productId}
-              onChange={handleChange}
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Dịch vụ ID</Form.Label>
-            <Form.Control
-              type="text"
-              name="serviceId"
-              value={formData.serviceId}
-              onChange={handleChange}
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Tin tức ID</Form.Label>
-            <Form.Control
-              type="text"
-              name="newsId"
-              value={formData.newsId}
-              onChange={handleChange}
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Giới thiệu ID</Form.Label>
-            <Form.Control
-              type="text"
-              name="aboutId"
-              value={formData.aboutId}
-              onChange={handleChange}
             />
           </Form.Group>
 
@@ -117,4 +85,4 @@ const EditImageModal = ({ show, onClose, onSave, initialData }) => {
   );
 };
 
-export default EditImageModal;
+export default EditVideoModal;

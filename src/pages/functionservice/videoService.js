@@ -35,7 +35,9 @@ const videoService = {
   async getAllVideos() {
     try {
       const response = await api.get('/videos');
-      return response.data;
+      console.log("Response data from getAllVideos:", response.data);
+      return response.data.videos;
+      
     } catch (error) {
       console.error("Error fetching videos:", error);
       throw error;
@@ -58,7 +60,10 @@ const videoService = {
       return response.data;
     } catch (error) {
       console.error("Error editing videos:", error.response?.data || error.message);
-      throw error;
+      if (error.response) {
+        console.error("Server response:", error.response.data);
+      }
+    throw error;
     }
   },
 
