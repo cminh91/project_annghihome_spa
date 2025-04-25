@@ -8,6 +8,7 @@ import ServiceDetail from '../pages/frontend/service/ServiceDetail';
 import ProductPage from '../pages/frontend/ProductPages';
 import ProductDetail from '../pages/frontend/product/ProductDetail';
 import TeamList from '../pages/frontend/team/TeamList';
+import BlogDetail from '../pages/frontend/blog/BlogDetail';
 
 const RouterFrontend = [
     { path: "/", element: <Home /> },  
@@ -20,6 +21,7 @@ const RouterFrontend = [
     {path: '/san-pham/:id',element:<ProductDetail/>},
     {path:"/category/:slug", element:<CategoryDetail />},
     {path:"/doi-ngu-nhan-su",element:<TeamList/>},
+    {path :"/blog/:slug",element:<BlogDetail/>}
 ];
 
 export default RouterFrontend;

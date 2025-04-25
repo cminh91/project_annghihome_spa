@@ -6,6 +6,7 @@ import HomeProduct from "../product/HomeProduct";
 import storeinforService from "../../functionservice/storeinforService";
 import HomeTeam from "../team/HomeTeam";
 import VideoList from "../video/VideoList";
+import HomeBlog from "../blog/HomeBlog";
 
 const Home = () => {
   const [banners, setBanners] = useState([]);
@@ -642,62 +643,7 @@ const Home = () => {
               </div>
             </div>
           </div>
-
-          <div className="tab-content">
-            {/* Tab 1 */}
-            <div id="tab-1" className="tab-pane fade show p-0 active">
-              <div className="row g-4">
-                {Array(4).fill().map((_, idx) => (
-                  <div key={idx} className="col-md-6 col-lg-4 col-xl-3">
-                    <div className="rounded position-relative fruite-item bg-white">
-                      <div className="fruite-img">
-                        <img
-                          src="https://imgs.search.brave.com/5BGSvPnjH5DF7_aIuUKfFqmXN3GgN2z7gcr_xP0w41I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzZkLzFj/L2RmLzZkMWNkZmRl/ZDRiMzEyMGM5ZDNm/Yjc1ZjI0MjFkODhj/LmpwZw"
-                          className="img-fluid w-100 rounded-top"
-                          alt=""
-                        />
-                      </div>
-                      <div
-                        className="text-white px-3 py-1 rounded position-absolute"
-                        style={{ top: "10px", left: "10px" }}
-                      ></div>
-                      <div className="p-4 border border-secondary border-top-0 rounded-bottom">
-                        <div className="d-flex justify-content-between flex-lg-wrap">
-                          <h4 style={{ borderBottom: "3px solid #007bff", paddingBottom: "3px" }}>Grapes</h4>
-                          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Tab 2 */}
-            <div id="tab-2" className="tab-pane fade show p-0">
-              <div className="row g-4">
-                <div className="col-md-6 col-lg-4 col-xl-3">
-                  <div className="rounded position-relative fruite-item">
-                    <div className="fruite-img">
-                      <img
-                        src="https://imgs.search.brave.com/5BGSvPnjH5DF7_aIuUKfFqmXN3GgN2z7gcr_xP0w41I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzZkLzFj/L2RmLzZkMWNkZmRl/ZDRiMzEyMGM5ZDNm/Yjc1ZjI0MjFkODhj/LmpwZw"
-                        className="img-fluid w-100 rounded-top"
-                        alt=""
-                      />
-                    </div>
-                    <div className="text-white bg-secondary px-3 py-1 rounded position-absolute" style={{ top: "10px", left: "10px" }}></div>
-                    <div className="p-4 border border-secondary border-top-0 rounded-bottom">
-                      <div className="d-flex justify-content-between flex-lg-wrap">
-                        <h4 style={{ borderBottom: "3px solid #007bff", paddingBottom: "3px" }}>Grapes</h4>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Add more product cards here as needed */}
-              </div>
-            </div>
-          </div>
+          <HomeBlog/>
         </div>
       </div>
     </div>

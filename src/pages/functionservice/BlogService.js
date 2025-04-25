@@ -23,8 +23,6 @@ api.interceptors.request.use(config => {
 });
 
 const blogService = {
-  // Lấy danh mục theo type (ví dụ: 'post')
-  // Lấy danh sách bài viết với phân trang, tìm kiếm, lọc tag
   async getPosts({ page = 1, limit = 10, search = '', tag = '' } = {}) {
     try {
       const params = {};
@@ -67,10 +65,11 @@ const blogService = {
       throw error;
     }
   },
-  async getBlogById(id) {
+  async getBlogById(slug) {
     try {
-      const response = await api.get(`/posts/${id}`);
+      const response = await api.get(`/posts/${slug}`);
       return response.data;
+      
     } catch (error) {
       console.error("Error fetching blog:", error);
       throw error;

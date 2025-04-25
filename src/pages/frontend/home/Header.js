@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import categoryService from "../../functionservice/categoryService";
 import storeinforService from "../../functionservice/storeinforService";
-
+import HomeBlog from "../blog/HomeBlog";
 const Header = () => {
   const [storeInfos, setStoreInfos] = useState([]);
   const [loading, setLoading] = useState(false);
