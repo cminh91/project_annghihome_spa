@@ -34,7 +34,7 @@ const teamService = {
     try {
       const response = await api.get('/team');
       console.log("Response data from getAllteams:", response.data);
-      return response.data.teams;
+      return response.data;
       
     } catch (error) {
       console.error("Error fetching teams:", error);

@@ -189,7 +189,7 @@ const Header = () => {
               <img
                 src={storeInfos[0].logo}
                 alt="Store Logo"
-                style={{ width: "150px", height: "95px" }}
+                style={{ width: "150px", height: "85px" }}
               />
             </Link>
           )}

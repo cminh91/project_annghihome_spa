@@ -3,9 +3,13 @@ import bannerService from "../../functionservice/BannerService";
 import HomeService from "../service/HomeService";
 import { Spinner } from "react-bootstrap";
 import HomeProduct from "../product/HomeProduct";
+import storeinforService from "../../functionservice/storeinforService";
+
 
 const Home = () => {
   const [banners, setBanners] = useState([]);
+  const [storeInfos, setStoreInfos] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -24,6 +28,22 @@ const Home = () => {
       }
     };
     fetchBanners();
+  }, [])
+  useEffect(() => {
+    const fetchStoreInfos = async () => {
+      try {
+        setLoading(true);
+        const data = await storeinforService.getAllStoreinfo();
+        setStoreInfos(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching banners:", err);
+        setError("Không thể tải thông tin cưa thàng. Vui lòng thử lại sau.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStoreInfos();
   }, [])
   useEffect(() => {
     const carouselElement = document.getElementById("carouselId");
@@ -125,7 +145,7 @@ const Home = () => {
                     style={{ maxWidth: "50px" }}
                   ></div>
                   <img
-                    src="logo.png"
+                    src={storeInfos?.favicon}
                     alt="Logo"
                     className="mx-3"
                     style={{ width: "40px", height: "40px" }}
@@ -213,7 +233,7 @@ const Home = () => {
                     style={{ maxWidth: "50px" }}
                   ></div>
                   <img
-                    src="logo.png"
+                    src={storeInfos?.favicon}
                     alt="Logo"
                     className="mx-3"
                     style={{ width: "40px", height: "40px" }}
