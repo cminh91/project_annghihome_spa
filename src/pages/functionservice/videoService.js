@@ -24,6 +24,7 @@ const videoService = {
   async getAllVideos() {
     try {
       const response = await api.get('/videos');
+      console.log(response)
       return response.data;
     } catch (error) {
       console.error("Error fetching videos:", error);

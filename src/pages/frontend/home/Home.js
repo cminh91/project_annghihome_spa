@@ -5,7 +5,7 @@ import { Spinner } from "react-bootstrap";
 import HomeProduct from "../product/HomeProduct";
 import storeinforService from "../../functionservice/storeinforService";
 import HomeTeam from "../team/HomeTeam";
-
+import VideoList from "../video/VideoList";
 
 const Home = () => {
   const [banners, setBanners] = useState([]);
@@ -354,6 +354,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+
       {/* cảm nhận khách hàng */}
       <div className="container-fluid py-5" style={{ backgroundColor: "whitesmoke" }}>
         <div className="container py-5">
@@ -418,75 +419,7 @@ const Home = () => {
             </div>
 
             {/* Slider Video */}
-            <div className="row mt-5">
-            <div className="col-lg-12">
-                <div id="videoCarousel" className="carousel slide" data-bs-ride="carousel">
-                <div className="carousel-inner">
-                    {/* Slide 1 */}
-                    <div className="carousel-item active">
-                    <div className="row g-4 justify-content-center">
-                        {["Video 1", "Video 2", "Video 3"].map((title, idx) => (
-                        <div className="col-md-4" key={idx}>
-                            <div className="ratio ratio-16x9">
-                            <iframe
-                                src="https://www.youtube.com/embed/tgbNymZ7vqY"
-                                title={title}
-                                allowFullScreen
-                            ></iframe>
-                            </div>
-                            <p className="text-center mt-2">
-                            {title === "Video 1"
-                                ? "MC Huỳnh Ngân chia sẻ về dịch vụ"
-                                : title === "Video 2"
-                                ? "Sang Lê chia sẻ trải nghiệm"
-                                : "Hoa hậu Ngân Hà nói về An Nghi"}
-                            </p>
-                        </div>
-                        ))}
-                    </div>
-                    </div>
-
-                    {/* Slide 2 */}
-                    <div className="carousel-item">
-                    <div className="row g-4 justify-content-center">
-                        {["Khách hàng 4", "Khách hàng 5", "Khách hàng 6"].map((title, idx) => (
-                        <div className="col-md-4" key={idx}>
-                            <div className="ratio ratio-16x9">
-                            <iframe
-                                src="https://www.youtube.com/embed/tgbNymZ7vqY"
-                                title={title}
-                                allowFullScreen
-                            ></iframe>
-                            </div>
-                            <p className="text-center mt-2">Chia sẻ {title}</p>
-                        </div>
-                        ))}
-                    </div>
-                    </div>
-                </div>
-
-                {/* Điều hướng video */}
-                <button
-                    className="carousel-control-prev"
-                    type="button"
-                    data-bs-target="#videoCarousel"
-                    data-bs-slide="prev"
-                >
-                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Trước</span>
-                </button>
-                <button
-                    className="carousel-control-next"
-                    type="button"
-                    data-bs-target="#videoCarousel"
-                    data-bs-slide="next"
-                >
-                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Sau</span>
-                </button>
-                </div>
-            </div>
-            </div>
+            <VideoList/>
         </div>
       </div>
 
@@ -689,6 +622,7 @@ const Home = () => {
             </div>
         </div>
      </div>
+
      {/* blog */}
      <div className="container-fluid fruite py-5" style={{backgroundColor:"skyblue"}}>
       <div className="container py-5">
