@@ -7,6 +7,8 @@ import storeinforService from "../../functionservice/storeinforService";
 import HomeTeam from "../team/HomeTeam";
 import VideoList from "../video/VideoList";
 import HomeBlog from "../blog/HomeBlog";
+import ContactList from "../contact/Contact";
+import ServiceList from "../service/Service";
 
 const Home = () => {
   const [banners, setBanners] = useState([]);
@@ -429,123 +431,16 @@ const Home = () => {
       <div className="container py-5">
         <div className="row g-4">
           {/* Phần "Chọn dịch vụ" */}
-          <div className="col-lg-6">
-            <div className="bg-white p-4 rounded shadow-sm">
-              <h2 className="fw-bold mb-4" style={{ color: "#0000FF" }}>
-                Chọn dịch vụ
-              </h2>
-              <div className="row g-4">
-                {/* Danh sách dịch vụ */}
-                {[
-                  {
-                    title: "Massage - tắm bé - vệ sinh chậu ở khoa - hỗ trợ mẹ",
-                    img: "https://imgs.search.brave.com/ea7xYcl_astoQ9t5xOfJT2BRV7lGLNxsPy4sbnHRwqY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YmFvaGF0aW5oLnZu/L2ltYWdlcy9lOTBi/ZDY3MWYxZGI1YjBi/MTM3NGY5MjRlYmQ0/MzhiOTRjNjg5NWVl/MGVlYWZiZmRkNGEy/M2E5NTZkZjc4MDk4/MGI4NWY0ZDNhOGNm/ZTAyNGMzMDIzZWQx/M2FiYmM2NGQ1MDc4/ZGFmMWViN2IxZDY0/MWZkNzU1NmZmNjAz/NGNhZS9kaWNoLXZ1/LXNwYS0zLTMxMzcu/anBn",
-                  },
-                  {
-                    title: "Massage chân giảm phù nề tích nước kết hợp ở khoa Himalaya",
-                    img: "https://imgs.search.brave.com/ea7xYcl_astoQ9t5xOfJT2BRV7lGLNxsPy4sbnHRwqY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YmFvaGF0aW5oLnZu/L2ltYWdlcy9lOTBi/ZDY3MWYxZGI1YjBi/MTM3NGY5MjRlYmQ0/MzhiOTRjNjg5NWVl/MGVlYWZiZmRkNGEy/M2E5NTZkZjc4MDk4/MGI4NWY0ZDNhOGNm/ZTAyNGMzMDIzZWQx/M2FiYmM2NGQ1MDc4/ZGFmMWViN2IxZDY0/MWZkNzU1NmZmNjAz/NGNhZS9kaWNoLXZ1/LXNwYS0zLTMxMzcu/anBn",
-                  },
-                  {
-                    title: "Kích sữa & chữa tắc sữa sau sinh",
-                    img: "https://imgs.search.brave.com/ea7xYcl_astoQ9t5xOfJT2BRV7lGLNxsPy4sbnHRwqY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YmFvaGF0aW5oLnZu/L2ltYWdlcy9lOTBi/ZDY3MWYxZGI1YjBi/MTM3NGY5MjRlYmQ0/MzhiOTRjNjg5NWVl/MGVlYWZiZmRkNGEy/M2E5NTZkZjc4MDk4/MGI4NWY0ZDNhOGNm/ZTAyNGMzMDIzZWQx/M2FiYmM2NGQ1MDc4/ZGFmMWViN2IxZDY0/MWZkNzU1NmZmNjAz/NGNhZS9kaWNoLXZ1/LXNwYS0zLTMxMzcu/anBn",
-                  },
-                  {
-                    title: "Chăm sóc mẹ sau sinh điều dưỡng",
-                    img: "https://imgs.search.brave.com/ea7xYcl_astoQ9t5xOfJT2BRV7lGLNxsPy4sbnHRwqY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YmFvaGF0aW5oLnZu/L2ltYWdlcy9lOTBi/ZDY3MWYxZGI1YjBi/MTM3NGY5MjRlYmQ0/MzhiOTRjNjg5NWVl/MGVlYWZiZmRkNGEy/M2E5NTZkZjc4MDk4/MGI4NWY0ZDNhOGNm/ZTAyNGMzMDIzZWQx/M2FiYmM2NGQ1MDc4/ZGFmMWViN2IxZDY0/MWZkNzU1NmZmNjAz/NGNhZS9kaWNoLXZ1/LXNwYS0zLTMxMzcu/anBn",
-                  },
-                ].map((service, index) => (
-                  <div className="col-12" key={index}>
-                    <div className="d-flex align-items-center">
-                      <img
-                        src={service.img}
-                        alt="Dịch vụ"
-                        className="rounded me-3"
-                        style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                      />
-                      <div className="flex-grow-1">
-                        <h5 className="fw-bold">{service.title}</h5>
-                        <a href="#st" className="btn btn-primary rounded-pill px-3">
-                          Liên hệ
-                        </a>
-                      </div>
-                    </div>
-                    <div style={{ borderBottom: "3px solid #007bff", paddingBottom: "3px" }}></div>
-                  </div>
-                ))}
-              </div>
-              <div className="text-center mt-4">
-                <a href="#st" className="btn btn-primary rounded-pill px-5">
-                  Đặt dịch vụ
-                </a>
-              </div>
-            </div>
-          </div>
+          <ServiceList/>
 
           {/* Phần "Yêu cầu tư vấn" */}
           <div className="col-lg-6">
             <div className="bg-white p-4 rounded shadow-sm">
-              <h2 className="fw-bold mb-4" style={{ color: "#0000FF" }}>
-                Yêu cầu tư vấn
-              </h2>
-              <form>
-                <div className="mb-3">
-                  <input type="text" className="form-control" placeholder="Họ tên (*)" required />
-                </div>
-                <div className="mb-3">
-                  <input type="tel" className="form-control" placeholder="Số điện thoại (*)" required />
-                </div>
-                <div className="mb-3">
-                  <input type="email" className="form-control" placeholder="Email" />
-                </div>
-                <div className="mb-3">
-                  <input type="text" className="form-control" placeholder="Địa chỉ" />
-                </div>
-                <div className="mb-3">
-                  <select className="form-select" required defaultValue="">
-                    <option value="" disabled>
-                      Tình trạng
-                    </option>
-                    <option value="dich-vu-cho-be">Dịch vụ cho bé</option>
-                    <option value="dich-vu-cho-me">Dịch vụ cho mẹ</option>
-                  </select>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Bạn đang quan tâm đến dịch vụ nào?</label>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="dich-vu-cho-be"
-                      id="dichVuChoBe"
-                    />
-                    <label className="form-check-label" htmlFor="dichVuChoBe">
-                      Dịch vụ cho bé
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="dich-vu-cho-me"
-                      id="dichVuChoMe"
-                    />
-                    <label className="form-check-label" htmlFor="dichVuChoMe">
-                      Dịch vụ cho mẹ
-                    </label>
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <textarea className="form-control" rows="3" placeholder="Nội dung"></textarea>
-                </div>
-                <div className="text-center">
-                  <button type="submit" className="btn btn-primary rounded-pill px-5">
-                    Gửi yêu cầu tư vấn
-                  </button>
-                </div>
-              </form>
+              <ContactList/>
             </div>
           </div>
         </div>
+
       </div>
       </div>
 

@@ -6,7 +6,7 @@ const ContactPage = () => {
   return (
     <>
       <Header />
-      <main style={{ paddingTop: "80px" }}>
+      <main style={{ paddingTop: "110px" }}>
       <ContactForm />
       </main>
       <Footer />
