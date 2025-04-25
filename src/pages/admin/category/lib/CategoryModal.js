@@ -23,8 +23,6 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
     setLevel(0);
   };
 
- 
-  
   const handleSubmit = async () => {
     const newCategory = {
       name,
@@ -40,6 +38,7 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
       const result = await categoryService.createCategory(newCategory);
       handleSave(result);
       handleClose();
+      resetForm();
     } catch (error) {
       console.error("Error creating category:", error.response?.data || error.message);
       toast.error("Không thể tạo danh mục. Vui lòng thử lại.");
@@ -47,14 +46,17 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={handleClose} centered size="lg">
+      <Modal.Header closeButton>
+        <Modal.Title>Thêm danh mục mới</Modal.Title>
+      </Modal.Header>
       <Modal.Body>
         <Form>
           {/* Tên & Slug */}
           <Row className="mb-3">
             <Col md={6}>
               <Form.Label>Tên danh mục</Form.Label>
-                <Form.Control
+              <Form.Control
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -75,6 +77,7 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
             <Form.Label>Mô tả</Form.Label>
             <Form.Control
               as="textarea"
+              rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -94,21 +97,22 @@ const CategoryModal = ({ show, handleClose, handleSave }) => {
 
             <Col md={4}>
               <Form.Label>Trạng thái</Form.Label>
-              <Form.Select value={isActive ? 1 : 0} onChange={(e) => setIsActive(Boolean(Number(e.target.value)))}>
+              <Form.Select
+                value={isActive ? 1 : 0}
+                onChange={(e) => setIsActive(Boolean(Number(e.target.value)))}
+              >
                 <option value={1}>Hiển thị</option>
                 <option value={0}>Ẩn</option>
               </Form.Select>
             </Col>
 
             <Col md={4}>
-            <Form.Group className="mb-3">
-                <Form.Label>Level</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={level}
-                  onChange={(e) => setLevel(e.target.value)}
-                />
-              </Form.Group>
+              <Form.Label>Level</Form.Label>
+              <Form.Control
+                type="number"
+                value={level}
+                onChange={(e) => setLevel(Number(e.target.value))}
+              />
             </Col>
           </Row>
 

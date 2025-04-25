@@ -1,6 +1,8 @@
 import React,{ useState, useEffect } from "react";
 import bannerService from "../../functionservice/BannerService";
+import HomeService from "../service/HomeService";
 import { Spinner } from "react-bootstrap";
+import HomeProduct from "../product/HomeProduct";
 
 const Home = () => {
   const [banners, setBanners] = useState([]);
@@ -36,7 +38,6 @@ const Home = () => {
   }, [currentSlide, banners.length]);
   return (
     <div>
-      {/* Hero Start */}
       <div className="container-fluid hero-header banner-container mt-5">
         <div className="container p-0">
           <div className="row g-0 align-items-center justify-content-center">
@@ -45,6 +46,7 @@ const Home = () => {
                 id="carouselId"
                 className="carousel slide"
                 data-bs-ride="carousel"
+                data-bs-interval="2000" // Slide every 2 seconds
               >
                 {loading ? (
                   <div className="text-center py-5">
@@ -57,29 +59,47 @@ const Home = () => {
                     Không có banner nào để hiển thị.
                   </div>
                 ) : (
-                  <div className="carousel-inner" type="button">
-                    {banners.map((banner, index) => (
-                      <div
-                        key={banner.id}
-                        className={`carousel-item ${index === currentSlide ? "active" : ""}`}
-                      >
-                        <div className="position-relative">
-                          <div
-                            className="position-relative"
-                            onClick={() => window.location.href = banner.link}
-                            style={{ cursor: 'pointer' }}
-                          >                            
-                            <img
-                              src={banner.imageUrl}
-                              className="d-block w-100 img-fluid rounded"
-                              style={{ height: "500px", objectFit: "cover" }}
-                              alt={banner.shortTitle || `Banner ${index + 1}`}
-                            />
+                  <>
+                    {/* Carousel Indicators */}
+                    <div className="carousel-indicators">
+                      {banners.map((_, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          data-bs-target="#carouselId"
+                          data-bs-slide-to={index}
+                          className={index === 0 ? "active" : ""}
+                          aria-current={index === 0 ? "true" : "false"}
+                          aria-label={`Slide ${index + 1}`}
+                        ></button>
+                      ))}
+                    </div>
+
+                    {/* Carousel Items */}
+                    <div className="carousel-inner">
+                      {banners.map((banner, index) => (
+                        <div
+                          key={banner.id}
+                          className={`carousel-item ${index === 0 ? "active" : ""}`}
+                        >
+                          <div className="position-relative">
+                            <div
+                              className="position-relative"
+                              onClick={() => (window.location.href = banner.link)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <img
+                                src={banner.imageUrl}
+                                className="d-block w-100 img-fluid rounded"
+                                style={{ height: "500px", objectFit: "cover" }}
+                                alt={banner.shortTitle || `Banner ${index + 1}`}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -92,7 +112,7 @@ const Home = () => {
       <div className="container-fluid fruite py-5">
         <div className="container py-5">
           <div className="tab-class text-center">
-            <div className="row g-4 justify-content-center">
+          <div className="row g-4 justify-content-center">
               <div className="col-lg-4 text-center">
                 <h1
                   className="fw-bold"
@@ -119,133 +139,17 @@ const Home = () => {
               </div>
               <div>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te
-                  incididunt
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit sed do
+                  eiusmod te incididunt
                 </p>
               </div>
             </div>
-            <div className="tab-content">
-              <div id="tab-1" className="tab-pane fade show p-0 active">
-                <div className="row g-4">
-                  <div className="col-lg-12">
-                    <div className="row g-4">
-                      <div className="col-md-6 col-lg-4 col-xl-3">
-                        <div className="rounded position-relative fruite-item">
-                          <div className="fruite-img">
-                            <img
-                              src="https://imgs.search.brave.com/5BGSvPnjH5DF7_aIuUKfFqmXN3GgN2z7gcr_xP0w41I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzZkLzFj/L2RmLzZkMWNkZmRl/ZDRiMzEyMGM5ZDNm/Yjc1ZjI0MjFkODhj/LmpwZw"
-                              className="img-fluid w-100 rounded-top"
-                              alt=""
-                            />
-                          </div>
-                          <div
-                            className="text-white px-3 py-1 rounded position-absolute"
-                            style={{ top: "10px", left: "10px" }}
-                          ></div>
-                          <div className="p-4 border border-secondary border-top-0 rounded-bottom">
-                            <div className="d-flex justify-content-between flex-lg-wrap">
-                              <h4 style={{ borderBottom: "3px solid #007bff", paddingBottom: "3px" }}>
-                                Grapes
-                              </h4>
-                              <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te
-                                incididunt
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-md-6 col-lg-4 col-xl-3">
-                        <div className="rounded position-relative fruite-item">
-                          <div className="fruite-img">
-                            <img
-                              src="https://imgs.search.brave.com/5BGSvPnjH5DF7_aIuUKfFqmXN3GgN2z7gcr_xP0w41I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzZkLzFj/L2RmLzZkMWNkZmRl/ZDRiMzEyMGM5ZDNm/Yjc1ZjI0MjFkODhj/LmpwZw"
-                              className="img-fluid w-100 rounded-top"
-                              alt=""
-                            />
-                          </div>
-                          <div
-                            className="text-white px-3 py-1 rounded position-absolute"
-                            style={{ top: "10px", left: "10px" }}
-                          ></div>
-                          <div className="p-4 border border-secondary border-top-0 rounded-bottom">
-                            <div className="d-flex justify-content-between flex-lg-wrap">
-                              <h4 style={{ borderBottom: "3px solid #007bff", paddingBottom: "3px" }}>
-                                Grapes
-                              </h4>
-                              <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te
-                                incididunt
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-md-6 col-lg-4 col-xl-3">
-                        <div className="rounded position-relative fruite-item">
-                          <div className="fruite-img">
-                            <img
-                              src="https://imgs.search.brave.com/5BGSvPnjH5DF7_aIuUKfFqmXN3GgN2z7gcr_xP0w41I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzZkLzFj/L2RmLzZkMWNkZmRl/ZDRiMzEyMGM5ZDNm/Yjc1ZjI0MjFkODhj/LmpwZw"
-                              className="img-fluid w-100 rounded-top"
-                              alt=""
-                            />
-                          </div>
-                          <div
-                            className="text-white px-3 py-1 rounded position-absolute"
-                            style={{ top: "10px", left: "10px" }}
-                          >
-                          </div>
-                          <div className="p-4 border border-secondary border-top-0 rounded-bottom">
-                            <div className="d-flex justify-content-between flex-lg-wrap">
-                              <h4 style={{ borderBottom: "3px solid #007bff", paddingBottom: "3px" }}>
-                                Grapes
-                              </h4>
-                              <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te
-                                incididunt
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-md-6 col-lg-4 col-xl-3">
-                        <div className="rounded position-relative fruite-item">
-                          <div className="fruite-img">
-                            <img
-                              src="https://imgs.search.brave.com/5BGSvPnjH5DF7_aIuUKfFqmXN3GgN2z7gcr_xP0w41I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzZkLzFj/L2RmLzZkMWNkZmRl/ZDRiMzEyMGM5ZDNm/Yjc1ZjI0MjFkODhj/LmpwZw"
-                              className="img-fluid w-100 rounded-top"
-                              alt=""
-                            />
-                          </div>
-                          <div
-                            className="text-white px-3 py-1 rounded position-absolute"
-                            style={{ top: "10px", left: "10px" }}
-                          >
-                          </div>
-                          <div className="p-4 border border-secondary border-top-0 rounded-bottom">
-                            <div className="d-flex justify-content-between flex-lg-wrap">
-                              <h4 style={{ borderBottom: "3px solid #007bff", paddingBottom: "3px" }}>
-                                Grapes
-                              </h4>
-                              <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te
-                                incididunt
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      {/* Các item khác tương tự */}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
+            <HomeService/>
           </div>
         </div>
       </div>
       {/* Dịch Shop End */}
+
       {/* lời mở dầu */}
       <div className="container-fluid py-5" style={{ backgroundColor: "skyblue" }}>
         <div className="container py-5">
@@ -291,6 +195,49 @@ const Home = () => {
             </div>
         </div>
       </div>
+      
+      {/* Dịch vụ Shop Start */}
+      <div className="container-fluid fruite py-5">
+        <div className="container py-5">
+          <div className="tab-class text-center">
+          <div className="row g-4 justify-content-center">
+              <div className="col-lg-4 text-center">
+                <h1
+                  className="fw-bold"
+                  style={{ whiteSpace: "nowrap", fontSize: "36px", color: "#0000FF" }}
+                >
+                  Sản Phẩm An Nghi Home
+                </h1>
+                <div className="d-flex align-items-center mt-3 justify-content-center">
+                  <div
+                    className="border-top border-dark flex-grow-1"
+                    style={{ maxWidth: "50px" }}
+                  ></div>
+                  <img
+                    src="logo.png"
+                    alt="Logo"
+                    className="mx-3"
+                    style={{ width: "40px", height: "40px" }}
+                  />
+                  <div
+                    className="border-top border-dark flex-grow-1"
+                    style={{ maxWidth: "50px" }}
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit sed do
+                  eiusmod te incididunt
+                </p>
+              </div>
+            </div>
+            <HomeProduct/>
+          </div>
+        </div>
+      </div>
+      {/* Dịch Shop End */}
+
       {/* đôi ngũ */}
       <div className="container-fluid fruite py-5 btn-light">
         <div className="container py-5">
@@ -362,7 +309,7 @@ const Home = () => {
             </div>
             </div>
         </div>
-    </div>
+      </div>
 
       {/* vì sao chọn an nghi home */}
       <div className="container-fluid py-5" style={{ backgroundColor: "skyblue" }}>
@@ -688,6 +635,7 @@ const Home = () => {
         </div>
       </div>
       </div>
+
       {/* hình ảnh */}
       <div className="container-fluid py-5" style={{ backgroundColor: 'whitesmoke' }}>
         <div className="container py-5">
@@ -843,6 +791,7 @@ const Home = () => {
         </div>
       </div>
     </div>
+
     </div>
   );
 };

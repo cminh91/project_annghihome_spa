@@ -37,12 +37,12 @@ const CategoryList = () => {
     let timeoutId;
     const delayedSearch = () => {
       timeoutId = setTimeout(() => {
-        setCurrentPage(1); // Reset to page 1 when searching
+        setCurrentPage(1);
       }, 300);
     };
 
     delayedSearch();
-    return () => clearTimeout(timeoutId); // Cleanup timeout
+    return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
   // Handle search input

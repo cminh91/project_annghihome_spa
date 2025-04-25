@@ -12,8 +12,8 @@ const EditForm = ({ show, handleClose, handleUpdate, data }) => {
     longDescription: "",
     price: "",
     salePrice: "",
-    thumbnail: "", // Use thumbnail instead of imageUrl
-    images: [], // Use images instead of additionalImages
+    thumbnail: "", 
+    images: [], 
     metaTitle: "",
     metaDescription: "",
     metaKeywords: "",
@@ -44,8 +44,8 @@ const EditForm = ({ show, handleClose, handleUpdate, data }) => {
           longDescription: data.longDescription || "",
           price: data.price || "",
           salePrice: data.salePrice || "",
-          thumbnail: data.imageUrl || "", // Populate thumbnail from imageUrl
-          images: data.additionalImages || [], // Populate images from additionalImages
+          thumbnail: data.imageUrl || "", 
+          images: data.additionalImages || [],
           metaTitle: data.metaTitle || "",
           metaDescription: data.metaDescription || "",
           metaKeywords: data.metaKeywords || "",

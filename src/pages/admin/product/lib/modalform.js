@@ -4,14 +4,14 @@ import DescriptionEditor from "../../lib/DescriptionEditor";
 import productService from "../../../functionservice/productService";
 import uploadService from "../../../functionservice/uploadService";
 
-const ProductModal = ({ show, handleClose, handleSave }) => {
+const ProductModal = ({ show, handleClose, handleSave, initialData }) => {
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
     description: "",
     longDescription: "",
-    price: "",
-    salePrice: "",
+    price: 0,
+    salePrice: 0,
     imageUrl: "",
     categoryId: "",
     additionalImages: [],
@@ -46,7 +46,7 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
       setErrors({});
       fetchCategories();
     }
-  }, [show]);
+  }, [show, initialData]);
 
   const fetchCategories = async () => {
     try {
@@ -147,7 +147,7 @@ const ProductModal = ({ show, handleClose, handleSave }) => {
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered scrollable>
       <Modal.Header closeButton>
-        <Modal.Title>Thêm sản phẩm mới</Modal.Title>
+        <Modal.Title>{initialData ? "Sửa sản phẩm" : "Thêm sản phẩm mới"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>

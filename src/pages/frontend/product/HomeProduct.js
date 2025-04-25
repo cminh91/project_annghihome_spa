@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import productService from "../../functionservice/productService";
 import { useNavigate } from "react-router-dom";
 
-const AllProducts = () => {
+const HomeProduct = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +11,7 @@ const AllProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await productService.getAllProducts(1, 12);
+        const data = await productService.getAllProducts(1, 4);
         setProducts(data.products || []);
         setLoading(false);
       } catch (err) {
@@ -49,9 +49,6 @@ const AllProducts = () => {
               />
               <div className="p-3">
                 <h5 className="fw-bold text-dark">{product.name}</h5>
-                <p className="text-muted" style={{ fontSize: "14px" }}>
-                  {product.category?.name}
-                </p>
                 <p className="mb-1 text-primary fw-semibold">
                   Giá: {Number(product.salePrice || product.price).toLocaleString()} VND
                 </p>
@@ -60,7 +57,11 @@ const AllProducts = () => {
                     {Number(product.price).toLocaleString()} VND
                   </p>
                 )}
-                <p style={{ fontSize: "13px" }}>{product.description}</p>
+                  <button   className="btn btn-primary btn-lg"
+                  style={{ backgroundColor: "#007bff", borderColor: "#007bff" }}  onClick={() => handleProductClick(product.id)}>
+                      Chi tiết
+                </button>
+
               </div>
             </div>
           </div>
@@ -70,4 +71,4 @@ const AllProducts = () => {
   );
 };
 
-export default AllProducts;
+export default HomeProduct;

@@ -48,6 +48,27 @@ const ServiceList = () => {
 
   // Fetch services on mount or when dependencies change
   useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const servicesData = await serviceService.getAllServices(currentPage, servicesPerPage, searchTerm, sortBy, sortOrder);
+        if (Array.isArray(servicesData)) { // Check if the result is an array
+          setServices(servicesData); // Set services directly from the array
+          setTotalServices(servicesData.length); // Set total based on array length
+        } else if (servicesData && Array.isArray(servicesData.services)) { // Keep the old check for robustness
+          setServices(servicesData.services);
+          setTotalServices(servicesData.total || 0);
+        } else {
+          console.error("API did not return expected data format:", servicesData);
+          setServices([]);
+          setTotalServices(0);
+        }
+      } catch (error) {
+        console.error("Failed to fetch services:", error);
+        setServices([]);
+        setTotalServices(0);
+      }
+    };
+
     fetchServices();
   }, [fetchServices]);
 

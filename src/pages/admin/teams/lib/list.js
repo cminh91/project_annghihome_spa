@@ -14,7 +14,6 @@ const TeamMemberList = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
-
   const navigate = useNavigate();
 
   // Function to fetch team members

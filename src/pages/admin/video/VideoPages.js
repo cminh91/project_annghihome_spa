@@ -2,9 +2,9 @@ import React from "react";
 import Header from "../home/Header";
 import Footer from "../home/Footer";
 import SideBar from "../home/SideBar";
-import Trash from "./lib/trash";
+import Videolist from "./lib/list";
 
-const ServiceTrash =()=>{
+const VideoPages =()=>{
     return(
         <div className="d-flex flex-column min-vh-100">
             <Header />
@@ -14,7 +14,7 @@ const ServiceTrash =()=>{
                             <SideBar />
                         </div>
                         <div className="col-md-9">
-                            <Trash />
+                            <Videolist />
                         </div>
                     </div>
                 </div>
@@ -22,4 +22,4 @@ const ServiceTrash =()=>{
       </div>
       );
 }
-export default ServiceTrash;
+export default VideoPages;

@@ -1,18 +1,18 @@
 import React from "react";
 import Header from "../frontend/home/Header";
 import Footer from "../frontend/home/Footer";
-import AboutUs from "../frontend/about/AboutUs";
+import CateDetail from "./service/cateDetail";
 
-const AboutPage = () => {
+const CategoryDetail = () => {
   return (
     <>
       <Header />
       <main style={{ paddingTop: "110px" }}>
-      <AboutUs />
+        <CateDetail /> 
       </main>
       <Footer />
     </>
   );
 };
 
-export default AboutPage;
+export default CategoryDetail;
