@@ -8,8 +8,7 @@ const Home = () => {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  
+
   useEffect(() => {
     const fetchBanners = async () => {
       try {
@@ -25,19 +24,17 @@ const Home = () => {
       }
     };
     fetchBanners();
-  }, []);
-  
+  }, [])
   useEffect(() => {
-    if (banners.length === 0) return;
-  
-    const timer = setTimeout(() => {
-      setCurrentSlide((prevSlide) => (prevSlide + 1) % banners.length);
-    }, 2000); // Adjusting to 2 seconds
-  
-    return () => clearTimeout(timer);
-  }, [currentSlide, banners.length]);
+    const carouselElement = document.getElementById("carouselId");
+    if (carouselElement) {
+      const carousel = new window.bootstrap.Carousel(carouselElement);
+      carousel.cycle();
+    }
+  }, []);
   return (
     <div>
+      {/* Hero Start */}
       <div className="container-fluid hero-header banner-container mt-5">
         <div className="container p-0">
           <div className="row g-0 align-items-center justify-content-center">
@@ -46,7 +43,7 @@ const Home = () => {
                 id="carouselId"
                 className="carousel slide"
                 data-bs-ride="carousel"
-                data-bs-interval="2000" // Slide every 2 seconds
+                data-bs-interval="2500" // Slide every 2 seconds
               >
                 {loading ? (
                   <div className="text-center py-5">
@@ -99,6 +96,7 @@ const Home = () => {
                         </div>
                       ))}
                     </div>
+
                   </>
                 )}
               </div>
@@ -107,6 +105,7 @@ const Home = () => {
         </div>
       </div>
       {/* Hero End */}
+
 
       {/* Dịch vụ Shop Start */}
       <div className="container-fluid fruite py-5">
@@ -784,9 +783,6 @@ const Home = () => {
                 {/* Add more product cards here as needed */}
               </div>
             </div>
-
-            {/* Tab 3, Tab 4, Tab 5 — You can replicate the same pattern and map data dynamically if needed */}
-
           </div>
         </div>
       </div>

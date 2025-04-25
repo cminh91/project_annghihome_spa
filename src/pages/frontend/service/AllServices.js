@@ -95,13 +95,10 @@ const AllService = () => {
                           >
                             {service.name}
                           </h4>
-                          <p
-                            style={{ fontSize: "18px", color: "#007bff" }}
-                          >
-                            {service.price
-                              ? `${service.price} VND/buổi`
-                              : "Giá liên hệ"}
+                          <p style={{ fontSize: "18px", color: "#007bff" }}>
+                            {service.price ? `${service.price.toLocaleString()} VND/buổi` : "Giá liên hệ"}
                           </p>
+
                           <p>{service.description}</p>
                         </div>
                       </div>

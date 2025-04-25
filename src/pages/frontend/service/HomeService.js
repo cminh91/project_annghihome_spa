@@ -67,7 +67,7 @@ const HomeService = () => {
                             style={{ fontSize: "18px", color: "#007bff" }}
                           >
                             {service.price
-                              ? `${service.price} VND/buổi`
+                              ? `${service.price.toLocaleString()} VND/buổi`
                               : "Giá liên hệ"}
                           </p>
                           <p>{service.description}</p>
