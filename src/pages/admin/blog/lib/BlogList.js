@@ -1,68 +1,109 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import FormBlog from "./FormBlog"; // Đảm bảo đường dẫn chính xác cho FormBlog
+import FormBlog from "./FormBlog";
+import blogService from "../../../functionservice/BlogService";
+import uploadService from "../../../functionservice/uploadService";
 
 const BlogList = () => {
-  const navigate = useNavigate();
+
   const [showModal, setShowModal] = useState(false);
   const [editBlog, setEditBlog] = useState(null); // Thêm state cho bài blog đang chỉnh sửa
-  const [blogs, setBlogs] = useState([
-    {
-      id: 1,
-      image: "https://via.placeholder.com/100",
-      title: "5 cách để trang trí nội thất hiệu quả",
-      description: "Khám phá những mẹo đơn giản giúp không gian sống trở nên ấn tượng hơn...",
-      name: "Nguyễn Văn A",
-    },
-    {
-      id: 2,
-      image: "https://via.placeholder.com/100",
-      title: "Xu hướng nội thất 2025",
-      description: "Tổng hợp những xu hướng thiết kế nổi bật sẽ thống trị trong năm tới.",
-      name: "Trần Thị B",
-    },
-    {
-      id: 3,
-      image: "https://via.placeholder.com/100",
-      title: "Mẹo chọn đồ gỗ bền đẹp",
-      description: "Bí quyết lựa chọn đồ nội thất bằng gỗ vừa đẹp vừa bền theo thời gian.",
-      name: "Lê Văn C",
-    },
-  ]);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
 
-  const handleOpenTrash = () => {
-    navigate("/admin/blog/trash");
+  useEffect(() => {
+    fetchBlogs(page, limit);
+  }, [page, limit]);
+
+  const fetchBlogs = async (currentPage = 1, currentLimit = 10) => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await blogService.getPosts({ page: currentPage, limit: currentLimit });
+      setBlogs(Array.isArray(data.posts) ? data.posts : []);
+      setTotal(Number(data.total) || 0);
+    } catch (err) {
+      setError("Không thể tải danh sách blog.");
+      setBlogs([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleOpenEdit = (blog) => {
-    setEditBlog(blog); // Cập nhật bài blog cần chỉnh sửa
-    setShowModal(true); // Mở modal chỉnh sửa
+
+
+  const handleOpenEdit = async (blog) => {
+    setEditBlog(blog);
+    await fetchCategories();
+    setShowModal(true);
   };
 
-  const handleOpenCreate = () => {
-    setEditBlog(null); // Nếu thêm mới thì không có blog chỉnh sửa
-    setShowModal(true); // Mở modal thêm
+  const handleOpenCreate = async () => {
+    setEditBlog(null);
+    await fetchCategories();
+    setShowModal(true);
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const data = await blogService.getCategoriesByType('post');
+      setCategories(Array.isArray(data) ? data : (Array.isArray(data.items) ? data.items : []));
+    } catch (err) {
+      setCategories([]);
+    }
   };
 
   const handleClose = () => {
     setShowModal(false);
   };
 
-  const handleSave = (data) => {
-    if (editBlog) {
-      // Cập nhật blog đã tồn tại
-      setBlogs(
-        blogs.map((blog) => (blog.id === editBlog.id ? { ...blog, ...data } : blog))
-      );
-    } else {
-      // Thêm mới blog
-      const newBlog = {
-        ...data,
-        id: blogs.length + 1,
-      };
-      setBlogs([...blogs, newBlog]);
+  // Xử lý upload ảnh và lưu blog
+  const handleSave = async (data, fileImage) => {
+    setLoading(true);
+    setError("");
+    try {
+      let imageUrl = data.imageUrl || "";
+      // Nếu có file ảnh mới, upload lên
+      if (fileImage) {
+        const imageUrls = await uploadService.uploadImages([fileImage]);
+        imageUrl = imageUrls[0];
+      }
+      const payload = { ...data, imageUrl };
+      if (editBlog) {
+        await blogService.updateBlog(editBlog.id, payload);
+      } else {
+        await blogService.createBlog(payload);
+      }
+      await fetchBlogs();
+      setShowModal(false);
+    } catch (err) {
+      setError("Lưu blog thất bại");
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Xử lý xóa blog
+  const handleDelete = async (id) => {
+    if (!window.confirm("Bạn chắc chắn muốn xóa blog này?")) return;
+    setLoading(true);
+    setError("");
+    try {
+      await blogService.deleteBlog(id);
+      await fetchBlogs();
+    } catch (err) {
+      setError("Xóa blog thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div className="container mt-4">
@@ -72,18 +113,18 @@ const BlogList = () => {
           <button className="btn btn-primary" onClick={handleOpenCreate}>
             <i className="bi bi-plus-circle me-2"></i>Thêm mới
           </button>
-          <button className="btn btn-danger" onClick={handleOpenTrash}>
-            <i className="bi bi-trash me-2"></i>Thùng rác
-          </button>
+
         </div>
       </div>
 
+      {error && <div className="alert alert-danger">{error}</div>}
+      {loading && <div>Đang tải...</div>}
       <table className="table table-bordered table-hover">
         <thead className="table-dark">
           <tr>
             <th>Hình ảnh</th>
             <th>Tiêu đề</th>
-            <th>Mô tả</th>
+            <th>Tóm tắt</th>
             <th>Tác giả</th>
             <th>Hành động</th>
           </tr>
@@ -93,7 +134,7 @@ const BlogList = () => {
             <tr key={blog.id}>
               <td>
                 <img
-                  src={blog.image}
+                  src={blog.imageUrl || blog.image}
                   alt="Blog"
                   width="100"
                   height="100"
@@ -101,8 +142,8 @@ const BlogList = () => {
                 />
               </td>
               <td>{blog.title}</td>
-              <td>{blog.description}</td>
-              <td>{blog.name}</td>
+              <td>{blog.summary}</td>
+              <td>{blog.authorName}</td>
               <td className="d-flex gap-2">
                 <button
                   className="btn btn-warning btn-sm"
@@ -110,7 +151,7 @@ const BlogList = () => {
                 >
                   <i className="bi bi-pencil-square"></i>
                 </button>
-                <button className="btn btn-danger btn-sm">
+                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(blog.id)}>
                   <i className="bi bi-trash"></i>
                 </button>
               </td>
@@ -118,14 +159,26 @@ const BlogList = () => {
           ))}
         </tbody>
       </table>
+      {/* Pagination */}
+      <div className="d-flex justify-content-center align-items-center my-3">
+        <button className="btn btn-outline-secondary mx-2" disabled={page === 1} onClick={() => setPage(page - 1)}>
+          Trang trước
+        </button>
+        <span>Trang {page} / {Math.ceil(total / limit) || 1}</span>
+        <button className="btn btn-outline-secondary mx-2" disabled={page >= Math.ceil(total / limit)} onClick={() => setPage(page + 1)}>
+          Trang sau
+        </button>
+      </div>
 
-      {/* Modal thêm/sửa blog */}
-      <FormBlog
-        show={showModal}
-        handleClose={handleClose}
-        handleSave={handleSave}
-        defaultData={editBlog} // Nếu đang chỉnh sửa, truyền dữ liệu của bài blog đó
-      />
+      {showModal && (
+        <FormBlog
+          show={showModal}
+          handleClose={handleClose}
+          handleSave={handleSave}
+          defaultData={editBlog}
+          categories={categories}
+        />
+      )}
     </div>
   );
 };

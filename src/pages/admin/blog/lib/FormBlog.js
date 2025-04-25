@@ -38,19 +38,35 @@ const FormBlog = ({ show, handleClose, handleSave, defaultData = {}, categories 
     }));
   };
 
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Chuẩn hóa dữ liệu cho API
+    const payload = {
+      title: formData.title || "",
+      slug: formData.slug || "",
+      content: formData.content || "",
+      summary: formData.excerpt || "", // dùng excerpt cho summary
+      imageUrl: formData.imageUrl || "", // sẽ được cập nhật sau khi upload nếu có
+      isPublished: Boolean(formData.isPublished),
+      tags: Array.isArray(formData.tags) ? formData.tags : (typeof formData.tags === "string" ? formData.tags.split(',').map(s => s.trim()).filter(Boolean) : []),
+      authorName: formData.author || ""
+    };
+    // Nếu có file ảnh, truyền về BlogList để xử lý upload
+    handleSave(payload, formData._fileImage || null);
+    handleClose();
+  };
+
+  // Sửa lại handleImageChange để lưu file gốc
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, image: imageUrl }));
+      setFormData((prev) => ({ ...prev, image: imageUrl, _fileImage: file }));
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleSave(formData);  // Gọi hàm handleSave khi submit
-    handleClose();  // Đóng modal sau khi lưu
-  };
 
   return (
     <Modal show={show} onHide={handleClose} centered size="lg">

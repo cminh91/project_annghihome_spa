@@ -33,13 +33,16 @@ const SliderList = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this slider?")) {
+    // Use Vietnamese confirmation message
+    if (window.confirm("Bạn có chắc chắn muốn xóa slider này không?")) {
       try {
         await bannerService.deleteBanner(id);
         setSliders((prev) => prev.filter((slider) => slider.id !== id));
       } catch (error) {
         setError(error);
-        console.error("Failed to delete slider:", error);
+        // Add Vietnamese alert or keep console error
+        console.error("Không thể xóa slider:", error);
+        alert("Không thể xóa slider. Vui lòng kiểm tra console.");
       }
     }
   };
@@ -66,8 +69,9 @@ const SliderList = () => {
       handleCloseModal();
     } catch (error) {
       setError(error);
-      console.error("Failed to create slider:", error);
-      alert("Failed to create slider. Please check the console for details.");
+      console.error("Không thể tạo slider:", error);
+      // Use Vietnamese alert
+      alert("Không thể tạo slider. Vui lòng kiểm tra console.");
     }
   };
 
@@ -91,25 +95,30 @@ const SliderList = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
-    return <div>Loading...</div>; // Simple loading indicator
+    // Vietnamese loading text
+    return <div>Đang tải...</div>;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>; // Display error message
+    // Vietnamese error text
+    return <div>Lỗi: {error.message || "Đã xảy ra lỗi không mong muốn."}</div>;
   }
 
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3 mt-4">
-        <h3>Slider List</h3>
+        {/* Vietnamese title */}
+        <h3>Danh Sách Slider</h3>
+        {/* Vietnamese button text */}
         <Button variant="success me-2" onClick={handleAdd}>
-          Add Slider
+          Thêm Slider
         </Button>
       </div>
       <input
         type="text"
         className="form-control mb-3"
-        placeholder="Search Sliders"
+        // Vietnamese placeholder
+        placeholder="Tìm kiếm Slider"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
@@ -117,11 +126,12 @@ const SliderList = () => {
       <Table striped bordered hover className="mt-3">
         <thead>
           <tr>
-            <th>shortTitle</th>
-            <th>longTitle</th>
-            <th>Image</th>
-            <th>Order</th>
-            <th>Actions</th>
+            {/* Vietnamese table headers */}
+            <th>Tiêu đề ngắn</th>
+            <th>Tiêu đề dài</th>
+            <th>Hình ảnh</th>
+            <th>Thứ tự</th>
+            <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
@@ -131,26 +141,33 @@ const SliderList = () => {
               <td>{slider.longTitle}</td>
               <td>
                 <img
-                  src={slider.imageUrl || "default-image-url.jpg"}
-                  alt={slider.shortTitle}
+                  // Use the actual image URL, provide a fallback if necessary
+                  src={slider.imageUrl || "placeholder.jpg"} // Consider a local placeholder
+                  alt={slider.shortTitle || "Hình ảnh slider"} // Vietnamese alt text
                   width="80"
                   className="rounded"
                 />
               </td>
               <td>{slider.order}</td>
               <td>
+                {/* Edit button */}
                 <Button
                   variant="warning"
                   size="sm"
                   onClick={() => handleEdit(slider)}
                   className="me-2"
+                  // Vietnamese tooltip/aria-label (optional)
+                  title="Chỉnh sửa"
                 >
                   <FaEdit />
                 </Button>
+                {/* Delete button */}
                 <Button
                   variant="danger"
                   size="sm"
                   onClick={() => handleDelete(slider.id)}
+                  // Vietnamese tooltip/aria-label (optional)
+                  title="Xóa"
                 >
                   <FaTrashAlt />
                 </Button>
@@ -160,6 +177,7 @@ const SliderList = () => {
         </tbody>
       </Table>
 
+      {/* Pagination remains the same logic, text is just numbers */}
       <nav className="d-flex justify-content-center">
         <ul className="pagination d-flex flex-row">
           {Array.from({ length: Math.ceil(filteredSliders.length / slidersPerPage) }, (_, index) => (

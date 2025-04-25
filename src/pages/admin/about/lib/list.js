@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 import React, { useState, useEffect } from "react";
 import { Table, Button, Spinner } from "react-bootstrap";
 import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
@@ -83,8 +83,6 @@ const AboutList = () => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>Tiêu đề</th>
-            <th>Nội dung</th>
             <th>Sứ mệnh</th>
             <th>Tầm nhìn</th>
             <th>Lịch sử</th>
@@ -94,11 +92,9 @@ const AboutList = () => {
         <tbody>
           {aboutItems.map((item) => (
             <tr key={item.id}>
-              <td>{item.title}</td>
-              <td>{item.content}</td>
-              <td>{item.mission}</td>
-              <td>{item.vision}</td>
-              <td>{item.history}</td>
+              <td dangerouslySetInnerHTML={{ __html: item.mission }}></td>
+              <td dangerouslySetInnerHTML={{ __html: item.vision }}></td>
+              <td dangerouslySetInnerHTML={{ __html: item.history }}></td>
               <td className="d-flex justify-content-center align-items-center">
                 <Button
                   variant="warning"
