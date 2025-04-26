@@ -1,43 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductModal from "./modalform";
-import EditProductModal from "./editform"; 
-import productService from "../../../functionservice/productService";
+import EditProductModal from "./editform"; // Import the EditProductModal
+import productService from "../../../functionservice/productService"; // Import productService
 
 const ProductList = () => {
   const navigate = useNavigate()
   const [products, setProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(null); // Keep track of the product to be edited
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
-  const [sortBy, setSortBy] = useState("createdAt");
-  const [sortOrder, setSortOrder] = useState("DESC");
-  const [totalProducts, setTotalProducts] = useState(0);
+  const [sortBy, setSortBy] = useState("createdAt"); // Default sort by createdAt
+  const [sortOrder, setSortOrder] = useState("DESC"); // Default sort order DESC
+  const [totalProducts, setTotalProducts] = useState(0); // State to hold total number of products
 
+  // Fetch products on component mount or when pagination/search/sort changes
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const productsData = await productService.getAllProducts(currentPage, productsPerPage, searchTerm, sortBy, sortOrder);
         console.log('Products data:', productsData);
         setProducts(productsData.products);
-        setTotalProducts(productsData.total);
+        setTotalProducts(productsData.total); // Set total products from API
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
     };
 
     fetchProducts();
-  }, [currentPage, productsPerPage, searchTerm, sortBy, sortOrder]);
+  }, [currentPage, productsPerPage, searchTerm, sortBy, sortOrder]); // Add dependencies
 
   const handleOpenTrash = () => {
     navigate("/admin/product/trash");
   };
 
   const handleOpenEdit = (product) => {
-    setShowEditModal(product);
-    setShowModal(true); 
+    setShowEditModal(product); // Set the product being edited
+    setShowModal(true); // Show the modal for editing
   };
 
   const handleDeleteProduct = async (id) => {
@@ -45,7 +46,7 @@ const ProductList = () => {
     if (isConfirmed) {
       try {
         await productService.deleteProduct(id);
-        setProducts(products.filter((prod) => prod.id !== id));
+        setProducts(products.filter((prod) => prod.id !== id)); // Remove the deleted product from the list
       } catch (error) {
         console.error("Error deleting product:", error);
       }
@@ -55,28 +56,32 @@ const ProductList = () => {
   const handleSaveProduct = async (newProduct) => {
     try {
       await productService.createProduct(newProduct);
+      // Fetch products again to update the list after adding a new product
       const productsData = await productService.getAllProducts(currentPage, productsPerPage);
       setProducts(productsData.products);
-      setShowModal(false);
+      setShowModal(false); // Close the modal after saving
     } catch (error) {
       console.error("Error creating product:", error);
+      // Handle error appropriately, e.g., display an error message
     }
   };
 
   const handleUpdateProduct = async (updatedProduct) => {
     try {
       await productService.editProduct(updatedProduct.id, updatedProduct);
+      // Fetch products again to update the list after editing a product
       const productsData = await productService.getAllProducts(currentPage, productsPerPage);
       setProducts(productsData.products);
-      setShowModal(false);
+      setShowModal(false); // Close the modal after updating
     } catch (error) {
       console.error("Error updating product:", error);
+      // Handle error appropriately, e.g., display an error message
     }
   };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page on search
   };
 
  
@@ -90,7 +95,7 @@ const ProductList = () => {
         <div className="d-flex gap-2">
           <button
             className="btn btn-primary m-2"
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowModal(true)} // Open modal for adding product
           >
             <i className="bi bi-plus"></i> Thêm sản phẩm
           </button>
@@ -182,7 +187,6 @@ const ProductList = () => {
           handleClose={() => setShowModal(false)} // Close modal
           handleSave={handleUpdateProduct} // Save updated product
           data={showEditModal} // Pass product for editing
-          
         />
       ) : (
         <ProductModal
