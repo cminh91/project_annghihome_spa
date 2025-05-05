@@ -1,6 +1,26 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/api/';
+const API_URL = process.env.REACT_APP_API_BASE_URL;
+
+// Create axios instance with default headers
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+});
+
+// Add request interceptor to include token
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('jwt-token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
 
 const productService = {
   async createProduct(productData) {
@@ -11,46 +31,26 @@ const productService = {
       longDescription,
       price,
       salePrice,
-      inStock,
-      featured,
-      isActive,
-      categoryId,
-      specs,
-      metaTitle,
-      metaDescription,
-      metaKeywords,
-      images,
+      imageUrl,
+      additionalImages,
+      categoryId
     } = productData;
 
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('slug', slug);
-    formData.append('description', description || '');
-    formData.append('longDescription', longDescription || '');
-    formData.append('price', price.toString());
-    if (salePrice) formData.append('salePrice', salePrice.toString());
-    formData.append('inStock', inStock ? 'true' : 'false');
-    formData.append('featured', featured ? 'true' : 'false');
-    formData.append('isActive', isActive ? 'true' : 'false');
-    formData.append('categoryId', categoryId || '');
-    formData.append('specs', specs || '');
-    formData.append('metaTitle', metaTitle || '');
-    formData.append('metaDescription', metaDescription || '');
-    formData.append('metaKeywords', metaKeywords || '');
-
-    if (images && images.length > 0) {
-      images.forEach((img) => {
-        formData.append('images', img);
-      });
-    }
+    const productDataToSend = {
+      name: name.trim(),
+      slug: slug?.trim() || '',
+      description: description?.trim() || '',
+      longDescription: longDescription?.trim() || '',
+      price: Number(price),
+      salePrice: salePrice ? Number(salePrice) : null,
+      imageUrl: imageUrl || '',
+      additionalImages: additionalImages || [],
+      categoryId: categoryId || ''
+    };
 
     try {
-      const response = await axios.post(`${API_URL}products`, formData, {
+      const response = await api.post('/products', productDataToSend, {
         withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Accept': 'application/json',
-        },
       });
       return response.data;
     } catch (error) {
@@ -59,30 +59,28 @@ const productService = {
     }
   },
 
-  async getAllProducts() {
+  async getAllProducts(page = 1, limit = 10, searchTerm = '', sortBy = 'createdAt', sortOrder = 'DESC') {
     try {
-      const response = await axios.get(`${API_URL}products`, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      let apiUrl = `/products?sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&limit=${limit}`;
+      if (searchTerm) {
+        apiUrl += `&searchTerm=${searchTerm}`;
+      }
+      const response = await api.get(apiUrl);
       return response.data;
     } catch (error) {
       console.error("Error fetching products:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        console.error("Error message from backend:", error.response.data.message);
+      } else {
+        console.error("Error response data:", error.response?.data);
+      }
       throw error;
     }
   },
 
   async getProductById(id) {
     try {
-      const response = await axios.get(`${API_URL}products/${id}`, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      });
+      const response = await api.get(`/products/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching product by ID:", error);
@@ -98,46 +96,42 @@ const productService = {
       longDescription,
       price,
       salePrice,
+      imageUrl,
+      additionalImages,
+      categoryId,
       inStock,
       featured,
       isActive,
-      categoryId,
       specs,
       metaTitle,
       metaDescription,
       metaKeywords,
-      images,
+      images
     } = productData;
 
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('slug', slug);
-    formData.append('description', description || '');
-    formData.append('longDescription', longDescription || '');
-    formData.append('price', price.toString());
-    if (salePrice) formData.append('salePrice', salePrice.toString());
-    formData.append('inStock', inStock ? 'true' : 'false');
-    formData.append('featured', featured ? 'true' : 'false');
-    formData.append('isActive', isActive ? 'true' : 'false');
-    formData.append('categoryId', categoryId || '');
-    formData.append('specs', specs || '');
-    formData.append('metaTitle', metaTitle || '');
-    formData.append('metaDescription', metaDescription || '');
-    formData.append('metaKeywords', metaKeywords || '');
-
-    if (images && images.length > 0) {
-      images.forEach((img) => {
-        formData.append('images', img);
-      });
-    }
+    const productDataToSend = {
+      name: name.trim(),
+      slug: slug?.trim() || '',
+      description: description?.trim() || '',
+      longDescription: longDescription?.trim() || '',
+      price: Number(price),
+      salePrice: salePrice ? Number(salePrice) : null,
+      inStock: Boolean(inStock),
+      featured: Boolean(featured),
+      isActive: Boolean(isActive),
+      categoryId: categoryId || '',
+      specs: specs || '',
+      metaTitle: metaTitle || '',
+      metaDescription: metaDescription || '',
+      metaKeywords: metaKeywords || '',
+      images: images || [],
+      imageUrl: imageUrl || '',
+      additionalImages: additionalImages || []
+    };
 
     try {
-      const response = await axios.put(`${API_URL}products/${id}`, formData, {
+      const response = await api.put(`/products/${id}`, productDataToSend, {
         withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Accept': 'application/json',
-        },
       });
       return response.data;
     } catch (error) {
@@ -148,12 +142,7 @@ const productService = {
 
   async deleteProduct(id) {
     try {
-      const response = await axios.delete(`${API_URL}products/${id}`, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await api.delete(`/products/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -161,5 +150,17 @@ const productService = {
     }
   },
 };
+
+async function getCategoriesByType(type) {
+  try {
+    const response = await api.get(`/categories/by-type/${type}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching categories by type ${type}:`, error);
+    throw error;
+  }
+}
+
+productService.getCategoriesByType = getCategoriesByType;
 
 export default productService;

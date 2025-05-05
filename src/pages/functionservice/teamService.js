@@ -10,8 +10,6 @@ const api = axios.create({
     'Accept': 'application/json'
   }
 });
-
-// Add request interceptor to include token
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('jwt-token');
   if (token) {
@@ -22,55 +20,59 @@ api.interceptors.request.use(config => {
   return Promise.reject(error);
 });
 
-const bannerService = {
-  async createBanner(bannerData) {
+const teamService = {
+  async createTeam(teamData) {
     try {
-      const response = await api.post('/banners', bannerData);
+      const response = await api.post('/team', teamData);
       return response.data;
     } catch (error) {
-      console.error("Error creating banner:", error.response?.data || error.message);
+      console.error("Error creating teams:", error.response?.data || error.message);
       throw error;
     }
   },
-  async getAllBanners() {
+  async getAllTeams() {
     try {
-      const response = await api.get('/banners');
+      const response = await api.get('/team');
       return response.data;
+      
     } catch (error) {
-      console.error("Error fetching banners:", error);
-      throw error;
-    }
-  },
-
-  async getBannerById(id) {
-    try {
-      const response = await api.get(`/banners/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching banner by ID:", error);
+      console.error("Error fetching teams:", error);
       throw error;
     }
   },
 
-  async editBanner(id, bannerData) {
+  async getteamsById(id) {
     try {
-      const response = await api.put(`/banners/${id}`, bannerData);
+      const response = await api.get(`/teams/${id}`);
       return response.data;
     } catch (error) {
-      console.error("Error editing banner:", error.response?.data || error.message);
+      console.error("Error fetching teams by ID:", error);
       throw error;
     }
   },
 
-  async deleteBanner(id) {
+  async editteam(id, teamData) {
     try {
-      const response = await api.delete(`/banners/${id}`);
+      const response = await api.put(`/teams/${id}`, teamData);
       return response.data;
     } catch (error) {
-      console.error("Error deleting banner:", error);
+      console.error("Error editing teams:", error.response?.data || error.message);
+      if (error.response) {
+        console.error("Server response:", error.response.data);
+      }
+    throw error;
+    }
+  },
+
+  async deleteteam(id) {
+    try {
+      const response = await api.delete(`/teams/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting teams:", error);
       throw error;
     }
   },
 };
 
-export default bannerService;
+export default teamService;

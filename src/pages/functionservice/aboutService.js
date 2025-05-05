@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/api/';
+const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 const aboutService = {
   async createAbout(aboutData) {
     try {
-      const response = await axios.post(`${API_URL}about`, aboutData, {
+      const response = await axios.post(`${API_URL}/about`, aboutData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ const aboutService = {
 
   async getAllAbout() {
     try {
-      const response = await axios.get(`${API_URL}about`, {
+      const response = await axios.get(`${API_URL}/about`, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ const aboutService = {
 
   async getAboutById(id) {
     try {
-      const response = await axios.get(`${API_URL}about/${id}`, {
+      const response = await axios.get(`${API_URL}/about/${id}`, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ const aboutService = {
 
   async updateAbout(id, aboutData) {
     try {
-      const response = await axios.put(`${API_URL}about/${id}`, aboutData, {
+      const response = await axios.put(`${API_URL}/about/${id}`, aboutData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ const aboutService = {
 
   async deleteAbout(id) {
     try {
-      const response = await axios.delete(`${API_URL}about/${id}`, {
+      const response = await axios.delete(`${API_URL}/about/${id}`, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',

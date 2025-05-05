@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import productService from "../../functionservice/productService";
 import { useNavigate } from "react-router-dom";
 
-const AllProducts = () => {
+const HomeProduct = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +11,7 @@ const AllProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await productService.getAllProducts(1, 12);
+        const data = await productService.getAllProducts(1, 4);
         setProducts(data.products || []);
         setLoading(false);
       } catch (err) {
@@ -23,15 +23,19 @@ const AllProducts = () => {
     fetchProducts();
   }, []);
 
-  const handleProductClick = (id) => {
-    navigate(`/san-pham/${id}`);
+  const handleProductClick = (slug) => {
+    navigate(`/san-pham/${slug}`);
   };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="container-fluid fruite py-5">
+    <div>
+      <div className="container-fluid fruite py-5 ">
+        <div className="container py-5">
+          <div className="tab-class text-center">
+            <div className="tab-content" type="button">
               <div id="tab-1" className="tab-pane fade show p-0 active">
                 <div className="row g-4 ">
                   {products.map((product) => (
@@ -41,14 +45,14 @@ const AllProducts = () => {
                       onClick={() => handleProductClick(product.id)}
                     >
                       <div className="rounded position-relative fruite-item border border-secondary border-top-0 rounded-bottom">
-                        <div className="fruite-img" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <div className="fruite-img">
                           <img
                             src={product.imageUrl || "default-image.jpg"}
-                            className="img-fluid w-50 rounded-top"
+                            className="img-fluid w-100 rounded-top"
                             alt={product.name}
                           />
                         </div>
-                        <div className="p-4 text-center ">
+                        <div className="p-4 ">
                           <h4
                             style={{
                               borderBottom: "3px solid #007bff",
@@ -77,7 +81,7 @@ const AllProducts = () => {
                               backgroundColor: "#007bff",
                               borderColor: "#007bff",
                             }}
-                            onClick={() => handleProductClick(product.id)}
+                            onClick={() => handleProductClick(product.slug)}
                           >
                             Chi tiết
                           </button>
@@ -87,8 +91,12 @@ const AllProducts = () => {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default AllProducts;
+export default HomeProduct;

@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_BASE_URL;
@@ -29,7 +28,6 @@ const categoryService = {
       if (!categoryData.name || !categoryData.slug || !categoryData.type) {
         throw new Error('Tên danh mục, slug và type là bắt buộc');
       }
-
       const response = await api.post('/categories', {
         name: categoryData.name.trim(),
         slug: categoryData.slug.trim(),
@@ -41,6 +39,10 @@ const categoryService = {
       });
       return response.data;
     } catch (error) {
+      if (error.response && error.response.status === 409) {
+        // Handle duplicate name error
+        throw new Error('Tên danh mục đã tồn tại!');
+      }
       console.error("Chi tiết lỗi:", error.response?.data || error.message);
       throw error;
     }
@@ -96,7 +98,18 @@ const categoryService = {
       console.error("Error deleting category:", error);
       throw error;
     }
-  }
-}
+  },
 
+  // Lấy danh mục theo type (ví dụ: PRODUCT)
+  async getCategoriesByType(type) {
+    try {
+      const response = await api.get(`/categories/by-type/${type}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching categories by type:", error);
+      throw error;
+    }
+  }
+
+}
 export default categoryService;
