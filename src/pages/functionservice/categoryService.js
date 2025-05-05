@@ -28,7 +28,6 @@ const categoryService = {
       if (!categoryData.name || !categoryData.slug || !categoryData.type) {
         throw new Error('Tên danh mục, slug và type là bắt buộc');
       }
-
       const response = await api.post('/categories', {
         name: categoryData.name.trim(),
         slug: categoryData.slug.trim(),

@@ -63,13 +63,13 @@ const ContactList = () => {
     <div className="container py-5">
       <h2 className="text-center mb-4">Liên hệ với chúng tôi</h2>
       <div className="row">
-        <div className="col-md-7">
+        <div className="col-md-7py-5">
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="name" className="form-label">Họ và tên (*)</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control form-control-lg w-100"
                 id="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -82,7 +82,7 @@ const ContactList = () => {
               <label htmlFor="phoneNumber" className="form-label">Số điện thoại (*)</label>
               <input
                 type="tel"
-                className="form-control"
+                className="form-control form-control-lg w-100"
                 id="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
@@ -95,7 +95,7 @@ const ContactList = () => {
               <label htmlFor="email" className="form-label">Email</label>
               <input
                 type="email"
-                className="form-control"
+                className="form-control form-control-lg w-100"
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -107,7 +107,7 @@ const ContactList = () => {
               <label htmlFor="address" className="form-label">Địa chỉ</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control form-control-lg w-100"
                 id="address"
                 value={formData.address}
                 onChange={handleChange}
@@ -117,7 +117,7 @@ const ContactList = () => {
             <div className="mb-3">
               <label htmlFor="message" className="form-label">Nội dung</label>
               <textarea
-                className="form-control"
+                className="form-control form-control-lg w-100"
                 id="message"
                 rows="5"
                 value={formData.message}
@@ -126,8 +126,10 @@ const ContactList = () => {
               ></textarea>
             </div>
 
-            <button type="submit" className="btn btn-primary">Gửi thông tin</button>
-          </form>
+            <div className="d-flex justify-content-center">
+              <button type="submit" className="btn btn-primary">Gửi thông tin</button>
+            </div>
+            </form>
           {statusMessage && (
             <div className={`alert mt-3 ${statusMessage.includes("thành công") ? "alert-success" : "alert-danger"}`} role="alert">
               {statusMessage}

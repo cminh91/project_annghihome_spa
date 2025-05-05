@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import categoryService from "../../functionservice/categoryService";
 import storeinforService from "../../functionservice/storeinforService";
-import HomeBlog from "../blog/HomeBlog";
+
 const Header = () => {
   const [storeInfos, setStoreInfos] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -10,8 +10,8 @@ const Header = () => {
   const [categories, setCategories] = useState({
     level0: [],
     level1: [],
-    level2: [],
   });
+  
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   useEffect(() => {
@@ -25,15 +25,13 @@ const Header = () => {
         const level1Categories = categoriesData.filter(
           (category) => category.level === 1
         );
-        const level2Categories = categoriesData.filter(
-          (category) => category.level === 2
-        );
+
 
         setCategories({
           level0: level0Categories,
           level1: level1Categories,
-          level2: level2Categories,
         });
+        setError(null);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
         setError("Không thể tải danh mục. Vui lòng thử lại.");
@@ -62,65 +60,6 @@ const Header = () => {
     fetchStoreInfos();
   }, []);
 
-  const renderSubCategories = (parentCategory) => {
-    const level1SubCategories = categories.level1.filter(
-      (category) => category.parentId === parentCategory.id
-    );
-    const level2SubCategories = categories.level2.filter(
-      (category) => category.parentId === parentCategory.id
-    );
-
-    if (level1SubCategories.length > 0 || level2SubCategories.length > 0) {
-      return (
-        <div className="dropdown-menu m-0 bg-secondary rounded-0">
-          {level1SubCategories.length > 0 && (
-            <div className="dropdown-item">
-              {level1SubCategories.map((subcategory) => (
-                <div key={subcategory.id} className="dropdown-item">
-                  <Link
-                    to={`/dich-vu/${subcategory.slug}`}
-                    className="dropdown-item"
-                  >
-                    {subcategory.name}
-                  </Link>
-                  <Link
-                    to={`/san-pham/${subcategory.slug}`}
-                    className="dropdown-item"
-                  >
-                    {subcategory.name}
-                  </Link>
-                  <Link
-                    to={`/bai-viet/${subcategory.slug}`}
-                    className="dropdown-item"
-                  >
-                    {subcategory.name}
-                  </Link>
-                  {renderSubCategories(subcategory)}
-                </div>
-              ))}
-            </div>
-          )}
-          {level2SubCategories.length > 0 && (
-            <div className="dropdown-item">
-              <strong>Level 2</strong>
-              {level2SubCategories.map((subcategory) => (
-                <div key={subcategory.id} className="dropdown-item">
-                  <Link
-                    to={`/dich-vu/${subcategory.slug}`}
-                    className="dropdown-item"
-                  >
-                    {subcategory.name}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      );
-    }
-    return null;
-  };
-
   const renderCategoryDropdown = (categoryType) => {
     const filteredCategories = categories.level0.filter(
       (category) => category.type === categoryType
@@ -139,7 +78,6 @@ const Header = () => {
         <Link to={`/category/${category.slug}`} className="dropdown-item">
           {category.name}
         </Link>
-        {renderSubCategories(category)}
       </div>
     ));
   };

@@ -54,7 +54,7 @@ const Footer = () => {
             {/* Liên hệ + Social */}
             <div className="col-lg-3 col-md-6">
               <div className="footer-item">
-                <h4 className="text-white mb-3">Liên Hệ</h4>
+                <h4 className="text-white mb-3">Thông Tin Liên Hệ</h4>
                 <p className="mb-2">
                   <i className="fa fa-map-marker-alt me-2"></i>10B Phan Đình Phùng P Thành Nhất, Buon Ma Thuot, Vietnam
                 </p>
@@ -63,9 +63,6 @@ const Footer = () => {
                 </p>
                 <p className="mb-2">
                   <i className="fa fa-phone me-2"></i>082 620 4747
-                </p>
-                <p className="mb-3">
-                  <i className="fa fa-clock me-2"></i>8:00 - 20:00 (T2 - CN)
                 </p>
               </div>
               <div className="d-flex pt-2">

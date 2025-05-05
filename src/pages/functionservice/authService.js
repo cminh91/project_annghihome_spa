@@ -1,4 +1,3 @@
-// authService.js
 const authService = () => {
     const isLocalStorageAvailable = typeof window !== "undefined" && window.localStorage;
   
@@ -32,4 +31,4 @@ const authService = () => {
     };
 };
 
-export default authService;  // This is the correct default export
+export default authService;

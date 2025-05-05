@@ -33,7 +33,6 @@ const teamService = {
   async getAllTeams() {
     try {
       const response = await api.get('/team');
-      console.log("Response data from getAllteams:", response.data);
       return response.data;
       
     } catch (error) {

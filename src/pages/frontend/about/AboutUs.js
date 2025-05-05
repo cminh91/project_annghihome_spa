@@ -41,11 +41,11 @@ const AboutUs = () => {
       {/* Tầm Nhìn & Sứ Mệnh */}
       <div className="row mb-5">
         <div className="col-md-6">
-          <h3 className="mb-3">Tầm Nhìn</h3>
+          <h3 className="mb-3 text-center">Tầm Nhìn</h3>
           <p>{aboutData.vision}</p>
         </div>
         <div className="col-md-6">
-          <h3 className="mb-3">Sứ Mệnh</h3>
+          <h3 className="mb-3 text-center">Sứ Mệnh</h3>
           <p>{aboutData.mission}</p>
         </div>
       </div>

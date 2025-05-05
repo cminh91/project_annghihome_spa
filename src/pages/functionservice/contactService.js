@@ -60,18 +60,26 @@ const contactService = {
     }
   },
 
-  async editContact(id, contactData) {
+  async markAsRead(id) {
     try {
-      const response = await api.put(`/contact/${id}`, contactData);
+      const response = await api.put(`/contact/${id}/read`);
       return response.data;
     } catch (error) {
-      console.error("Error editing contact:", error.response?.data || error.message);
-      if (error.response) {
-        console.error("Server response:", error.response.data);
-      }
-    throw error;
+      console.error("Error marking as read:", error.response?.data || error.message);
+      throw error;
     }
   },
+  
+  async markAsReplied(id) {
+    try {
+      const response = await api.put(`/contact/${id}/replied`);
+      return response.data;
+    } catch (error) {
+      console.error("Error marking as replied:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  
 
   async deleteContact(id) {
     try {

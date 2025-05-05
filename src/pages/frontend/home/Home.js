@@ -36,6 +36,7 @@ const Home = () => {
       try {
         setLoading(true);
         const data = await storeinforService.getAllStoreinfo();
+        console.log(data)
         setStoreInfos(data);
         setError(null);
       } catch (err) {
@@ -181,7 +182,7 @@ const Home = () => {
                 </h1>
                 <div className="d-flex align-items-center mt-3 justify-content-center">
                 <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
-                <img src="logo.png" alt="Logo" className="mx-3" style={{ width: "40px", height: "40px" }} />
+                <img src={storeInfos?.favicon} alt="Logo" className="mx-3" style={{ width: "40px", height: "40px" }} />
                 <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
                 </div>
             </div>
@@ -282,7 +283,7 @@ const Home = () => {
                     <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
                 </div>
                 </div>
-                <p className="text-dark mt-3 text-start">
+                <p className="text-dark mt-3 text-center">
                 An Nghi HOME có Đội ngũ Bác sĩ uy tín hàng đầu hiện nay ở cả 3 lĩnh vực Sản Khoa – Nhi Khoa – Chăm sóc Tiền / Hậu Sản.
                 Đội ngũ Bác sĩ tại An Nghi HOME có rất nhiều năm kinh nghiệm về chuyên môn và đảm trách nhiệm vụ, vị trí công tác quan trọng
                 ở các Bệnh viện hàng đầu Việt Nam như: Bệnh viện Quốc tế Mỹ AIH, Bệnh viện Từ Dũ, Bệnh viện FV, Bệnh viện Nhi Đồng 2, CMI Việt Nam.
@@ -428,21 +429,25 @@ const Home = () => {
 
       {/* tư vấn */}
       <div className="container-fluid py-5" style={{ backgroundColor: "skyblue" }}>
-      <div className="container py-5">
-        <div className="row g-4">
-          {/* Phần "Chọn dịch vụ" */}
-          <ServiceList/>
+        <div className="container py-5">
+          <div className="row g-4">
+            {/* Phần "Chọn dịch vụ" - Cột 1 */}
+            <div className="col-lg-6">
+              <div className="bg-white rounded shadow-sm p-4">
+                <ServiceList />
+              </div>
+            </div>
 
-          {/* Phần "Yêu cầu tư vấn" */}
-          <div className="col-lg-6">
-            <div className="bg-white p-4 rounded shadow-sm">
-              <ContactList/>
+            {/* Phần "Yêu cầu tư vấn" - Cột 2 */}
+            <div className="col-lg-6">
+              <div className="bg-white rounded shadow-sm p-4">
+                <ContactList />
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-      </div>
-      </div>
 
       {/* hình ảnh */}
       {/* <div className="container-fluid py-5" style={{ backgroundColor: 'whitesmoke' }}>
