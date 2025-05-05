@@ -121,94 +121,110 @@ const Header = () => {
           </div>
         </div>
 
-        <nav className="navbar navbar-light bg-white navbar-expand-xl">
-          {storeInfos.length > 0 && storeInfos[0].logo && (
-            <Link to="/" className="navbar-brand" style={{ marginLeft: "90px" }}>
-              <img
-                src={storeInfos[0].logo}
-                alt="Store Logo"
-                style={{ width: "150px", height: "85px" }}
-              />
-            </Link>
-          )}
-          <div className="collapse navbar-collapse">
-            <div className="navbar-nav mx-auto">
-              <Link to="/" className="nav-item nav-link">
-                Trang chủ
+        <nav className="navbar navbar-white  navbar-expand-xl">
+            {storeInfos.length > 0 && storeInfos[0].logo && (
+              <Link to="/" className="navbar-brand" style={{ marginLeft: "90px" }}>
+                <img
+                  src={storeInfos[0].logo}
+                  alt="Store Logo"
+                  style={{ width: "150px", height: "85px" }}
+                />
               </Link>
+            )}
 
-              <div className="nav-item dropdown">
-                <a
-                  href="#st"
-                  className="nav-link dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                >
-                  Dịch vụ
-                </a>
-                <div className="dropdown-menu m-0 bg-secondary rounded-0">
-                  {renderCategoryDropdown("service")}
-                </div>
-              </div>
-
-              <div className="nav-item dropdown">
-                <a
-                  href="#st"
-                  className="nav-link dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                >
-                  Sản phẩm
-                </a>
-                <div className="dropdown-menu m-0 bg-secondary rounded-0">
-                  {renderCategoryDropdown("product")}
-                </div>
-              </div>
-
-              <div className="nav-item dropdown">
-                <a
-                  href="#st"
-                  className="nav-link dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                >
-                  Bài viết
-                </a>
-                <div className="dropdown-menu m-0 bg-secondary rounded-0">
-                  {renderCategoryDropdown("post")}
-                </div>
-              </div>
-
-              <div className="nav-item dropdown">
-                <a
-                  href="#st"
-                  className="nav-link dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                >
-                  Video
-                </a>
-                <div className="dropdown-menu m-0 bg-secondary rounded-0">
-                  {renderCategoryDropdown("video")}
-                </div>
-              </div>
-
-              <Link to="/gioi-thieu" className="nav-item nav-link">
-                Giới thiệu
-              </Link>
-              <Link to="/lien-he" className="nav-item nav-link">
-                Contact
-              </Link>
-            </div>
-
-            <div className="d-flex align-items-center justify-content-end ms-auto">
+            {/* Nút toggler menu khi màn hình nhỏ */}
             <button
-                className="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
-                data-bs-toggle="modal"
-                data-bs-target="#searchModal"
-              >
-                <i className="fas fa-search text-primary"></i>
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarCollapse"
+              aria-controls="navbarCollapse"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon"></span>
             </button>
 
+            {/* Nội dung menu */}
+            <div className="collapse navbar-collapse" id="navbarCollapse">
+              <div className="navbar-nav mx-auto">
+                <Link to="/" className="nav-item nav-link">
+                  Trang chủ
+                </Link>
+
+                <div className="nav-item dropdown">
+                  <a
+                    href="#st"
+                    className="nav-link dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                  >
+                    Dịch vụ
+                  </a>
+                  <div className="dropdown-menu m-0 bg-secondary rounded-0">
+                    {renderCategoryDropdown("service")}
+                  </div>
+                </div>
+
+                <div className="nav-item dropdown">
+                  <a
+                    href="#st"
+                    className="nav-link dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                  >
+                    Sản phẩm
+                  </a>
+                  <div className="dropdown-menu m-0 bg-secondary rounded-0">
+                    {renderCategoryDropdown("product")}
+                  </div>
+                </div>
+
+                <div className="nav-item dropdown">
+                  <a
+                    href="#st"
+                    className="nav-link dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                  >
+                    Bài viết
+                  </a>
+                  <div className="dropdown-menu m-0 bg-secondary rounded-0">
+                    {renderCategoryDropdown("post")}
+                  </div>
+                </div>
+
+                <div className="nav-item dropdown">
+                  <a
+                    href="#st"
+                    className="nav-link dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                  >
+                    Video
+                  </a>
+                  <div className="dropdown-menu m-0 bg-secondary rounded-0">
+                    {renderCategoryDropdown("video")}
+                  </div>
+                </div>
+
+                <Link to="/gioi-thieu" className="nav-item nav-link">
+                  Giới thiệu
+                </Link>
+                <Link to="/lien-he" className="nav-item nav-link">
+                  Contact
+                </Link>
+              </div>
+
+              {/* Nút tìm kiếm bên phải */}
+              <div className="d-flex align-items-center justify-content-end ms-auto">
+                <button
+                  className="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
+                  data-bs-toggle="modal"
+                  data-bs-target="#searchModal"
+                >
+                  <i className="fas fa-search text-primary"></i>
+                </button>
+              </div>
             </div>
-          </div>
-        </nav>
+          </nav>
+
       </div>
       <div
           className="modal fade"

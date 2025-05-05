@@ -1,5 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import contactService from "../../functionservice/contactService";
+import storeinforService from "../../functionservice/storeinforService";
+import storeService from "../../functionservice/storeService";
+
+
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -7,8 +11,48 @@ const ContactForm = () => {
     email: "",
     message: "",
   });
+    const [storeInfo, setStoreInfos] = useState([]);
+      const [address, setAddress] = useState([]);
+    
+      const [loading, setLoading] = useState(false);
+      const [showButtons, setShowButtons] = useState(false);
+    
+  
 
   const [statusMessage, setStatusMessage] = useState("");
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      setLoading(true);
+      try {
+        const response = await storeService.getAlladdresses();
+        setAddress(Array.isArray(response) ? response : [response]);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAddresses();
+  }, []);
+
+  useEffect(() => {
+    const fetchStoreInfos = async () => {
+      setLoading(true);
+      try {
+        const data = await storeinforService.getAllStoreinfo();
+        setStoreInfos(Array.isArray(data) ? data : [data]);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStoreInfos();
+  }, []);
+
+  const store = storeInfo[0] || {};
+  const addr = address[0] || {};
+
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -42,15 +86,15 @@ const ContactForm = () => {
       <h2 className="text-center mb-4">Liên hệ với chúng tôi</h2>
       <div className="row">
         <div className="col-md-5 mb-4">
-          <h5>Thông tin liên hệ</h5>
-          <p><strong>Địa chỉ:</strong> 10B Phan Đình Phùng P Thành Nhất, Buon Ma Thuot, Vietnam</p>
-          <p><strong>Email:</strong> hoanghanggldl@gmail.com</p>
-          <p><strong>Hotline:</strong> 082 620 4747</p>
-          <p><strong>Thời gian làm việc:</strong> 8:00 - 20:00 (T2 - CN)</p>
+          <h5 className="text-center">Thông tin liên hệ</h5>
+          <p><strong>Địa chỉ:</strong>{addr.street} </p>
+          <p><strong>Tên Của Hàng:</strong> {addr.fullName}</p>
+          <p><strong>Hotline:</strong> {store.hotline}</p>
+          <p><strong>Thời gian làm việc:</strong> {store.workingHours}</p>
           <div className="mt-3">
           <iframe
             title="map"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3912.778222884797!2d108.0598662!3d12.6904525!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDQxJzI2LjMiTiAxMDjCsDAzJzM1LjMiRQ!5e0!3m2!1svi!2s!4v1714030501234!5m2!1svi!2s"
+            src={store.googleMap}
             width="100%"
             height="250"
             style={{ border: 0 }}
@@ -61,7 +105,7 @@ const ContactForm = () => {
           </div>
         </div>
 
-        <div className="col-md-7">
+        <div className="col-md-7 align-items-center">
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="name" className="form-label">Họ và tên</label>
@@ -111,8 +155,10 @@ const ContactForm = () => {
               ></textarea>
             </div>
 
+            <div className="text-center">
             <button type="submit" className="btn btn-primary">Gửi thông tin</button>
-          </form>
+          </div>
+        </form>
           {statusMessage && (
             <div className={`alert mt-3 ${statusMessage.includes("thành công") ? "alert-success" : "alert-danger"}`} role="alert">
               {statusMessage}
