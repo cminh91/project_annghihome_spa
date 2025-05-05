@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import videoService from "../../functionservice/videoService";
+import { Spinner } from "react-bootstrap";
 
 const VideoList = () => {
   const [videos, setVideos] = useState([]);
@@ -22,7 +23,12 @@ const VideoList = () => {
   }, []);
 
   if (loading) {
-    return <p>Loading videos...</p>;
+    return (
+      <div className="text-center">
+        <Spinner animation="border" variant="primary" />
+        <p>Loading videos...</p>
+      </div>
+    );
   }
 
   if (error) {
@@ -42,35 +48,36 @@ const VideoList = () => {
           <div id="videoCarousel" className="carousel slide" data-bs-ride="carousel">
             <div className="carousel-inner">
               {videoGroups.map((group, groupIdx) => (
-                
-                <div className={`carousel-item ${groupIdx === 0 ? "active" : ""}`} key={groupIdx}>
+                <div
+                  className={`carousel-item ${groupIdx === 0 ? "active" : ""}`}
+                  key={groupIdx}
+                >
                   <div className="row g-4 justify-content-center">
-                  {group.map((video) => {
-                    const videoId = new URL(video.linkYtb).searchParams.get("v");
-                    const thumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                    {group.map((video) => {
+                      const videoId = new URL(video.linkYtb).searchParams.get("v");
+                      const thumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
 
-                    return (
+                      return (
                         <div className="col-md-4" key={video.id}>
-                        <div className="ratio ratio-16x9">
+                          <div className="ratio ratio-16x9">
                             <a href={video.linkYtb} target="_blank" rel="noopener noreferrer">
-                            <img
+                              <img
                                 src={thumbnail}
                                 alt="Video thumbnail"
                                 className="img-fluid"
                                 style={{ objectFit: "cover" }}
-                            />
+                              />
                             </a>
+                          </div>
                         </div>
-                        </div>
-                    );
+                      );
                     })}
-
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Điều hướng video */}
+            {/* Carousel navigation */}
             <button
               className="carousel-control-prev"
               type="button"
@@ -78,7 +85,7 @@ const VideoList = () => {
               data-bs-slide="prev"
             >
               <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span className="visually-hidden">Trước</span>
+              <span className="visually-hidden">Previous</span>
             </button>
             <button
               className="carousel-control-next"
@@ -87,7 +94,7 @@ const VideoList = () => {
               data-bs-slide="next"
             >
               <span className="carousel-control-next-icon" aria-hidden="true"></span>
-              <span className="visually-hidden">Sau</span>
+              <span className="visually-hidden">Next</span>
             </button>
           </div>
         </div>

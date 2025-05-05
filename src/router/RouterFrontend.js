@@ -23,7 +23,7 @@ const RouterFrontend = [
     { path :"/dich-vu",element:<ServicePages/>},
     { path :"/dich-vu/:id",element:<ServiceDetail />},
     {path: '/san-pham',element:<ProductPage/>},
-    {path: '/san-pham/:id',element:<ProductDetail/>},
+    {path: '/san-pham/:slug',element:<ProductDetail/>},
     {path:"/category/:slug", element:<CategoryDetail />},
     {path:"/doi-ngu-nhan-su",element:<TeamList/>},
     {path :"/blog/:slug",element:<BlogDetail/>}

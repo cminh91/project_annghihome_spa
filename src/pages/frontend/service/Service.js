@@ -30,9 +30,9 @@ const ServiceList = () => {
   }
 
   return (
-    <div className="col-lg-6">
+    <div className="col-lg-6 "style={{ width: "100%"}}>
       <div className="bg-white p-4 rounded shadow-sm">
-        <h2 className="fw-bold mb-4" style={{ color: "#0000FF" }}>
+        <h2 className="fw-bold mb-4 text-center" style={{ color: "#0000FF" }}>
           Chọn dịch vụ
         </h2>
         <div className="row g-4">

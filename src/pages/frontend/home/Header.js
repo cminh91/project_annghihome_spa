@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import categoryService from "../../functionservice/categoryService";
 import storeinforService from "../../functionservice/storeinforService";
+import { SiZalo } from 'react-icons/si';
 
 const Header = () => {
   const [storeInfos, setStoreInfos] = useState([]);
@@ -108,14 +109,14 @@ const Header = () => {
               </small>
             </div>
             <div className="top-link d-flex gap-2">
-                <a href="https://zalo.me/" className="text-white" target="_blank" rel="noopener noreferrer">
-                  <i className="fab fa-zalo fa-lg me-2 "></i>
-                  Zalo
-                </a>
-                <a href={storeInfos[0]?.facebook|| '#'} className="text-white" target="_blank" rel="noopener noreferrer">
-                  <i className="fab fa-facebook fa-lg me-2"></i>
-                </a>
-              </div>
+              <a href={`https://zalo.me/${storeInfos[0]?.zalo}`} className="text-white d-flex align-items-center" target="_blank" rel="noopener noreferrer">
+              <SiZalo size={30} className="me-2" />
+              </a>
+              <a href={storeInfos[0]?.facebook || '#'} className="text-white" target="_blank" rel="noopener noreferrer">
+                <i className="fab fa-facebook fa-lg me-2"></i>
+              </a>
+            </div>
+
 
           </div>
         </div>
@@ -197,34 +198,43 @@ const Header = () => {
             </div>
 
             <div className="d-flex align-items-center justify-content-end ms-auto">
-              <button
+            <button
                 className="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
                 data-bs-toggle="modal"
                 data-bs-target="#searchModal"
               >
                 <i className="fas fa-search text-primary"></i>
-              </button>
-              <a href="#st" className="position-relative me-4">
-                <i className="fa fa-shopping-bag fa-2x"></i>
-                <span
-                  className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
-                  style={{
-                    top: "-5px",
-                    left: "9px",
-                    height: "20px",
-                    minWidth: "20px",
-                  }}
-                >
-                  3
-                </span>
-              </a>
-              <a href="#st">
-                <i className="fas fa-user fa-2x"></i>
-              </a>
+            </button>
+
             </div>
           </div>
         </nav>
       </div>
+      <div
+          className="modal fade"
+          id="searchModal"
+          tabIndex="-1"
+          aria-labelledby="searchModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="searchModalLabel">Tìm kiếm</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <input type="text" className="form-control" placeholder="Nhập từ khoá..." />
+              </div>
+            </div>
+          </div>
+        </div>
+
     </header>
   );
 };

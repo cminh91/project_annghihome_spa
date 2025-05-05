@@ -66,7 +66,7 @@ const Home = () => {
                 id="carouselId"
                 className="carousel slide"
                 data-bs-ride="carousel"
-                data-bs-interval="2500" // Slide every 2 seconds
+                data-bs-interval="2000" // Slide every 2 seconds
               >
                 {loading ? (
                   <div className="text-center py-5">
@@ -308,7 +308,7 @@ const Home = () => {
               <div className="d-flex align-items-center mt-3 justify-content-center">
                 <div className="border-top border-dark flex-grow-1" style={{ maxWidth: "50px" }}></div>
                 <img
-                  src="logo.png"
+                  src={storeInfos?.favicon}
                   alt="Logo"
                   className="mx-3"
                   style={{ width: "40px", height: "40px" }}
@@ -430,7 +430,7 @@ const Home = () => {
       {/* tư vấn */}
       <div className="container-fluid py-5" style={{ backgroundColor: "skyblue" }}>
         <div className="container py-5">
-          <div className="row g-4">
+          <div className="row g-2">
             {/* Phần "Chọn dịch vụ" - Cột 1 */}
             <div className="col-lg-6">
               <div className="bg-white rounded shadow-sm p-4">

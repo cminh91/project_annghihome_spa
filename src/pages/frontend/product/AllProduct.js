@@ -31,41 +31,62 @@ const AllProducts = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="container py-5">
-      <div className="row g-4">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="col-md-6 col-lg-4 col-xl-3"
-            onClick={() => handleProductClick(product.id)}
-            style={{ cursor: "pointer" }}
-          >
-            <div className="rounded border border-secondary h-100">
-              <img
-                src={product.imageUrl || "default-image.jpg"}
-                alt={product.name}
-                className="img-fluid w-100 rounded-top"
-                style={{ height: "200px", objectFit: "cover" }}
-              />
-              <div className="p-3">
-                <h5 className="fw-bold text-dark">{product.name}</h5>
-                <p className="text-muted" style={{ fontSize: "14px" }}>
-                  {product.category?.name}
-                </p>
-                <p className="mb-1 text-primary fw-semibold">
-                  Giá: {Number(product.salePrice || product.price).toLocaleString()} VND
-                </p>
-                {product.salePrice && (
-                  <p className="mb-1 text-muted text-decoration-line-through" style={{ fontSize: "14px" }}>
-                    {Number(product.price).toLocaleString()} VND
-                  </p>
-                )}
-                <p style={{ fontSize: "13px" }}>{product.description}</p>
+    <div className="container-fluid fruite py-5">
+              <div id="tab-1" className="tab-pane fade show p-0 active">
+                <div className="row g-4 ">
+                  {products.map((product) => (
+                    <div
+                      key={product.id}
+                      className="col-md-6 col-lg-4 col-xl-3"
+                      onClick={() => handleProductClick(product.id)}
+                    >
+                      <div className="rounded position-relative fruite-item border border-secondary border-top-0 rounded-bottom">
+                        <div className="fruite-img" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                          <img
+                            src={product.imageUrl || "default-image.jpg"}
+                            className="img-fluid w-50 rounded-top"
+                            alt={product.name}
+                          />
+                        </div>
+                        <div className="p-4 text-center ">
+                          <h4
+                            style={{
+                              borderBottom: "3px solid #007bff",
+                              paddingBottom: "3px",
+                            }}
+                          >
+                            {product.name}
+                          </h4>
+                          <p
+                            style={{ fontSize: "18px", color: "#007bff" }}
+                          >
+                            Giá: {Number(product.salePrice || product.price).toLocaleString()} VND
+                          </p>
+                          {product.salePrice && (
+                            <p
+                              className="mb-1 text-muted text-decoration-line-through"
+                              style={{ fontSize: "14px" }}
+                            >
+                              {Number(product.price).toLocaleString()} VND
+                            </p>
+                          )}
+                          <p>{product.description}</p>
+                          <button
+                            className="btn btn-primary btn-lg"
+                            style={{
+                              backgroundColor: "#007bff",
+                              borderColor: "#007bff",
+                            }}
+                            onClick={() => handleProductClick(product.id)}
+                          >
+                            Chi tiết
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };

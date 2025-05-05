@@ -5,7 +5,7 @@ import Footer from "../home/Footer";
 import productService from "../../functionservice/productService";
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +13,7 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data = await productService.getProductById(id);
+        const data = await productService.getProductById(slug);
         setProduct(data);
         setLoading(false);
       } catch (err) {
@@ -23,7 +23,7 @@ const ProductDetail = () => {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [slug]);
 
   if (loading) {
     return <div className="container py-5">Đang tải chi tiết sản phẩm...</div>;

@@ -7,7 +7,7 @@ const ProductPage = () => {
   return (
     <>
       <Header />
-      <main style={{ paddingTop: "90px" }}>
+      <main style={{ paddingTop: "190px" }}>
       <h2 className="text-center mb-4 text-primary fw-bold">Tất cả sản phẩm</h2>
       <AllProduct />
       </main>

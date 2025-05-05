@@ -23,8 +23,8 @@ const HomeProduct = () => {
     fetchProducts();
   }, []);
 
-  const handleProductClick = (id) => {
-    navigate(`/san-pham/${id}`);
+  const handleProductClick = (slug) => {
+    navigate(`/san-pham/${slug}`);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -81,7 +81,7 @@ const HomeProduct = () => {
                               backgroundColor: "#007bff",
                               borderColor: "#007bff",
                             }}
-                            onClick={() => handleProductClick(product.id)}
+                            onClick={() => handleProductClick(product.slug)}
                           >
                             Chi tiết
                           </button>
